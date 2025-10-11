@@ -1,0 +1,561 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Quem Somos Nós - Stigliani{% endblock %}
+
+{% block content %}
+<!-- Seção Quem Somos Nós -->
+<div class="about-section">
+    <div class="about-container">
+        <div class="about-content">
+            <div class="about-header">
+                <div class="about-icon">🏢</div>
+                <h1 class="about-title">Quem Somos Nós?</h1>
+                <p class="about-subtitle">Conheça a Stigliani e nossa missão de propagar conhecimento analítico consistente. Nosso fundador, Emerson Stigliani, possui Licenciatura em Matemática(<a href="https://www.ime.usp.br/" target="_blank" rel="noopener noreferrer">IME-USP</a>), Bacharelado em Estatística(<a href="https://www.ime.usp.br/" target="_blank" rel="noopener noreferrer">IME-USP</a>), MBA em Internet of Thing(PECE-Escola Politécnica da USP, monografia disponível para consulta, buscando pelo nome do autor <a href="https://pecepoli.com.br/" target="_blank" rel="noopener noreferrer">aqui</a>), larga experiência em análise de dados e estudioso de geopolítica.</p>
+            </div>
+            
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="card-icon">🎯</div>
+                    <h3 class="card-title">Nossa Missão</h3>
+                    <p class="card-text">
+                        Fornecer informações precisas e atualizadas a respeito dos mais diversos assuntos, 
+                        ajudando pessoas a tomarem decisões mais informadas a fim de terem maior qualidade em suas vidas.
+                    </p>
+                </div>
+                
+                <div class="about-card">
+                    <div class="card-icon">📊</div>
+                    <h3 class="card-title">Nossa Metodologia</h3>
+                    <p class="card-text">
+                        Utilizamos dados oficiais, análises estatísticas de qualidade, know-how socioeconômico e tecnologia para criar o City Safety Score, um indicador 
+                        confiável de segurança urbana.
+                    </p>
+                </div>
+                
+                <div class="about-card">
+                    <div class="card-icon">🤝</div>
+                    <h3 class="card-title">Nossos Valores</h3>
+                    <p class="card-text">
+                        Transparência, precisão e responsabilidade social são os pilares que guiam 
+                        nosso trabalho. Acreditamos que informação de qualidade é fundamental 
+                        para um país mais próspero.
+                    </p>
+                </div>
+                
+                <div class="about-card">
+                    <div class="card-icon">🚀</div>
+                    <h3 class="card-title">Nossa Visão</h3>
+                    <p class="card-text">
+                        Ser a principal referência em análise de dados confiável no mundo, contribuindo para o desenvolvimento e melhoria da qualidade de vida das pessoas.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="about-stats">
+                <div class="stat-item">
+                    <div class="stat-number">5000+</div>
+                    <div class="stat-label">Cidades Analisadas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">27</div>
+                    <div class="stat-label">Unidades Federativas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Dados Atualizados</div>
+                </div>
+            </div>
+            
+            <div class="about-team">
+                <h3 class="team-title">Nossa Equipe</h3>
+                <p class="team-description">
+                    Contamos com uma equipe multidisciplinar de especialistas em análise de dados e tecnologia, comprometidos em fornecer informações precisas 
+                    e úteis para nossos usuários.
+                </p>
+                <div class="team-features">
+                    <div class="team-feature">
+                        <span class="feature-icon">📈</span>
+                        <span class="feature-text">Analistas de Dados</span>
+                    </div>
+                    <div class="team-feature">
+                        <span class="feature-icon">💻</span>
+                        <span class="feature-text">Desenvolvedores de Software</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="about-cta">
+                <h3 class="cta-title">Pronto para Consultar?</h3>
+                <p class="cta-description">
+                    Use nossa ferramenta de consulta para obter informações detalhadas sobre a segurança 
+                    de qualquer cidade brasileira.
+                </p>
+                <a href="{% url 'home' %}" class="btn btn-primary btn-large">
+                    <span class="btn-text">Consultar Cidades</span>
+                    <span class="btn-icon">→</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Seção Quem Somos Nós */
+.about-section {
+    margin: 2rem 0;
+    padding: 0 20px;
+    min-height: calc(100vh - 200px);
+}
+
+.about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.about-content {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 24px;
+    padding: 4rem 3rem;
+    box-shadow: var(--sombra-forte);
+    border: 1px solid var(--cor-cinza-claro);
+    position: relative;
+    overflow: hidden;
+}
+
+.about-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradiente-principal);
+    z-index: 1;
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.about-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.about-title {
+    font-size: 2.0rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.about-subtitle {
+    font-size: 1.3rem;
+    color: var(--cor-cinza);
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 350;
+    text-align: justify;
+    padding: 0 2rem;
+}
+
+.about-subtitle a {
+    color: var(--cor-cinza);
+    text-decoration: none;
+    font-weight: 350;
+    transition: var(--transicao-media);
+    border-bottom: 1px solid transparent;
+}
+
+.about-subtitle a:hover {
+    color: var(--cor-cinza-escuro);
+    border-bottom-color: var(--cor-cinza-escuro);
+    text-decoration: none;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.about-card {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-cinza-claro);
+    transition: var(--transicao-media);
+    position: relative;
+    overflow: hidden;
+}
+
+.about-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradiente-principal);
+    transform: scaleX(0);
+    transition: var(--transicao-media);
+}
+
+.about-card:hover::before {
+    transform: scaleX(1);
+}
+
+.about-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--sombra-forte);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.card-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: var(--cor-cinza);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.about-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--cor-azul-escuro) 0%, var(--cor-azul-medio) 100%);
+    border-radius: 16px;
+    color: var(--cor-branco);
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--cor-branco);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.about-team {
+    text-align: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 16px;
+    padding: 2.5rem;
+    border: 1px solid var(--cor-cinza-claro);
+    margin-bottom: 3rem;
+}
+
+.team-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.team-description {
+    font-size: 1.1rem;
+    color: var(--cor-cinza);
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+}
+
+.team-features {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.team-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--cor-branco);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-cinza-claro);
+    transition: var(--transicao-media);
+}
+
+.team-feature:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+.feature-icon {
+    font-size: 1.5rem;
+}
+
+.feature-text {
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    font-size: 0.95rem;
+}
+
+.about-cta {
+    text-align: center;
+    background: linear-gradient(135deg, var(--cor-laranja) 0%, var(--cor-laranja-claro) 100%);
+    border-radius: 16px;
+    padding: 2.5rem;
+    color: var(--cor-branco);
+}
+
+.cta-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--cor-branco);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.cta-description {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 500px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+}
+
+.btn-large {
+    padding: 1.2rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: var(--cor-laranja);
+    color: var(--cor-laranja);
+    border: 2px solid var(--cor-laranja-claro);
+}
+
+.btn-large:hover {
+    background: transparent;
+    color: var(--cor-branco);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-forte);
+}
+
+/* Responsividade para About Section */
+@media (max-width: 768px) {
+    .about-section {
+        margin: 1rem 0;
+        padding: 0 15px;
+    }
+    
+    .about-content {
+        padding: 2.5rem 2rem;
+    }
+    
+    .about-title {
+        font-size: 2.2rem;
+    }
+    
+    .about-subtitle {
+        font-size: 1.1rem;
+        max-width: 700px;
+        padding: 0 1.5rem;
+    }
+    
+    .about-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .about-card {
+        padding: 1.5rem;
+    }
+    
+    .card-title {
+        font-size: 1.2rem;
+    }
+    
+    .about-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .about-team {
+        padding: 2rem 1.5rem;
+    }
+    
+    .team-title {
+        font-size: 1.6rem;
+    }
+    
+    .team-features {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .team-feature {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+    
+    .about-cta {
+        padding: 2rem 1.5rem;
+    }
+    
+    .cta-title {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-content {
+        padding: 2rem 1.5rem;
+    }
+    
+    .about-title {
+        font-size: 1.8rem;
+    }
+    
+    .about-subtitle {
+        font-size: 1rem;
+        max-width: 100%;
+        padding: 0 1rem;
+    }
+    
+    .about-card {
+        padding: 1.25rem;
+    }
+    
+    .card-icon {
+        font-size: 2rem;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .card-text {
+        font-size: 0.95rem;
+    }
+    
+    .about-stats {
+        grid-template-columns: 1fr;
+        padding: 1.25rem;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+    }
+    
+    .about-team {
+        padding: 1.5rem 1rem;
+    }
+    
+    .team-title {
+        font-size: 1.4rem;
+    }
+    
+    .team-description {
+        font-size: 1rem;
+    }
+    
+    .team-feature {
+        padding: 0.75rem 1rem;
+    }
+    
+    .feature-icon {
+        font-size: 1.2rem;
+    }
+    
+    .feature-text {
+        font-size: 0.9rem;
+    }
+    
+    .about-cta {
+        padding: 1.5rem 1rem;
+    }
+    
+    .cta-title {
+        font-size: 1.4rem;
+    }
+    
+    .cta-description {
+        font-size: 1rem;
+    }
+    
+    .btn-large {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+}
+</style>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

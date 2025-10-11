@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}Excluir Loja - Painel Admin{% endblock %}
+
+{% block content %}
+    <div class="admin-header">
+        <div class="admin-header-left">
+            <h1 class="admin-title">Excluir Loja: {{ loja.nome }}</h1>
+            <div class="admin-user-info">
+                <span class="admin-level">{{ admin_user.get_nivel_acesso_display }}</span>
+                <span class="admin-welcome">Bem-vindo, {{ admin_user.username }}!</span>
+            </div>
+        </div>
+        <div class="admin-actions">
+            <a href="{% url 'admin_lojas_list' %}" class="btn btn-secondary btn-small">
+                🏪 Voltar para Lojas
+            </a>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary btn-small">
+                📊 Dashboard
+            </a>
+            <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-small">
+                🚪 Sair
+            </a>
+        </div>
+    </div>
+
+    <div class="admin-content-card">
+        <div class="delete-confirmation">
+            <div class="delete-warning">
+                <div class="warning-icon">⚠️</div>
+                <h3 class="warning-title">Atenção!</h3>
+                <p class="warning-message">
+                    Tem certeza que deseja excluir a loja <strong>"{{ loja.nome }}"</strong>?
+                </p>
+                <p class="warning-details">
+                    Esta ação não pode ser desfeita e todos os dados relacionados à loja serão removidos permanentemente.
+                </p>
+            </div>
+
+            <div class="loja-info">
+                <div class="loja-badge" style="background-color: {{ loja.cor_fundo }}; color: {{ loja.cor_texto }};">
+                    {{ loja.nome }}
+                </div>
+                
+                <div class="loja-details">
+                    <div class="detail-item">
+                        <strong>Descrição:</strong>
+                        <span>{{ loja.descricao|default:"Sem descrição" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Status:</strong>
+                        <span class="{% if loja.ativo %}status-ativo{% else %}status-inativo{% endif %}">
+                            {% if loja.ativo %}✅ Ativa{% else %}❌ Inativa{% endif %}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Ordem de Exibição:</strong>
+                        <span>{{ loja.ordem_exibicao }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Cupons Associados:</strong>
+                        <span>{{ loja.cupom_set.count }} cupom(ns)</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Data de Criação:</strong>
+                        <span>{{ loja.data_criacao|date:"d/m/Y H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <span class="btn-text">Sim, Excluir Loja</span>
+                        <span class="btn-icon">🗑️</span>
+                    </button>
+                </form>
+                
+                <a href="{% url 'admin_lojas_list' %}" class="btn btn-secondary">
+                    <span class="btn-text">Cancelar</span>
+                    <span class="btn-icon">❌</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .delete-confirmation {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .delete-warning {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .warning-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .warning-title {
+            color: #DC2626;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .warning-message {
+            color: #991B1B;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .warning-details {
+            color: #7F1D1D;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .loja-info {
+            background: var(--cor-branco);
+            border: 1px solid var(--cor-cinza-claro);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .loja-badge {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .loja-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--cor-cinza-claro);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item strong {
+            color: var(--cor-azul-escuro);
+            font-weight: 600;
+            min-width: 120px;
+        }
+
+        .detail-item span {
+            color: var(--cor-cinza);
+            text-align: right;
+        }
+
+        .status-ativo {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .status-inativo {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .delete-warning {
+                padding: 1.5rem;
+            }
+
+            .warning-title {
+                font-size: 1.3rem;
+            }
+
+            .loja-info {
+                padding: 1rem;
+            }
+
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .detail-item strong {
+                min-width: auto;
+            }
+
+            .detail-item span {
+                text-align: left;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+{% endblock %}

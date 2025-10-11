@@ -1,0 +1,30 @@
+# Arquivo de variáveis Terraform
+# Copie este arquivo para terraform.tfvars e configure os valores
+
+aws_region   = "us-east-1"
+project_name = "safetyscorebrasil"
+domain_name  = "safetyscorebrasil.com.br"
+db_password  = "sua-senha-super-segura-aqui"
+
+# Opcional: Configure sua chave SSH
+# ssh_key_name = "sua-chave-ssh"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

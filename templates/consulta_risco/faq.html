@@ -1,0 +1,581 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}FAQ - Perguntas Frequentes | Stigliani{% endblock %}
+
+{% block content %}
+<div class="faq-section">
+    <div class="container">
+        <div class="faq-container">
+            <div class="faq-content">
+                <div class="faq-header">
+                    <div class="faq-icon">❓</div>
+                    <h1 class="faq-title">Perguntas Frequentes</h1>
+                    <p class="faq-subtitle">
+                        Encontre respostas para as dúvidas mais comuns sobre o City Safety Score do Brasil
+                    </p>
+                </div>
+
+                <div class="faq-intro">
+                    <div class="intro-card">
+                        <h2>Como funciona o City Safety Score?</h2>
+                        <p>
+                            O City Safety Score é um sistema que analisa dados de criminalidade de mais de 5 mil cidades brasileiras, 
+                            fornecendo informações sobre o nível de segurança para ajudar você a tomar decisões mais informadas sobre seus trajetos.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-questions">
+                    <div class="question-group">
+                        <h3 class="group-title">📊 Sobre o Sistema</h3>
+                        
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Como é calculado o nível de risco?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    O nível de risco é calculado com base na diferença de posições entre as cidades de origem e destino 
+                                    no ranking de criminalidade. Utilizamos dados oficiais do Ministério da Justiça e Segurança Pública 
+                                    e IBGE para criar um ranking atualizado mensalmente.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Com que frequência os dados são atualizados?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    Os dados são atualizados mensalmente com base em informações do ano corrente e anterior. 
+                                    O sistema contempla mais de 5 mil cidades do país, garantindo informações sempre atualizadas.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Os dados são confiáveis?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    Sim! Utilizamos dados oficiais de fontes abertas do Ministério da Justiça e Segurança Pública 
+                                    e IBGE. A metodologia aplicada no cálculo do Score de Ranking não tem vínculo oficial com 
+                                    essas instituições, mas utiliza dados públicos e confiáveis.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <h3 class="group-title">🔍 Como Usar</h3>
+                        
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Como faço uma consulta de risco?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    1. Selecione o estado de origem<br>
+                                    2. Escolha a cidade de origem<br>
+                                    3. Selecione o estado de destino<br>
+                                    4. Escolha a cidade de destino<br>
+                                    5. Digite o código de verificação<br>
+                                    6. Clique em "Consultar Risco"
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>O que significam os níveis de risco?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    <strong>Reduzido:</strong> A cidade de destino tem menor índice de criminalidade que a origem<br>
+                                    <strong>Inalterado:</strong> Ambas as cidades têm índices similares<br>
+                                    <strong>Aumentado:</strong> A cidade de destino tem maior índice de criminalidade que a origem
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Por que preciso digitar o código de verificação?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    O código de verificação (captcha) é uma medida de segurança para evitar consultas automatizadas 
+                                    e garantir que o sistema seja usado de forma adequada por usuários reais.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <h3 class="group-title">⭐ Avaliações</h3>
+                        
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Como posso avaliar a segurança da minha cidade?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    Após realizar uma consulta, você pode avaliar o nível de segurança da sua cidade de origem 
+                                    na escala de 1 a 10. Sua avaliação ajuda outros usuários a terem uma visão mais completa 
+                                    sobre a segurança local.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Minha avaliação é obrigatória?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    Não, a avaliação é opcional. Você pode consultar o risco sem avaliar, mas sua contribuição 
+                                    é muito importante para enriquecer o banco de dados com experiências reais dos usuários.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <h3 class="group-title">🎁 Cupons</h3>
+                        
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Como funcionam os cupons de desconto?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    Oferecemos cupons de desconto de parceiros como forma de agradecimento por usar nosso serviço. 
+                                    Os cupons são válidos nas lojas parceiras e podem ser copiados facilmente para uso.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Os cupons têm data de validade?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    Sim, cada cupom possui sua própria data de validade. Verifique sempre as condições de uso 
+                                    antes de utilizar o cupom na loja parceira.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <h3 class="group-title">🔒 Privacidade</h3>
+                        
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Meus dados são seguros?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    Sim! Respeitamos sua privacidade e seguimos a LGPD (Lei Geral de Proteção de Dados). 
+                                    Não armazenamos informações pessoais desnecessárias e utilizamos apenas dados públicos 
+                                    para os cálculos de risco.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="question-item">
+                            <div class="question-header">
+                                <h4>Que informações são coletadas?</h4>
+                                <span class="toggle-icon">+</span>
+                            </div>
+                            <div class="question-answer">
+                                <p>
+                                    Coletamos apenas o email quando você opta por avaliar uma cidade, e os dados de consulta 
+                                    (origem e destino) para fins estatísticos. Não compartilhamos informações pessoais com terceiros.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-footer">
+                    <div class="footer-actions">
+                        <a href="{% url 'home' %}" class="btn btn-primary">
+                            <span class="btn-text">Voltar ao Início</span>
+                            <span class="btn-icon">←</span>
+                        </a>
+                        <a href="{% url 'sobre' %}" class="btn btn-secondary">
+                            <span class="btn-text">Conheça Mais</span>
+                            <span class="btn-icon">ℹ️</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para página FAQ */
+.faq-section {
+    margin: 2rem 0;
+    padding: 0 20px;
+    min-height: calc(100vh - 200px);
+}
+
+.faq-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.faq-content {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 24px;
+    padding: 4rem 3rem;
+    box-shadow: var(--sombra-forte);
+    border: 1px solid var(--cor-cinza-claro);
+    position: relative;
+    overflow: hidden;
+}
+
+.faq-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradiente-principal);
+    z-index: 1;
+}
+
+.faq-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.faq-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+.faq-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.faq-subtitle {
+    font-size: 1.3rem;
+    color: var(--cor-cinza);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.faq-intro {
+    margin-bottom: 3rem;
+}
+
+.intro-card {
+    background: linear-gradient(135deg, var(--cor-azul-escuro) 0%, var(--cor-azul-medio) 100%);
+    border-radius: 16px;
+    padding: 2.5rem;
+    color: var(--cor-branco);
+    text-align: center;
+}
+
+.intro-card h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.intro-card p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.95;
+}
+
+.faq-questions {
+    margin-bottom: 3rem;
+}
+
+.question-group {
+    margin-bottom: 2.5rem;
+}
+
+.group-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--cor-laranja);
+}
+
+.question-item {
+    background: var(--cor-branco);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-cinza-claro);
+    overflow: hidden;
+    transition: var(--transicao-media);
+}
+
+.question-item:hover {
+    box-shadow: var(--sombra-media);
+    transform: translateY(-2px);
+}
+
+.question-header {
+    padding: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    transition: var(--transicao-media);
+}
+
+.question-header:hover {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+}
+
+.question-header h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin: 0;
+    flex: 1;
+    padding-right: 1rem;
+}
+
+.toggle-icon {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--cor-laranja);
+    transition: var(--transicao-media);
+    min-width: 30px;
+    text-align: center;
+}
+
+.question-item.active .toggle-icon {
+    transform: rotate(45deg);
+}
+
+.question-answer {
+    padding: 0 1.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    background: var(--cor-branco);
+}
+
+.question-item.active .question-answer {
+    padding: 1.5rem;
+    max-height: 500px;
+}
+
+.question-answer p {
+    color: var(--cor-cinza-escuro);
+    line-height: 1.6;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.faq-footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--cor-cinza-claro);
+}
+
+.footer-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transicao-media);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--gradiente-principal);
+    color: var(--cor-branco);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+.btn-secondary {
+    background: var(--gradiente-secundario);
+    color: var(--cor-branco);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+
+/* Animações */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .faq-content {
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+    }
+    
+    .faq-title {
+        font-size: 2rem;
+    }
+    
+    .faq-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .intro-card {
+        padding: 2rem;
+    }
+    
+    .intro-card h2 {
+        font-size: 1.5rem;
+    }
+    
+    .question-header {
+        padding: 1rem;
+    }
+    
+    .question-header h4 {
+        font-size: 1rem;
+    }
+    
+    .question-item.active .question-answer {
+        padding: 1rem;
+    }
+    
+    .footer-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .faq-section {
+        padding: 0 15px;
+    }
+    
+    .faq-content {
+        padding: 1.5rem 1rem;
+    }
+    
+    .faq-title {
+        font-size: 1.8rem;
+    }
+    
+    .faq-subtitle {
+        font-size: 1rem;
+    }
+    
+    .intro-card {
+        padding: 1.5rem;
+    }
+    
+    .group-title {
+        font-size: 1.3rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Funcionalidade de accordion para as perguntas
+    const questionItems = document.querySelectorAll('.question-item');
+    
+    questionItems.forEach(item => {
+        const header = item.querySelector('.question-header');
+        
+        header.addEventListener('click', function() {
+            // Fechar outros itens
+            questionItems.forEach(otherItem => {
+                if (otherItem !== item) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Toggle do item atual
+            item.classList.toggle('active');
+        });
+    });
+    
+    // Animação de entrada dos elementos
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+    
+    const animatedElements = document.querySelectorAll('.question-item, .intro-card');
+    animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+        observer.observe(el);
+    });
+});
+</script>
+
+{% endblock %}
+

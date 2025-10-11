@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}City Safety Score do Brasil{% endblock %}</title>
+    {% load static %}
+    {% load consulta_risco_tags %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-icon">
+                    <a href="{% url 'home' %}" class="icon-link">
+                        <div class="icon-circle">
+                            <span class="icon-letter">S</span>
+                        </div>
+                    </a>
+                </div>
+                <h1 class="logo">
+                    <a href="{% url 'home' %}" class="logo-link" style="color: white !important; text-decoration: none !important;">Stigliani</a>
+                </h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>&copy; 2025 Stigliani. Todos os direitos reservados.</p>
+                    <p class="footer-update">
+                        <small>Dados atualizados em: {% get_ultima_atualizacao %}</small>
+                    </p>
+                </div>
+                <div class="footer-links">
+                    <a href="{% url 'sobre' %}" class="footer-link">Quem Somos</a>
+                    <a href="{% url 'faq' %}" class="footer-link">FAQ</a>
+                    <a href="{% url 'lgpd' %}" class="footer-link">Política de Privacidade</a>
+                    <a href="{% url 'cupons' %}" class="footer-link">Cupons</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

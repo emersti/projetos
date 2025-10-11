@@ -1,0 +1,624 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if cupom %}Editar Cupom{% else %}Novo Cupom{% endif %} - Stigliani{% endblock %}
+
+{% block content %}
+<div class="admin-edit-container">
+    <div class="admin-edit-card">
+        <div class="admin-edit-header">
+            <h1 class="admin-edit-title">
+                {% if cupom %}
+                    ✏️ Editar Cupom
+                {% else %}
+                    ➕ Novo Cupom
+                {% endif %}
+            </h1>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary btn-small">
+                ← Voltar ao Dashboard
+            </a>
+        </div>
+
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="admin-edit-form">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="loja" class="form-label">Loja</label>
+                    <select id="loja" name="loja" class="form-input" required>
+                        <option value="">Selecione uma loja...</option>
+                        {% for loja in lojas %}
+                            <option value="{{ loja.nome }}" 
+                                    {% if cupom and cupom.loja == loja.nome %}selected{% endif %}
+                                    data-cor-fundo="{{ loja.cor_fundo }}"
+                                    data-cor-texto="{{ loja.cor_texto }}">
+                                {{ loja.nome }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-help">Selecione a loja onde o cupom é válido</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="ordem_exibicao" class="form-label">Ordem de Exibição</label>
+                    <input type="number" id="ordem_exibicao" name="ordem_exibicao" class="form-input" 
+                           value="{% if cupom %}{{ cupom.ordem_exibicao }}{% else %}1{% endif %}" 
+                           min="1" required>
+                    <small class="form-help">Menor número aparece primeiro</small>
+                </div>
+            </div>
+
+
+
+            <div class="form-group">
+                <label for="titulo" class="form-label">Título do Cupom</label>
+                <input type="text" id="titulo" name="titulo" class="form-input" 
+                       value="{% if cupom %}{{ cupom.titulo }}{% endif %}" 
+                       placeholder="Ex: Ganhe desconto na sua próxima compra" required>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao" class="form-label">Descrição</label>
+                <textarea id="descricao" name="descricao" class="form-textarea" rows="4" 
+                          placeholder="Descreva o cupom e suas condições..." required>{% if cupom %}{{ cupom.descricao }}{% endif %}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="codigo" class="form-label">Código do Cupom</label>
+                    <input type="text" id="codigo" name="codigo" class="form-input" 
+                           value="{% if cupom %}{{ cupom.codigo }}{% endif %}" 
+                           placeholder="Ex: CITYSAFETY10 (opcional)">
+                    <small class="form-help">Deixe em branco se não houver código específico</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="link_acesso" class="form-label">Link de Acesso</label>
+                    <input type="url" id="link_acesso" name="link_acesso" class="form-input" 
+                           value="{% if cupom %}{{ cupom.link_acesso }}{% endif %}" 
+                           placeholder="https://www.mercadolivre.com.br" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="data_inicio" class="form-label">Data de Início</label>
+                    <input type="datetime-local" id="data_inicio" name="data_inicio" class="form-input" 
+                           value="{% if cupom and cupom.data_inicio %}{{ cupom.data_inicio|date:'Y-m-d\TH:i' }}{% endif %}">
+                    <small class="form-help">Deixe em branco para ativar imediatamente</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="data_validade" class="form-label">Data de Validade</label>
+                    <input type="datetime-local" id="data_validade" name="data_validade" class="form-input" 
+                           value="{% if cupom and cupom.data_validade %}{{ cupom.data_validade|date:'Y-m-d\TH:i' }}{% endif %}">
+                    <small class="form-help">Deixe em branco para cupom sem prazo</small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" name="ativo" {% if not cupom or cupom.ativo %}checked{% endif %}>
+                    <span class="checkbox-text">Cupom ativo (visível no site)</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-text">
+                        {% if cupom %}
+                            Atualizar Cupom
+                        {% else %}
+                            Criar Cupom
+                        {% endif %}
+                    </span>
+                    <span class="btn-icon">💾</span>
+                </button>
+                
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                    <span class="btn-text">Cancelar</span>
+                    <span class="btn-icon">❌</span>
+                </a>
+            </div>
+        </form>
+
+        {% if cupom %}
+            <div class="cupom-preview">
+                <h3 class="preview-title">👁️ Preview do Cupom</h3>
+                <div class="preview-card">
+                    <div class="preview-badge" id="preview-badge" style="background-color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}#ff6b35{% endif %}; color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_texto }}{% else %}white{% endif %};">
+                        {{ cupom.loja }}
+                    </div>
+                    <h4 class="preview-titulo">{{ cupom.titulo }}</h4>
+                    <p class="preview-descricao">{{ cupom.descricao }}</p>
+                    <div class="preview-datas">
+                        <span class="preview-status">{{ cupom.get_status_validade }}</span>
+                    </div>
+                    <div class="preview-codigo">
+                        {% if cupom.codigo %}
+                            <button type="button" class="btn btn-secondary btn-small copy-preview" data-code="{{ cupom.codigo }}">
+                                Copiar cupom
+                            </button>
+                        {% endif %}
+                        <a class="btn btn-primary btn-small" href="{{ cupom.link_acesso }}" target="_blank">
+                            Usar no {{ cupom.loja }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.admin-edit-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 20px;
+}
+
+.admin-edit-card {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: var(--sombra-forte);
+    border: 1px solid var(--cor-cinza-claro);
+    animation: slideUp 0.6s ease-out;
+}
+
+.admin-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-edit-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin: 0;
+}
+
+.admin-edit-form {
+    margin-bottom: 2rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--cor-branco);
+    color: var(--cor-preto);
+    transition: var(--transicao-rapida);
+    font-family: inherit;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.form-help {
+    display: block;
+    color: var(--cor-cinza);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--cor-azul-escuro);
+}
+
+.form-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--cor-laranja);
+}
+
+.checkbox-text {
+    font-size: 0.95rem;
+}
+
+.color-input-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.form-color-input {
+    width: 60px;
+    height: 40px;
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    cursor: pointer;
+    background: none;
+    padding: 0;
+}
+
+.form-color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.form-color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+.color-text-input {
+    flex: 1;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.cupom-preview {
+    border-top: 1px solid var(--cor-cinza-claro);
+    padding-top: 2rem;
+}
+
+.preview-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+}
+
+.preview-card {
+    background: #f8f9fa;
+    border: 1px solid var(--cor-cinza-claro);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.preview-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.preview-badge-mercadolivre {
+    background: #fff159;
+    color: #333;
+}
+
+.preview-badge-amazon {
+    background: #ff9900;
+    color: white;
+}
+
+.preview-badge-magazineluiza {
+    background: #ff6b35;
+    color: white;
+}
+
+.preview-badge-americanas {
+    background: #ff1744;
+    color: white;
+}
+
+.preview-badge-custom {
+    background: var(--cor-laranja);
+    color: white;
+}
+
+.preview-titulo {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.preview-descricao {
+    color: var(--cor-cinza);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.preview-datas {
+    margin-bottom: 1rem;
+}
+
+.preview-status {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #e3f2fd;
+    color: #1565c0;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid #bbdefb;
+}
+
+.preview-codigo {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.messages-container {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+
+.alert-error {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+}
+
+.alert-info {
+    background: #DBEAFE;
+    color: #1E40AF;
+    border: 1px solid #BFDBFE;
+}
+
+@media (max-width: 768px) {
+    .admin-edit-container {
+        padding: 1rem 15px;
+    }
+    
+    .admin-edit-card {
+        padding: 1.5rem;
+    }
+    
+    .admin-edit-title {
+        font-size: 1.6rem;
+    }
+    
+    .admin-edit-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .preview-codigo {
+        flex-direction: column;
+    }
+    
+    .preview-codigo .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-edit-card {
+        padding: 1rem;
+    }
+    
+    .admin-edit-title {
+        font-size: 1.4rem;
+    }
+}
+</style>
+
+<script>
+// Preview em tempo real
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = ['loja', 'titulo', 'descricao', 'codigo', 'link_acesso', 'data_inicio', 'data_validade'];
+    const previewElements = {
+        loja: '.preview-badge',
+        titulo: '.preview-titulo',
+        descricao: '.preview-descricao',
+        codigo: '.copy-preview',
+        link_acesso: '.preview-codigo a'
+    };
+    
+    inputs.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        if (input) {
+            if (inputId === 'loja') {
+                // Para o select de loja, usar 'change' em vez de 'input'
+                input.addEventListener('change', updatePreview);
+            } else if (inputId === 'data_inicio' || inputId === 'data_validade') {
+                // Para campos de data, usar 'change'
+                input.addEventListener('change', updatePreview);
+            } else {
+                input.addEventListener('input', updatePreview);
+            }
+        }
+    });
+    
+    // Adicionar listener para o checkbox ativo
+    const ativoCheckbox = document.querySelector('input[name="ativo"]');
+    if (ativoCheckbox) {
+        ativoCheckbox.addEventListener('change', updatePreview);
+    }
+    
+    
+    function updatePreview() {
+        const lojaSelect = document.getElementById('loja');
+        const loja = lojaSelect ? lojaSelect.value : '';
+        const titulo = document.getElementById('titulo').value;
+        const descricao = document.getElementById('descricao').value;
+        const codigo = document.getElementById('codigo').value;
+        const link_acesso = document.getElementById('link_acesso').value;
+        
+        // Atualizar badge com cores da loja selecionada
+        const badge = document.querySelector('.preview-badge');
+        if (badge) {
+            badge.textContent = loja || 'Nome da Loja';
+            
+            // Obter cores da loja selecionada
+            let corFundo = '#ff6b35';
+            let corTexto = 'white';
+            
+            if (lojaSelect && lojaSelect.selectedOptions.length > 0) {
+                const selectedOption = lojaSelect.selectedOptions[0];
+                corFundo = selectedOption.getAttribute('data-cor-fundo') || '#ff6b35';
+                corTexto = selectedOption.getAttribute('data-cor-texto') || 'white';
+            }
+            
+            badge.style.backgroundColor = corFundo;
+            badge.style.color = corTexto;
+        }
+        
+        // Atualizar outros elementos
+        const tituloEl = document.querySelector('.preview-titulo');
+        if (tituloEl) tituloEl.textContent = titulo || 'Título do Cupom';
+        
+        const descricaoEl = document.querySelector('.preview-descricao');
+        if (descricaoEl) descricaoEl.textContent = descricao || 'Descrição do cupom';
+        
+        const codigoBtn = document.querySelector('.copy-preview');
+        if (codigoBtn && codigo) {
+            codigoBtn.textContent = `Copiar cupom (${codigo})`;
+            codigoBtn.setAttribute('data-code', codigo);
+            codigoBtn.style.display = 'inline-flex';
+        } else if (codigoBtn) {
+            codigoBtn.style.display = 'none';
+        }
+        
+        const linkEl = document.querySelector('.preview-codigo a');
+        if (linkEl) {
+            linkEl.href = link_acesso || '#';
+            linkEl.textContent = `Usar no ${loja || 'Site'}`;
+        }
+        
+        // Atualizar status de validade
+        updateValidityStatus();
+    }
+    
+    function updateValidityStatus() {
+        const dataInicio = document.getElementById('data_inicio').value;
+        const dataValidade = document.getElementById('data_validade').value;
+        const ativo = document.querySelector('input[name="ativo"]').checked;
+        
+        let status = '';
+        const agora = new Date();
+        
+        if (!ativo) {
+            status = 'Inativo';
+        } else if (dataInicio) {
+            const inicio = new Date(dataInicio);
+            if (agora < inicio) {
+                status = `Válido a partir de ${inicio.toLocaleDateString('pt-BR')} ${inicio.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}`;
+            } else if (dataValidade) {
+                const validade = new Date(dataValidade);
+                if (agora > validade) {
+                    status = `Expirado em ${validade.toLocaleDateString('pt-BR')} ${validade.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}`;
+                } else {
+                    status = `Válido até ${validade.toLocaleDateString('pt-BR')} ${validade.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}`;
+                }
+            } else {
+                status = 'Válido sem prazo';
+            }
+        } else if (dataValidade) {
+            const validade = new Date(dataValidade);
+            if (agora > validade) {
+                status = `Expirado em ${validade.toLocaleDateString('pt-BR')} ${validade.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}`;
+            } else {
+                status = `Válido até ${validade.toLocaleDateString('pt-BR')} ${validade.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}`;
+            }
+        } else {
+            status = 'Válido sem prazo';
+        }
+        
+        const statusEl = document.querySelector('.preview-status');
+        if (statusEl) {
+            statusEl.textContent = status;
+        }
+    }
+    
+    // Funcionalidade de copiar cupom
+    const copyButtons = document.querySelectorAll('.copy-preview');
+    copyButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const code = this.getAttribute('data-code');
+            if (code) {
+                navigator.clipboard.writeText(code).then(() => {
+                    const original = this.innerHTML;
+                    this.innerHTML = 'Copiado!';
+                    setTimeout(() => {
+                        this.innerHTML = original;
+                    }, 1500);
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

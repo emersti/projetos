@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Usuário - Stigliani{% endblock %}
+
+{% block content %}
+<div class="admin-user-edit-container">
+    <div class="admin-user-edit-card">
+        <div class="admin-user-edit-header">
+            <h1 class="admin-user-edit-title">✏️ Editar Usuário</h1>
+            <a href="{% url 'admin_users_list' %}" class="btn btn-secondary btn-small">
+                ← Voltar à Lista
+            </a>
+        </div>
+
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="admin-user-edit-form">
+            {% csrf_token %}
+            
+            <div class="user-info">
+                <div class="user-badge user-badge-{{ usuario_editado.nivel_acesso }}">
+                    {{ usuario_editado.get_nivel_acesso_display }}
+                </div>
+                <h3 class="user-username">{{ usuario_editado.username }}</h3>
+                <p class="user-meta">
+                    Criado em: {{ usuario_editado.data_criacao|date:"d/m/Y H:i" }}
+                    {% if usuario_editado.ultimo_login %}
+                        | Último login: {{ usuario_editado.ultimo_login|date:"d/m/Y H:i" }}
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="username" class="form-label">Nome de Usuário</label>
+                <input type="text" id="username" name="username" class="form-input" 
+                       value="{{ usuario_editado.username }}" required>
+                <small class="form-help">Nome único para login</small>
+            </div>
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-input" 
+                       value="{{ usuario_editado.email }}" placeholder="usuario@exemplo.com">
+                <small class="form-help">Email para contato (opcional)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Nova Senha</label>
+                <input type="password" id="password" name="password" class="form-input" 
+                       placeholder="Deixe em branco para manter a senha atual">
+                <small class="form-help">Mínimo 6 caracteres (opcional)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="nivel_acesso" class="form-label">Nível de Acesso</label>
+                <select id="nivel_acesso" name="nivel_acesso" class="form-select" required>
+                    <option value="editor" {% if usuario_editado.nivel_acesso == 'editor' %}selected{% endif %}>Editor</option>
+                    <option value="admin" {% if usuario_editado.nivel_acesso == 'admin' %}selected{% endif %}>Administrador</option>
+                    {% if admin_user.pode_editar_super_admin %}
+                        <option value="super_admin" {% if usuario_editado.nivel_acesso == 'super_admin' %}selected{% endif %}>Super Administrador</option>
+                    {% endif %}
+                </select>
+                <small class="form-help">
+                    {% if admin_user.pode_editar_super_admin %}
+                        Você pode alterar para qualquer nível
+                    {% else %}
+                        Você pode alterar para Editor ou Administrador
+                    {% endif %}
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" name="ativo" {% if usuario_editado.ativo %}checked{% endif %}>
+                    <span class="checkbox-text">Usuário ativo</span>
+                </label>
+                <small class="form-help">Usuários inativos não podem fazer login</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-text">Salvar Alterações</span>
+                    <span class="btn-icon">💾</span>
+                </button>
+                
+                <a href="{% url 'admin_users_list' %}" class="btn btn-secondary">
+                    <span class="btn-text">Cancelar</span>
+                    <span class="btn-icon">❌</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.admin-user-edit-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem 20px;
+}
+
+.admin-user-edit-card {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: var(--sombra-forte);
+    border: 1px solid var(--cor-cinza-claro);
+    animation: slideUp 0.6s ease-out;
+}
+
+.admin-user-edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-user-edit-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin: 0;
+}
+
+.user-info {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+.user-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.user-badge-super_admin {
+    background: #8B5CF6;
+    color: white;
+}
+
+.user-badge-admin {
+    background: var(--cor-laranja);
+    color: white;
+}
+
+.user-badge-editor {
+    background: #10B981;
+    color: white;
+}
+
+.user-username {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.user-meta {
+    color: var(--cor-cinza);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.admin-user-edit-form {
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-input, .form-select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--cor-branco);
+    color: var(--cor-preto);
+    transition: var(--transicao-rapida);
+    font-family: inherit;
+}
+
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.checkbox-text {
+    font-weight: 500;
+    color: var(--cor-azul-escuro);
+}
+
+.form-help {
+    display: block;
+    color: var(--cor-cinza);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.messages-container {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+
+.alert-error {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+}
+
+.alert-info {
+    background: #DBEAFE;
+    color: #1E40AF;
+    border: 1px solid #BFDBFE;
+}
+
+@media (max-width: 768px) {
+    .admin-user-edit-container {
+        padding: 1rem 15px;
+    }
+    
+    .admin-user-edit-card {
+        padding: 1.5rem;
+    }
+    
+    .admin-user-edit-title {
+        font-size: 1.6rem;
+    }
+    
+    .admin-user-edit-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-user-edit-card {
+        padding: 1rem;
+    }
+    
+    .admin-user-edit-title {
+        font-size: 1.4rem;
+    }
+    
+    .user-info {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,798 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Administrativo - Stigliani{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="admin-header">
+        <div class="admin-header-content">
+            <h1 class="admin-title">📊 Dashboard Administrativo</h1>
+            <div class="admin-user-info">
+                <div class="admin-user-badge admin-user-badge-{{ admin_user.nivel_acesso }}">
+                    {{ admin_user.get_nivel_acesso_display }}
+                </div>
+                <span class="admin-welcome">Bem-vindo, {{ admin_user.username }}!</span>
+            </div>
+        </div>
+        <div class="admin-actions">
+            <a href="{% url 'admin_profile_edit' %}" class="btn btn-secondary btn-small">
+                👤 Meu Perfil
+            </a>
+            {% if admin_user.pode_gerenciar_usuarios %}
+                <a href="{% url 'admin_users_list' %}" class="btn btn-secondary btn-small">
+                    👥 Usuários
+                </a>
+            {% endif %}
+            <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-small">
+                🚪 Sair
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="admin-content">
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">🎫 Gerenciar Cupons</h2>
+                <div class="admin-actions">
+                    <a href="{% url 'admin_cupom_edit' %}" class="btn btn-primary">
+                        <span class="btn-text">+ Novo Cupom</span>
+                        <span class="btn-icon">+</span>
+                    </a>
+                    <a href="{% url 'admin_lojas_list' %}" class="btn btn-secondary">
+                        <span class="btn-text">🏪 Lojas</span>
+                        <span class="btn-icon">🏪</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- CAMPO DE BUSCA POR LOJA -->
+            <div class="search-container">
+                <h3 class="search-title">🔍 Buscar Cupons por Loja</h3>
+                <p class="search-description">Digite o nome da loja para filtrar os cupons disponíveis</p>
+                
+                <form method="GET" class="search-form">
+                    <div class="search-input-group">
+                        <input type="text" 
+                               name="loja" 
+                               value="{{ loja_pesquisa }}" 
+                               placeholder="Ex: Mercado Livre, Amazon, Magazine Luiza..." 
+                               class="search-input">
+                        <button type="submit" class="btn btn-primary search-btn">
+                            🔍 Buscar
+                        </button>
+                        {% if loja_pesquisa %}
+                            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary search-clear">
+                                ✕ Limpar
+                            </a>
+                        {% endif %}
+                    </div>
+                </form>
+                
+                {% if loja_pesquisa %}
+                    <div class="search-results-info">
+                        <div class="search-info">
+                            <strong>🔍 Buscando por:</strong> "{{ loja_pesquisa }}"
+                            {% if cupons %}
+                                - <strong>{{ cupons.count }}</strong> cupom{{ cupons.count|pluralize }} encontrado{{ cupons.count|pluralize }}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if cupons %}
+                <div class="cupons-grid">
+                    {% for cupom in cupons %}
+                        <div class="cupom-card {% if not cupom.ativo %}cupom-inativo{% endif %}">
+                            <div class="cupom-header">
+                                <div class="cupom-badge" style="background-color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}#ff6b35{% endif %}; color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_texto }}{% else %}white{% endif %};">
+                                    {{ cupom.loja }}
+                                </div>
+                                <div class="cupom-status">
+                                    {% if cupom.ativo %}
+                                        <span class="status-ativo">✅ Ativo</span>
+                                    {% else %}
+                                        <span class="status-inativo">❌ Inativo</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="cupom-content">
+                                <h3 class="cupom-titulo">{{ cupom.titulo }}</h3>
+                                <p class="cupom-descricao">{{ cupom.descricao|truncatechars:100 }}</p>
+                                {% if cupom.codigo %}
+                                    <div class="cupom-codigo">
+                                        <strong>Código:</strong> <code>{{ cupom.codigo }}</code>
+                                    </div>
+                                {% endif %}
+                                <div class="cupom-link">
+                                    <strong>Link:</strong> 
+                                    <a href="{{ cupom.link_acesso }}" target="_blank" class="link-externo">
+                                        {{ cupom.link_acesso|truncatechars:30 }}
+                                    </a>
+                                </div>
+                                <div class="cupom-meta">
+                                    <div class="cupom-meta-item">
+                                        <strong>Ordem:</strong> {{ cupom.ordem_exibicao }}
+                                    </div>
+                                    <div class="cupom-meta-item">
+                                        <strong>Status:</strong> 
+                                        <span class="cupom-status-validade">{{ cupom.get_status_validade }}</span>
+                                    </div>
+                                    {% if cupom.data_inicio %}
+                                        <div class="cupom-meta-item">
+                                            <strong>Início:</strong> {{ cupom.data_inicio|date:"d/m/Y H:i" }}
+                                        </div>
+                                    {% endif %}
+                                    {% if cupom.data_validade %}
+                                        <div class="cupom-meta-item">
+                                            <strong>Validade:</strong> {{ cupom.data_validade|date:"d/m/Y H:i" }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="cupom-meta-item">
+                                        <strong>Criado:</strong> {{ cupom.data_criacao|date:"d/m/Y H:i" }}
+                                        {% if cupom.criado_por %}
+                                            por <span class="meta-user">{{ cupom.criado_por.username }}</span>
+                                        {% else %}
+                                            <span style="color: red;">SEM USUÁRIO</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if cupom.data_atualizacao != cupom.data_criacao %}
+                                        <div class="cupom-meta-item">
+                                            <strong>Modificado:</strong> {{ cupom.data_atualizacao|date:"d/m/Y H:i" }}
+                                            {% if cupom.modificado_por %}
+                                                por <span class="meta-user">{{ cupom.modificado_por.username }}</span>
+                                            {% else %}
+                                                <span style="color: red;">SEM USUÁRIO</span>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="cupom-actions">
+                                <a href="{% url 'admin_cupom_edit' cupom.id %}" class="btn btn-secondary btn-small">
+                                    ✏️ Editar
+                                </a>
+                                <a href="{% url 'admin_cupom_delete' cupom.id %}" class="btn btn-danger btn-small">
+                                    🗑️ Excluir
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">🎫</div>
+                    {% if loja_pesquisa %}
+                        <h3 class="empty-title">Nenhum cupom encontrado</h3>
+                        <p class="empty-description">Não foram encontrados cupons para a loja "{{ loja_pesquisa }}".</p>
+                        <div class="empty-actions">
+                            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                                📋 Ver Todos os Cupons
+                            </a>
+                            <a href="{% url 'admin_cupom_edit' %}" class="btn btn-primary">
+                                <span class="btn-text">+ Criar Cupom para {{ loja_pesquisa }}</span>
+                                <span class="btn-icon">+</span>
+                            </a>
+                        </div>
+                    {% else %}
+                        <h3 class="empty-title">Nenhum cupom encontrado</h3>
+                        <p class="empty-description">Comece criando seu primeiro cupom!</p>
+                        <a href="{% url 'admin_cupom_edit' %}" class="btn btn-primary">
+                            <span class="btn-text">Criar Primeiro Cupom</span>
+                            <span class="btn-icon">+</span>
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">📈 Estatísticas</h2>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🎫</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ cupons|length }}</div>
+                        <div class="stat-label">Total de Cupons</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ cupons|length }}</div>
+                        <div class="stat-label">Cupons Ativos</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🏪</div>
+                    <div class="stat-content">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Tipos Disponíveis</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 20px;
+}
+
+.admin-header {
+    background: var(--gradiente-secundario);
+    color: var(--cor-branco);
+    padding: 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    box-shadow: var(--sombra-media);
+}
+
+.admin-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.admin-user-badge-super_admin {
+    background: #8B5CF6;
+    color: white;
+}
+
+.admin-user-badge-admin {
+    background: var(--cor-laranja);
+    color: white;
+}
+
+.admin-user-badge-editor {
+    background: #10B981;
+    color: white;
+}
+
+.admin-welcome {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.admin-user-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.admin-content {
+    display: grid;
+    gap: 2rem;
+}
+
+.admin-section {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+.admin-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.admin-section-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin: 0;
+}
+
+.cupons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.cupom-card {
+    background: var(--cor-branco);
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: var(--transicao-media);
+}
+
+.cupom-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+.cupom-inativo {
+    opacity: 0.7;
+    border-color: var(--cor-cinza);
+}
+
+.cupom-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cupom-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.cupom-badge-mercadolivre {
+    background: #fff159;
+    color: #333;
+}
+
+.cupom-badge-amazon {
+    background: #ff9900;
+    color: white;
+}
+
+.cupom-badge-magazineluiza {
+    background: #ff6b35;
+    color: white;
+}
+
+.cupom-badge-americanas {
+    background: #ff1744;
+    color: white;
+}
+
+.cupom-badge-custom {
+    background: var(--cor-laranja);
+    color: white;
+}
+
+.cupom-status {
+    font-size: 0.85rem;
+}
+
+.status-ativo {
+    color: #10B981;
+    font-weight: 600;
+}
+
+.status-inativo {
+    color: #EF4444;
+    font-weight: 600;
+}
+
+.cupom-status-validade {
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+.cupom-titulo {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.cupom-descricao {
+    color: var(--cor-cinza);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.cupom-codigo {
+    margin-bottom: 0.5rem;
+}
+
+.cupom-codigo code {
+    background: var(--cor-cinza-claro);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+}
+
+.cupom-link {
+    margin-bottom: 1rem;
+}
+
+.link-externo {
+    color: var(--cor-laranja);
+    text-decoration: none;
+}
+
+.link-externo:hover {
+    text-decoration: underline;
+}
+
+.cupom-meta {
+    color: var(--cor-cinza);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.cupom-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-danger {
+    background: #EF4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #DC2626;
+    transform: translateY(-1px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.empty-description {
+    color: var(--cor-cinza);
+    margin-bottom: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--cor-laranja) 0%, var(--cor-laranja-claro) 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-icon {
+    font-size: 2rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.messages-container {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+
+.alert-error {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+}
+
+.alert-info {
+    background: #DBEAFE;
+    color: #1E40AF;
+    border: 1px solid #BFDBFE;
+}
+
+@media (max-width: 768px) {
+    .admin-dashboard {
+        padding: 1rem 15px;
+    }
+    
+    .admin-header {
+        padding: 1.5rem;
+    }
+    
+    .admin-title {
+        font-size: 1.8rem;
+    }
+    
+    .admin-header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .cupons-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-section {
+        padding: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-header {
+        padding: 1rem;
+    }
+    
+    .admin-title {
+        font-size: 1.5rem;
+    }
+    
+    .admin-section {
+        padding: 1rem;
+    }
+    
+    .cupom-actions {
+        flex-direction: column;
+    }
+    
+    .cupom-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Estilos para campo de busca */
+.search-container {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--cor-branco);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+.search-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.search-description {
+    color: var(--cor-cinza);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.search-form {
+    margin-bottom: 1rem;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.search-btn {
+    padding: 0.75rem 1.5rem;
+    white-space: nowrap;
+}
+
+.search-clear {
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+    background: var(--cor-cinza-claro);
+    color: var(--cor-cinza);
+    border: 2px solid var(--cor-cinza-claro);
+}
+
+.search-clear:hover {
+    background: var(--cor-cinza);
+    color: var(--cor-branco);
+    border-color: var(--cor-cinza);
+}
+
+.search-results-info {
+    padding: 0.75rem 1rem;
+    background: rgba(255, 107, 53, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid var(--cor-laranja);
+}
+
+.search-info {
+    color: var(--cor-azul-escuro);
+    font-size: 0.9rem;
+}
+
+.search-info strong {
+    color: var(--cor-laranja);
+}
+
+.empty-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Estilos para informações de meta dos cupons */
+.cupom-meta {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--cor-cinza-claro);
+}
+
+.cupom-meta-item {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--cor-cinza);
+}
+
+.cupom-meta-item:last-child {
+    margin-bottom: 0;
+}
+
+.cupom-meta-item strong {
+    color: var(--cor-azul-escuro);
+    font-weight: 600;
+}
+
+.meta-user {
+    color: var(--cor-laranja);
+    font-weight: 600;
+    background: rgba(255, 107, 53, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+
+/* Responsividade para meta */
+@media (max-width: 768px) {
+    .cupom-meta-item {
+        font-size: 0.85rem;
+    }
+    
+    .meta-user {
+        font-size: 0.8rem;
+        padding: 0.15rem 0.3rem;
+    }
+    
+    /* Responsividade para busca */
+    .search-input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-input {
+        margin-bottom: 0.5rem;
+    }
+    
+    .search-btn, .search-clear {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .empty-actions {
+        flex-direction: column;
+    }
+    
+    .empty-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Aplicar cores ao status de validade dos cupons
+    document.querySelectorAll('.cupom-status-validade').forEach(function(element) {
+        const status = element.textContent.toLowerCase();
+        
+        if (status.includes('válido') && !status.includes('expirado')) {
+            element.style.background = '#D1FAE5';
+            element.style.color = '#065F46';
+        } else if (status.includes('expirado')) {
+            element.style.background = '#FEE2E2';
+            element.style.color = '#991B1B';
+        } else if (status.includes('inativo')) {
+            element.style.background = '#F3F4F6';
+            element.style.color = '#6B7280';
+        } else {
+            element.style.background = '#E3F2FD';
+            element.style.color = '#1565C0';
+        }
+    });
+});
+</script>
+{% endblock %}

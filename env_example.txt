@@ -1,0 +1,46 @@
+# Configurações de ambiente para produção
+# Copie este arquivo para .env e configure as variáveis
+
+# Django
+SECRET_KEY=sua-chave-secreta-super-segura-aqui
+DEBUG=False
+ALLOWED_HOSTS=safetyscorebrasil.com.br,www.safetyscorebrasil.com.br
+
+# Banco de dados PostgreSQL
+DATABASE_URL=postgresql://admin:sua-senha@seu-rds-endpoint:5432/projetoteste
+
+# Segurança
+SESSION_COOKIE_SECURE=True
+SECURE_SSL_REDIRECT=True
+
+# AWS (opcional)
+AWS_ACCESS_KEY_ID=sua-access-key
+AWS_SECRET_ACCESS_KEY=sua-secret-key
+AWS_STORAGE_BUCKET_NAME=safetyscorebrasil-media
+
+# Email (opcional)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=seu-email@gmail.com
+EMAIL_HOST_PASSWORD=sua-senha-do-app
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

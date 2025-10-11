@@ -1,0 +1,41 @@
+# Configuração para modo de manutenção
+# Altere MAINTENANCE_MODE para True quando quiser ativar a página de manutenção
+# Altere para False quando quiser voltar ao funcionamento normal
+
+MAINTENANCE_MODE = False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

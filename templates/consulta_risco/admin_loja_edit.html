@@ -1,0 +1,560 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if loja %}
+        Editar Loja - {{ loja.nome }}
+    {% else %}
+        Nova Loja
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <div class="admin-title">
+            <h1>
+                {% if loja %}
+                    <span class="admin-icon">🏪</span>
+                    Editar Loja
+                {% else %}
+                    <span class="admin-icon">➕</span>
+                    Nova Loja
+                {% endif %}
+            </h1>
+            <p class="admin-subtitle">
+                {% if loja %}
+                    Edite as informações da loja "{{ loja.nome }}"
+                {% else %}
+                    Cadastre uma nova loja no sistema
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="admin-actions">
+            <a href="{% url 'admin_lojas_list' %}" class="btn btn-secondary">
+                <span class="btn-text">📋 Lojas</span>
+                <span class="btn-icon">📋</span>
+            </a>
+            
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                <span class="btn-text">🏠 Dashboard</span>
+                <span class="btn-icon">🏠</span>
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="admin-messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="admin-content">
+        <form method="post" class="admin-edit-form">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nome" class="form-label">Nome da Loja</label>
+                    <input type="text" id="nome" name="nome" class="form-input" 
+                           value="{% if loja %}{{ loja.nome }}{% endif %}" 
+                           placeholder="Ex: Mercado Livre, Amazon, Magazine Luiza..." required>
+                    <small class="form-help">Digite o nome da loja</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="ordem_exibicao" class="form-label">Ordem de Exibição</label>
+                    <input type="number" id="ordem_exibicao" name="ordem_exibicao" class="form-input" 
+                           value="{% if loja %}{{ loja.ordem_exibicao }}{% else %}1{% endif %}" 
+                           min="1" required>
+                    <small class="form-help">Menor número aparece primeiro</small>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cor_fundo" class="form-label">Cor de Fundo</label>
+                    <div class="color-input-group">
+                        <input type="color" id="cor_fundo" name="cor_fundo" class="form-color-input" 
+                               value="{% if loja %}{{ loja.cor_fundo }}{% else %}#ff6b35{% endif %}"
+                               style="width: 60px; height: 40px; border: 2px solid #E2E8F0; border-radius: 8px; cursor: pointer; padding: 0; background: none;">
+                        <input type="text" id="cor_fundo_text" class="form-input color-text-input" 
+                               value="{% if loja %}{{ loja.cor_fundo }}{% else %}#ff6b35{% endif %}" 
+                               pattern="^#[0-9A-Fa-f]{6}$">
+                    </div>
+                    <small class="form-help">Cor de fundo do badge da loja</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="cor_texto" class="form-label">Cor do Texto</label>
+                    <div class="color-input-group">
+                        <input type="color" id="cor_texto" name="cor_texto" class="form-color-input" 
+                               value="{% if loja %}{{ loja.cor_texto }}{% else %}#ffffff{% endif %}"
+                               style="width: 60px; height: 40px; border: 2px solid #E2E8F0; border-radius: 8px; cursor: pointer; padding: 0; background: none;">
+                        <input type="text" id="cor_texto_text" class="form-input color-text-input" 
+                               value="{% if loja %}{{ loja.cor_texto }}{% else %}#ffffff{% endif %}" 
+                               pattern="^#[0-9A-Fa-f]{6}$">
+                    </div>
+                    <small class="form-help">Cor do texto do badge da loja</small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao" class="form-label">Descrição</label>
+                <textarea id="descricao" name="descricao" class="form-textarea" rows="4" 
+                          placeholder="Descreva a loja...">{% if loja %}{{ loja.descricao }}{% endif %}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" name="ativo" {% if not loja or loja.ativo %}checked{% endif %}>
+                    <span class="checkbox-text">Loja ativa (visível no sistema)</span>
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-text">
+                        {% if loja %}
+                            Atualizar Loja
+                        {% else %}
+                            Criar Loja
+                        {% endif %}
+                    </span>
+                    <span class="btn-icon">💾</span>
+                </button>
+                
+                <a href="{% url 'admin_lojas_list' %}" class="btn btn-secondary">
+                    <span class="btn-text">Cancelar</span>
+                    <span class="btn-icon">❌</span>
+                </a>
+            </div>
+        </form>
+
+        {% if loja %}
+        <!-- Preview da loja -->
+        <div class="cupom-preview">
+            <h3 class="preview-title">Preview da Loja</h3>
+            
+            <div class="preview-container">
+                <div class="preview-badge" id="preview-badge" 
+                     style="background-color: {{ loja.cor_fundo }}; color: {{ loja.cor_texto }};">
+                    {{ loja.nome }}
+                </div>
+                
+                <div class="preview-info">
+                    <p><strong>Nome:</strong> <span id="preview-nome">{{ loja.nome }}</span></p>
+                    <p><strong>Cor de Fundo:</strong> <span id="preview-cor-fundo">{{ loja.cor_fundo }}</span></p>
+                    <p><strong>Cor do Texto:</strong> <span id="preview-cor-texto">{{ loja.cor_texto }}</span></p>
+                    <p><strong>Status:</strong> <span id="preview-status">{% if loja.ativo %}Ativa{% else %}Inativa{% endif %}</span></p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.admin-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-title h1 {
+    color: var(--cor-azul-escuro);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-subtitle {
+    color: var(--cor-cinza);
+    margin: 0.5rem 0 0 0;
+    font-size: 0.95rem;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.admin-messages {
+    margin-bottom: 1.5rem;
+}
+
+.admin-edit-form {
+    background: var(--cor-branco);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    margin-bottom: 2rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-input, .form-textarea {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background: var(--cor-branco);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+}
+
+.form-help {
+    display: block;
+    color: var(--cor-cinza);
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+.form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.form-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-text {
+    color: var(--cor-azul-escuro);
+    font-weight: 500;
+}
+
+.color-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.form-color-input {
+    width: 60px;
+    height: 40px;
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.form-color-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+}
+
+.form-color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+.form-color-input::-moz-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+/* Fallback para navegadores que não suportam input color */
+@supports not (color-scheme: light) {
+    .form-color-input {
+        background: #f0f0f0;
+        border: 2px solid #ccc;
+    }
+}
+
+.color-text-input {
+    flex: 1;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.cupom-preview {
+    background: var(--cor-branco);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    border-top: 3px solid var(--cor-laranja);
+}
+
+.preview-title {
+    color: var(--cor-azul-escuro);
+    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.preview-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.preview-badge {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+    max-width: 200px;
+    box-shadow: var(--sombra-suave);
+}
+
+.preview-info {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.preview-info p {
+    margin: 0.5rem 0;
+    color: var(--cor-azul-escuro);
+}
+
+.preview-info strong {
+    color: var(--cor-laranja);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: var(--cor-laranja);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #e55a2b;
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+.btn-secondary {
+    background: var(--cor-cinza-claro);
+    color: var(--cor-azul-escuro);
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-suave);
+}
+
+.btn-text {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.btn-icon {
+    font-size: 1rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 1rem;
+    }
+    
+    .admin-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .preview-container {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sincronizar campos de cor
+    const corFundoInput = document.getElementById('cor_fundo');
+    const corFundoText = document.getElementById('cor_fundo_text');
+    const corTextoInput = document.getElementById('cor_texto');
+    const corTextoText = document.getElementById('cor_texto_text');
+    
+    if (corFundoInput && corFundoText) {
+        corFundoInput.addEventListener('input', function() {
+            corFundoText.value = this.value;
+            updatePreview();
+        });
+        
+        corFundoInput.addEventListener('change', function() {
+            corFundoText.value = this.value;
+            updatePreview();
+        });
+        
+        corFundoText.addEventListener('input', function() {
+            if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+                corFundoInput.value = this.value;
+                updatePreview();
+            }
+        });
+    }
+    
+    if (corTextoInput && corTextoText) {
+        corTextoInput.addEventListener('input', function() {
+            corTextoText.value = this.value;
+            updatePreview();
+        });
+        
+        corTextoInput.addEventListener('change', function() {
+            corTextoText.value = this.value;
+            updatePreview();
+        });
+        
+        corTextoText.addEventListener('input', function() {
+            if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+                corTextoInput.value = this.value;
+                updatePreview();
+            }
+        });
+    }
+    
+    // Atualizar preview quando campos mudarem
+    const inputs = ['nome', 'ativo'];
+    inputs.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.addEventListener('input', updatePreview);
+            input.addEventListener('change', updatePreview);
+        }
+    });
+    
+    function updatePreview() {
+        const nome = document.getElementById('nome').value;
+        const corFundo = document.getElementById('cor_fundo').value;
+        const corTexto = document.getElementById('cor_texto').value;
+        const ativo = document.getElementById('ativo').checked;
+        
+        // Atualizar badge
+        const badge = document.getElementById('preview-badge');
+        if (badge) {
+            badge.textContent = nome || 'Nome da Loja';
+            badge.style.backgroundColor = corFundo;
+            badge.style.color = corTexto;
+        }
+        
+        // Atualizar informações
+        const nomeEl = document.getElementById('preview-nome');
+        const corFundoEl = document.getElementById('preview-cor-fundo');
+        const corTextoEl = document.getElementById('preview-cor-texto');
+        const statusEl = document.getElementById('preview-status');
+        
+        if (nomeEl) nomeEl.textContent = nome || 'Nome da Loja';
+        if (corFundoEl) corFundoEl.textContent = corFundo;
+        if (corTextoEl) corTextoEl.textContent = corTexto;
+        if (statusEl) statusEl.textContent = ativo ? 'Ativa' : 'Inativa';
+    }
+    
+    // Atualizar preview inicial
+    updatePreview();
+});
+</script>
+{% endblock %}

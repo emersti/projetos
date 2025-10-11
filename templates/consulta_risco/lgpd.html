@@ -1,0 +1,551 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load consulta_risco_tags %}
+
+{% block title %}LGPD - Lei Geral de Proteção de Dados - Stigliani{% endblock %}
+
+{% block content %}
+<div class="lgpd-section">
+    <div class="lgpd-container">
+        <div class="lgpd-content">
+            <div class="lgpd-intro">
+                <div class="intro-card">
+                    <h2 class="intro-title">Nossa Política de Privacidade</h2>
+                    <p class="intro-text">
+                        A Stigliani está comprometida com a proteção dos dados pessoais de nossos usuários, 
+                        seguindo rigorosamente a Lei Geral de Proteção de Dados (Lei nº 13.709/2018). 
+                        Esta página explica como coletamos, utilizamos e protegemos suas informações.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="lgpd-sections">
+                <div class="lgpd-section-item">
+                    <div class="section-icon">📋</div>
+                    <h3 class="section-title">1. Dados Coletados</h3>
+                    <div class="section-content">
+                        <h4>Dados Pessoais:</h4>
+                        <ul>
+                            <li><strong>Dados de navegação:</strong> Endereço IP, tipo de navegador, páginas visitadas</li>
+                            <li><strong>Dados de consulta:</strong> Estados e cidades selecionados para análise</li>
+                            <li><strong>Dados de contato:</strong> E-mail (quando fornecido voluntariamente)</li>
+                        </ul>
+                        
+                        <h4>Dados Não Pessoais:</h4>
+                        <ul>
+                            <li>Informações estatísticas sobre uso do site</li>
+                            <li>Dados de performance e analytics</li>
+                            <li>Informações técnicas do dispositivo</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="lgpd-section-item">
+                    <div class="section-icon">🎯</div>
+                    <h3 class="section-title">2. Finalidade do Tratamento</h3>
+                    <div class="section-content">
+                        <p>Utilizamos seus dados pessoais para:</p>
+                        <ul>
+                            <li>Fornecer informações precisas e consistentes</li>
+                            <li>Melhorar a experiência do usuário em nosso site</li>
+                            <li>Analisar padrões de uso para aprimorar nossos serviços</li>
+                            <li>Responder a solicitações e dúvidas</li>
+                            <li>Cumprir obrigações legais e regulatórias</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="lgpd-section-item">
+                    <div class="section-icon">⚖️</div>
+                    <h3 class="section-title">3. Base Legal</h3>
+                    <div class="section-content">
+                        <p>O tratamento de seus dados pessoais é realizado com base em:</p>
+                        <ul>
+                            <li><strong>Consentimento:</strong> Quando você nos fornece dados voluntariamente</li>
+                            <li><strong>Interesse legítimo:</strong> Para melhorar nossos serviços e análises</li>
+                            <li><strong>Execução de contrato:</strong> Para fornecer os serviços solicitados</li>
+                            <li><strong>Cumprimento de obrigação legal:</strong> Quando exigido por lei</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="lgpd-section-item">
+                    <div class="section-icon">🔒</div>
+                    <h3 class="section-title">4. Segurança dos Dados</h3>
+                    <div class="section-content">
+                        <p>Implementamos medidas técnicas e organizacionais para proteger seus dados:</p>
+                        <ul>
+                            <li>Criptografia de dados sensíveis</li>
+                            <li>Controle de acesso restrito</li>
+                            <li>Monitoramento de segurança 24/7</li>
+                            <li>Backup regular dos dados</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="lgpd-section-item">
+                    <div class="section-icon">⏰</div>
+                    <h3 class="section-title">5. Retenção de Dados</h3>
+                    <div class="section-content">
+                        <p>Mantemos seus dados pessoais pelo tempo necessário para:</p>
+                        <ul>
+                            <li><strong>Dados de navegação:</strong> Até 12 meses</li>
+                            <li><strong>Dados de consulta:</strong> Até 6 meses</li>
+                            <li><strong>Dados de contato:</strong> Até que você solicite a exclusão</li>
+                            <li><strong>Dados para cumprimento legal:</strong> Conforme exigido pela legislação</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="lgpd-section-item">
+                    <div class="section-icon">👥</div>
+                    <h3 class="section-title">6. Compartilhamento de Dados</h3>
+                    <div class="section-content">
+                        <p>Não vendemos, alugamos ou compartilhamos seus dados pessoais com terceiros, exceto:</p>
+                        <ul>
+                            <li>Quando necessário para fornecer nossos serviços</li>
+                            <li>Com seu consentimento explícito</li>
+                            <li>Para cumprir obrigações legais</li>
+                            <li>Com prestadores de serviços que mantêm confidencialidade</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="lgpd-section-item">
+                    <div class="section-icon">🌐</div>
+                    <h3 class="section-title">7. Cookies e Tecnologias Similares</h3>
+                    <div class="section-content">
+                        <p>Utilizamos cookies para:</p>
+                        <ul>
+                            <li>Melhorar a experiência de navegação</li>
+                            <li>Analisar o uso do site</li>
+                            <li>Personalizar conteúdo</li>
+                            <li>Garantir a segurança</li>
+                        </ul>
+                        <p>Você pode gerenciar as preferências de cookies através das configurações do seu navegador.</p>
+                    </div>
+                </div>
+                
+                <div class="lgpd-section-item">
+                    <div class="section-icon">📞</div>
+                    <h3 class="section-title">8. Seus Direitos</h3>
+                    <div class="section-content">
+                        <p>Você tem os seguintes direitos em relação aos seus dados pessoais:</p>
+                        <ul>
+                            <li><strong>Acesso:</strong> Solicitar informações sobre seus dados</li>
+                            <li><strong>Correção:</strong> Corrigir dados incorretos ou incompletos</li>
+                            <li><strong>Exclusão:</strong> Solicitar a remoção de seus dados</li>
+                            <li><strong>Portabilidade:</strong> Transferir seus dados para outro serviço</li>
+                            <li><strong>Oposição:</strong> Opor-se ao tratamento de seus dados</li>
+                            <li><strong>Revogação:</strong> Retirar seu consentimento a qualquer momento</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="lgpd-section-item">
+                    <div class="section-icon">📧</div>
+                    <h3 class="section-title">9. Contato e Exercício de Direitos</h3>
+                    <div class="section-content">
+                        <p>Para exercer seus direitos ou esclarecer dúvidas sobre esta política:</p>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <strong>E-mail:</strong> <span class="email-address">atendimento@safetyscorebrasil.com.br</span>, <span class="email-subject">assunto:</span> <span class="email-privacy">Política de Privacidade</span>
+                            </div>
+                            <div class="contact-item">
+                                <strong>Endereço:</strong> São Paulo, SP - Brasil
+                            </div>
+                        </div>
+                        <p class="response-time">
+                            <strong>Tempo de resposta:</strong> Até 15 dias úteis para solicitações de direitos LGPD.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="lgpd-section-item">
+                    <div class="section-icon">📅</div>
+                    <h3 class="section-title">10. Alterações na Política</h3>
+                    <div class="section-content">
+                        <p>
+                            Esta política pode ser atualizada periodicamente. Notificaremos sobre mudanças 
+                            significativas através do nosso site. Recomendamos revisar 
+                            esta página regularmente.
+                        </p>
+                        <p class="last-update">
+                            <strong>Última atualização:</strong> {% get_ultima_atualizacao_pagina 'lgpd' %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lgpd-footer">
+                <div class="footer-actions">
+                    <a href="{% url 'home' %}" class="btn btn-primary">
+                        <span class="btn-text">Voltar ao Início</span>
+                        <span class="btn-icon">←</span>
+                    </a>
+                </div>
+                <div class="footer-disclaimer">
+                    <p>
+                        Esta política está em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018) 
+                        e demais regulamentações aplicáveis no Brasil.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para página LGPD */
+.lgpd-section {
+    margin: 2rem 0;
+    padding: 0 20px;
+    min-height: calc(100vh - 200px);
+}
+
+.lgpd-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.lgpd-content {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 24px;
+    padding: 4rem 3rem;
+    box-shadow: var(--sombra-forte);
+    border: 1px solid var(--cor-cinza-claro);
+    position: relative;
+    overflow: hidden;
+}
+
+.lgpd-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradiente-principal);
+    z-index: 1;
+}
+
+.lgpd-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+}
+
+.lgpd-subtitle {
+    font-size: 1.3rem;
+    color: var(--cor-cinza);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.lgpd-intro {
+    margin-bottom: 3rem;
+}
+
+.intro-card {
+    background: linear-gradient(135deg, var(--cor-azul-escuro) 0%, var(--cor-azul-medio) 100%);
+    border-radius: 16px;
+    padding: 2.5rem;
+    color: var(--cor-branco);
+    text-align: center;
+}
+
+.intro-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--cor-branco);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.lgpd-sections {
+    margin-bottom: 3rem;
+}
+
+.lgpd-section-item {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-cinza-claro);
+    transition: var(--transicao-media);
+    position: relative;
+    overflow: hidden;
+}
+
+.lgpd-section-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradiente-principal);
+    transform: scaleX(0);
+    transition: var(--transicao-media);
+}
+
+.lgpd-section-item:hover::before {
+    transform: scaleX(1);
+}
+
+.lgpd-section-item:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--sombra-forte);
+}
+
+.section-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.section-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+}
+
+.section-content h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.section-content h4:first-child {
+    margin-top: 0;
+}
+
+.section-content p {
+    font-size: 1rem;
+    color: var(--cor-cinza);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.section-content ul {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.section-content li {
+    font-size: 1rem;
+    color: var(--cor-cinza);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.contact-info {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.contact-item {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    color: var(--cor-azul-escuro);
+}
+
+.contact-item:last-child {
+    margin-bottom: 0;
+}
+
+.email-address {
+    color: var(--cor-azul-medio);
+    font-weight: 600;
+}
+
+.email-subject {
+    color: var(--cor-azul-escuro);
+    font-weight: 600;
+}
+
+.email-privacy {
+    color: var(--cor-cinza);
+    font-weight: 600;
+}
+
+.response-time {
+    background: linear-gradient(135deg, #fff5f0 0%, #ffe8e0 100%);
+    border: 2px solid var(--cor-laranja);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 1rem;
+    color: var(--cor-azul-escuro);
+    font-weight: 500;
+}
+
+.last-update {
+    background: linear-gradient(135deg, #e6f3ff 0%, #cce7ff 100%);
+    border: 2px solid var(--cor-azul-medio);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 1rem;
+    color: var(--cor-azul-escuro);
+    font-weight: 500;
+}
+
+.lgpd-footer {
+    border-top: 2px solid var(--cor-cinza-claro);
+    padding-top: 2rem;
+    text-align: center;
+}
+
+.footer-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.footer-disclaimer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+.footer-disclaimer p {
+    font-size: 0.95rem;
+    color: var(--cor-cinza);
+    line-height: 1.6;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Responsividade para página LGPD */
+@media (max-width: 768px) {
+    .lgpd-section {
+        margin: 1rem 0;
+        padding: 0 15px;
+    }
+    
+    .lgpd-content {
+        padding: 2.5rem 2rem;
+    }
+    
+    .lgpd-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .intro-card {
+        padding: 2rem;
+    }
+    
+    .intro-title {
+        font-size: 1.6rem;
+    }
+    
+    .lgpd-section-item {
+        padding: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.4rem;
+    }
+    
+    .footer-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .lgpd-content {
+        padding: 2rem 1.5rem;
+    }
+    
+    .lgpd-subtitle {
+        font-size: 1rem;
+    }
+    
+    .intro-card {
+        padding: 1.5rem;
+    }
+    
+    .intro-title {
+        font-size: 1.4rem;
+    }
+    
+    .intro-text {
+        font-size: 1rem;
+    }
+    
+    .lgpd-section-item {
+        padding: 1.25rem;
+    }
+    
+    .section-icon {
+        font-size: 2rem;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+    }
+    
+    .section-content h4 {
+        font-size: 1.1rem;
+    }
+    
+    .section-content p,
+    .section-content li {
+        font-size: 0.95rem;
+    }
+    
+    .contact-info {
+        padding: 1rem;
+    }
+    
+    .response-time,
+    .last-update {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .footer-disclaimer p {
+        font-size: 0.9rem;
+    }
+}
+</style>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+

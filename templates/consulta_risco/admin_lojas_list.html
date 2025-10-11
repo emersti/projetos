@@ -1,0 +1,499 @@
+{% extends 'base.html' %}
+
+{% block title %}Lojas Cadastradas - Stigliani{% endblock %}
+
+{% block content %}
+<div class="admin-lojas-container">
+    <div class="admin-lojas-header">
+        <div class="admin-lojas-header-content">
+            <h1 class="admin-lojas-title">🏪 Lojas Cadastradas</h1>
+            <div class="admin-user-info">
+                <div class="admin-user-badge admin-user-badge-{{ admin_user.nivel_acesso }}">
+                    {{ admin_user.get_nivel_acesso_display }}
+                </div>
+                <span class="admin-welcome">Bem-vindo, {{ admin_user.username }}!</span>
+            </div>
+        </div>
+        <div class="admin-actions">
+            <a href="{% url 'admin_loja_edit' %}" class="btn btn-primary btn-small">
+                ➕ Nova Loja
+            </a>
+            <a href="{% url 'admin_profile_edit' %}" class="btn btn-secondary btn-small">
+                👤 Meu Perfil
+            </a>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary btn-small">
+                📊 Dashboard
+            </a>
+            <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-small">
+                🚪 Sair
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Campo de busca por loja -->
+    <div class="search-container">
+        <h3 class="search-title">🔍 Buscar Loja</h3>
+        <p class="search-description">Digite o nome da loja para filtrar os resultados</p>
+        
+        <form method="GET" class="search-form">
+            <div class="search-input-group">
+                <input type="text" 
+                       name="loja" 
+                       value="{{ loja_pesquisa }}" 
+                       placeholder="Ex: Netshoes, Amazon, Mercado Livre..." 
+                       class="search-input">
+                <button type="submit" class="btn btn-primary search-btn">
+                    🔍 Buscar
+                </button>
+                {% if loja_pesquisa %}
+                    <a href="{% url 'admin_lojas_list' %}" class="btn btn-secondary search-clear">
+                        ✕ Limpar
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+        
+        {% if loja_pesquisa %}
+            <div class="search-results-info">
+                <div class="search-info">
+                    <strong>🔍 Buscando por:</strong> "{{ loja_pesquisa }}"
+                    {% if lojas %}
+                        - <strong>{{ lojas.count }}</strong> loja{{ lojas.count|pluralize }} encontrada{{ lojas.count|pluralize }}
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="admin-lojas-content">
+        {% if lojas %}
+            <div class="lojas-grid">
+                {% for loja in lojas %}
+                    <div class="loja-card" style="border-left: 4px solid {{ loja.cor_fundo }};">
+                        <div class="loja-header">
+                            <div class="loja-badge" style="background-color: {{ loja.cor_fundo }}; color: {{ loja.cor_texto }};">
+                                {{ loja.nome }}
+                            </div>
+                            <div class="loja-status">
+                                {% if loja.ativo %}
+                                    <span class="status-ativo">✅ Ativa</span>
+                                {% else %}
+                                    <span class="status-inativo">❌ Inativa</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="loja-content">
+                            {% if loja.descricao %}
+                                <p class="loja-descricao">{{ loja.descricao|truncatechars:100 }}</p>
+                            {% endif %}
+                            <div class="loja-meta">
+                                <div class="loja-meta-item">
+                                    <strong>Cupons:</strong> {{ loja.cupom_set.count }}
+                                </div>
+                                <div class="loja-meta-item">
+                                    <strong>Ordem:</strong> {{ loja.ordem_exibicao }}
+                                </div>
+                                <div class="loja-meta-item">
+                                    <strong>Criada:</strong> {{ loja.data_criacao|date:"d/m/Y H:i" }}
+                                </div>
+                                {% if loja.data_atualizacao != loja.data_criacao %}
+                                    <div class="loja-meta-item">
+                                        <strong>Atualizada:</strong> {{ loja.data_atualizacao|date:"d/m/Y H:i" }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="loja-actions">
+                            <a href="{% url 'admin_loja_edit' loja.id %}" class="btn btn-secondary btn-small">
+                                ✏️ Editar
+                            </a>
+                            {% if loja.cupom_set.count == 0 %}
+                                <button type="button" class="btn btn-danger btn-small" onclick="excluirLoja({{ loja.id }}, '{{ loja.nome }}')">
+                                    🗑️ Excluir
+                                </button>
+                            {% else %}
+                                <span class="btn btn-disabled btn-small" title="Não é possível excluir loja com cupons associados">
+                                    🗑️ Excluir
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">🏪</div>
+                {% if loja_pesquisa %}
+                    <h3 class="empty-title">Nenhuma loja encontrada</h3>
+                    <p class="empty-description">
+                        Não encontramos lojas para "{{ loja_pesquisa }}". 
+                        Tente buscar por outro nome ou veja todas as lojas cadastradas.
+                    </p>
+                    <div class="empty-actions">
+                        <a href="{% url 'admin_lojas_list' %}" class="btn btn-secondary">
+                            📋 Ver Todas as Lojas
+                        </a>
+                        <a href="{% url 'admin_loja_edit' %}" class="btn btn-primary">
+                            ➕ Nova Loja
+                        </a>
+                    </div>
+                {% else %}
+                    <h3 class="empty-title">Nenhuma loja cadastrada</h3>
+                    <p class="empty-description">Comece criando sua primeira loja!</p>
+                    <a href="{% url 'admin_loja_edit' %}" class="btn btn-primary">
+                        <span class="btn-text">Criar Primeira Loja</span>
+                        <span class="btn-icon">+</span>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.admin-lojas-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 20px;
+}
+
+.admin-lojas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-lojas-header-content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.admin-lojas-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin: 0;
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-user-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.admin-user-badge-super_admin {
+    background: #dc3545;
+    color: white;
+}
+
+.admin-user-badge-admin {
+    background: #28a745;
+    color: white;
+}
+
+.admin-user-badge-editor {
+    background: #17a2b8;
+    color: white;
+}
+
+.admin-welcome {
+    color: var(--cor-cinza);
+    font-weight: 500;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.messages-container {
+    margin-bottom: 2rem;
+}
+
+.search-container {
+    background: var(--cor-branco);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    margin-bottom: 2rem;
+}
+
+.search-title {
+    color: var(--cor-azul-escuro);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.search-description {
+    color: var(--cor-cinza);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.search-form {
+    margin-bottom: 1rem;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 250px;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+}
+
+.search-btn {
+    padding: 0.75rem 1.5rem;
+    white-space: nowrap;
+}
+
+.search-clear {
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+}
+
+.search-results-info {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--cor-laranja);
+}
+
+.search-info {
+    color: var(--cor-azul-escuro);
+    font-size: 0.9rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+
+.alert-error {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+}
+
+.alert-info {
+    background: #DBEAFE;
+    color: #1E40AF;
+    border: 1px solid #BFDBFE;
+}
+
+.lojas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.loja-card {
+    background: var(--cor-branco);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-cinza-claro);
+    transition: var(--transicao-rapida);
+}
+
+.loja-card:hover {
+    box-shadow: var(--sombra-forte);
+    transform: translateY(-2px);
+}
+
+.loja-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.loja-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.loja-status {
+    font-size: 0.85rem;
+}
+
+.status-ativo {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.status-inativo {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.loja-content {
+    margin-bottom: 1.5rem;
+}
+
+.loja-descricao {
+    color: var(--cor-cinza);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+}
+
+.loja-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.loja-meta-item {
+    font-size: 0.85rem;
+    color: var(--cor-cinza);
+}
+
+.loja-meta-item strong {
+    color: var(--cor-azul-escuro);
+    font-weight: 600;
+}
+
+.loja-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-disabled {
+    background: var(--cor-cinza-claro);
+    color: var(--cor-cinza);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.empty-description {
+    color: var(--cor-cinza);
+    margin-bottom: 2rem;
+}
+
+.empty-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .admin-lojas-container {
+        padding: 1rem 15px;
+    }
+    
+    .admin-lojas-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .admin-lojas-header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .admin-lojas-title {
+        font-size: 1.6rem;
+    }
+    
+    .lojas-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .loja-actions {
+        flex-direction: column;
+    }
+    
+    .loja-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+function excluirLoja(lojaId, nomeLoja) {
+    if (confirm(`Tem certeza que deseja excluir a loja "${nomeLoja}"?\n\nEsta ação não pode ser desfeita.`)) {
+        // Redirecionar para a página de confirmação de exclusão
+        window.location.href = `/painel/loja/delete/${lojaId}/`;
+    }
+}
+</script>
+{% endblock %}
+
+

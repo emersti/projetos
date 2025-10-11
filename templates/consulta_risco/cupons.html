@@ -1,0 +1,769 @@
+{% extends 'base.html' %}
+
+{% block title %}Cupons de Desconto - Stigliani{% endblock %}
+
+{% block content %}
+<div class="cupons-hero">
+    <h1 class="cupons-title">🎫 Cupons de Desconto</h1>
+    <p class="cupons-subtitle">Aproveite nossos cupons e economize em suas compras!</p>
+</div>
+
+<!-- Campo de busca por loja -->
+<div class="search-section">
+    <div class="search-container">
+        <h2 class="search-title">🔍 Buscar Cupons por Loja</h2>
+        <p class="search-description">Encontre cupons da sua loja preferida</p>
+        
+        <form method="GET" class="search-form">
+            <div class="search-input-group">
+                <input type="text" 
+                       name="loja" 
+                       value="{{ loja_pesquisa }}" 
+                       placeholder="Digite o nome da loja (ex: Mercado Livre, Amazon, Magazine Luiza...)" 
+                       class="search-input">
+                <button type="submit" class="btn btn-primary search-btn">
+                    🔍 Buscar
+                </button>
+                {% if loja_pesquisa %}
+                    <a href="{% url 'cupons' %}" class="btn btn-secondary search-clear">
+                        ✕ Limpar
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+        
+        {% if loja_pesquisa %}
+            <div class="search-results-info">
+                <div class="search-info">
+                    <strong>🔍 Buscando por:</strong> "{{ loja_pesquisa }}"
+                    {% if cupons %}
+                        - <strong>{{ cupons.count }}</strong> cupom{{ cupons.count|pluralize }} encontrado{{ cupons.count|pluralize }}
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="cupons-container">
+    {% if cupons %}
+        <div class="cupons-grid">
+            {% for cupom in cupons %}
+                <div class="cupom-card">
+                    <div class="cupom-header">
+                        <div class="cupom-badge" 
+                             style="background-color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}#ff6b35{% endif %}; 
+                                    color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_texto }}{% else %}white{% endif %};
+                                    border: 2px solid {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}#ff6b35{% endif %};">
+                            {{ cupom.loja }}
+                        </div>
+                        <div class="cupom-status">
+                            <span class="status-ativo">✅ Ativo</span>
+                        </div>
+                    </div>
+                    
+                    <div class="cupom-content">
+                        <h3 class="cupom-titulo">{{ cupom.titulo }}</h3>
+                        <p class="cupom-descricao">{{ cupom.descricao }}</p>
+                        
+                        <div class="cupom-actions">
+                            <button type="button" class="btn btn-primary copy-and-redirect" 
+                                    {% if cupom.codigo %}data-code="{{ cupom.codigo }}"{% endif %}
+                                    data-link="{{ cupom.link_acesso }}"
+                                    data-store="{{ cupom.loja }}"
+                                    style="background-color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}var(--cor-laranja){% endif %}; 
+                                           border-color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}var(--cor-laranja){% endif %};">
+                                {% if cupom.codigo %}
+                                    🎫 Copiar e Ir para {{ cupom.loja }}
+                                {% else %}
+                                    🛒 Ir para {{ cupom.loja }}
+                                {% endif %}
+                            </button>
+                        </div>
+                        
+                        <div class="cupom-footer">
+                            <small class="cupom-disclaimer">
+                                Sujeito a regras e disponibilidade no {{ cupom.loja }}.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-cupons">
+            <div class="empty-icon">🎫</div>
+            {% if loja_pesquisa %}
+                <h3 class="empty-title">Nenhum cupom encontrado</h3>
+                <p class="empty-description">
+                    Não encontramos cupons para "{{ loja_pesquisa }}". 
+                    Tente buscar por outro nome de loja ou veja todos os cupons disponíveis.
+                </p>
+                <div class="empty-actions">
+                    <a href="{% url 'cupons' %}" class="btn btn-secondary">
+                        📋 Ver Todos os Cupons
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-primary">
+                        ← Voltar ao Início
+                    </a>
+                </div>
+            {% else %}
+                <h3 class="empty-title">Nenhum cupom disponível no momento</h3>
+                <p class="empty-description">
+                    Estamos trabalhando para trazer novos cupons exclusivos para você!
+                    Volte em breve para conferir as novidades.
+                </p>
+                <a href="{% url 'home' %}" class="btn btn-primary">
+                    ← Voltar ao Início
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<!-- Seção de informações adicionais -->
+<div class="cupons-info">
+    <div class="info-card">
+        <h3 class="info-title">💡 Como usar nossos cupons?</h3>
+        <div class="info-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Escolha seu cupom</h4>
+                    <p>Selecione o cupom da loja onde deseja fazer sua compra</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Clique no botão</h4>
+                    <p>Clique em "Copiar e Ir para [Loja]" para copiar o código e ser redirecionado</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Use na loja</h4>
+                    <p>Cole o código no carrinho da loja e aproveite o desconto!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.cupons-hero {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, var(--cor-laranja) 0%, var(--cor-laranja-claro) 100%);
+    color: white;
+    border-radius: 16px;
+    margin: 0 20px 3rem;
+}
+
+.cupons-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cupons-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cupons-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.cupons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.cupom-card {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--sombra-forte);
+    border: 1px solid var(--cor-cinza-claro);
+    transition: var(--transicao-media);
+    position: relative;
+    overflow: hidden;
+}
+
+.cupom-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--cor-laranja), var(--cor-laranja-claro));
+}
+
+.cupom-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.cupom-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.cupom-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cupom-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cupom-badge-mercadolivre {
+    background: #fff159;
+    color: #333;
+}
+
+.cupom-badge-amazon {
+    background: #ff9900;
+    color: white;
+}
+
+.cupom-badge-magazineluiza {
+    background: #ff6b35;
+    color: white;
+}
+
+.cupom-badge-americanas {
+    background: #ff1744;
+    color: white;
+}
+
+.cupom-badge-custom {
+    background: var(--cor-laranja);
+    color: white;
+}
+
+.cupom-status {
+    font-size: 0.9rem;
+}
+
+.status-ativo {
+    color: #10B981;
+    font-weight: 600;
+}
+
+.cupom-titulo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.cupom-descricao {
+    color: var(--cor-cinza);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.cupom-actions {
+    margin-bottom: 1.5rem;
+}
+
+.cupom-actions .btn {
+    width: 100%;
+    justify-content: center;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.cupom-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    opacity: 0.9;
+}
+
+.cupom-footer {
+    border-top: 1px solid var(--cor-cinza-claro);
+    padding-top: 1rem;
+}
+
+.cupom-disclaimer {
+    color: var(--cor-cinza);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.empty-cupons {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--cor-branco);
+    border-radius: 16px;
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+}
+
+.empty-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+}
+
+.empty-description {
+    color: var(--cor-cinza);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cupons-info {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.info-card {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+.info-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.info-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.step-number {
+    background: var(--gradiente-principal);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.step-content h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.step-content p {
+    color: var(--cor-cinza);
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+    .cupons-hero {
+        margin: 0 15px 2rem;
+        padding: 1.5rem 1rem;
+    }
+    
+    .cupons-title {
+        font-size: 2rem;
+    }
+    
+    .cupons-subtitle {
+        font-size: 1rem;
+    }
+    
+    .cupons-container {
+        padding: 0 15px;
+    }
+    
+    .cupons-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .cupom-card {
+        padding: 1.5rem;
+    }
+    
+    .cupom-actions .btn {
+        width: 100%;
+    }
+    
+    .info-card {
+        padding: 1.5rem;
+    }
+    
+    .info-steps {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .step {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .step-number {
+        align-self: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .cupons-hero {
+        margin: 0 10px 1.5rem;
+        padding: 1rem;
+    }
+    
+    .cupons-title {
+        font-size: 1.6rem;
+    }
+    
+    .cupons-container {
+        padding: 0 10px;
+    }
+    
+    .cupom-card {
+        padding: 1rem;
+    }
+    
+    .cupom-titulo {
+        font-size: 1.2rem;
+    }
+    
+    .info-card {
+        padding: 1rem;
+    }
+}
+
+/* Estilos para campo de busca */
+.search-section {
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+    padding: 0 20px;
+}
+
+.search-container {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-cinza-claro);
+    text-align: center;
+}
+
+.search-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.search-description {
+    color: var(--cor-cinza);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.search-form {
+    margin-bottom: 1rem;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    min-width: 300px;
+    max-width: 500px;
+    flex: 1;
+    transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.search-btn {
+    padding: 1rem 2rem;
+    white-space: nowrap;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.search-clear {
+    padding: 1rem 1.5rem;
+    white-space: nowrap;
+    background: var(--cor-cinza-claro);
+    color: var(--cor-cinza);
+    border: 2px solid var(--cor-cinza-claro);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.search-clear:hover {
+    background: var(--cor-cinza);
+    color: var(--cor-branco);
+    border-color: var(--cor-cinza);
+}
+
+.search-results-info {
+    margin-top: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 107, 53, 0.1);
+    border-radius: 12px;
+    border-left: 4px solid var(--cor-laranja);
+}
+
+.search-info {
+    color: var(--cor-azul-escuro);
+    font-size: 1rem;
+}
+
+.search-info strong {
+    color: var(--cor-laranja);
+}
+
+.empty-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.empty-actions .btn {
+    min-width: 200px;
+}
+
+/* Responsividade para busca */
+@media (max-width: 768px) {
+    .search-section {
+        padding: 0 15px;
+        margin-bottom: 2rem;
+    }
+    
+    .search-container {
+        padding: 1.5rem;
+    }
+    
+    .search-title {
+        font-size: 1.5rem;
+    }
+    
+    .search-description {
+        font-size: 1rem;
+    }
+    
+    .search-input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-input {
+        min-width: auto;
+        margin-bottom: 1rem;
+    }
+    
+    .search-btn, .search-clear {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .empty-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .empty-actions .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-section {
+        padding: 0 10px;
+    }
+    
+    .search-container {
+        padding: 1rem;
+    }
+    
+    .search-title {
+        font-size: 1.3rem;
+    }
+    
+    .search-description {
+        font-size: 0.95rem;
+    }
+    
+    .search-input {
+        font-size: 1rem;
+        padding: 0.8rem 1rem;
+    }
+    
+    .search-btn, .search-clear {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
+}
+</style>
+
+<script>
+// Funcionalidade de copiar cupom e redirecionar
+document.addEventListener('DOMContentLoaded', function() {
+    const copyAndRedirectButtons = document.querySelectorAll('.copy-and-redirect');
+    
+    copyAndRedirectButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const code = this.getAttribute('data-code');
+            const link = this.getAttribute('data-link');
+            const store = this.getAttribute('data-store');
+            
+            if (code && link) {
+                // Copiar o código do cupom
+                navigator.clipboard.writeText(code).then(() => {
+                    // Feedback visual
+                    const original = this.innerHTML;
+                    this.innerHTML = '✅ Copiado! Redirecionando...';
+                    this.style.background = '#10B981';
+                    this.disabled = true;
+                    
+                    // Aguardar um pouco para mostrar o feedback
+                    setTimeout(() => {
+                        // Redirecionar para a loja
+                        window.open(link, '_blank');
+                        
+                        // Restaurar o botão após um tempo
+                        setTimeout(() => {
+                            this.innerHTML = original;
+                            this.style.background = '';
+                            this.disabled = false;
+                        }, 3000);
+                    }, 1000);
+                    
+                }).catch(() => {
+                    // Fallback para navegadores que não suportam clipboard API
+                    const textarea = document.createElement('textarea');
+                    textarea.value = code;
+                    textarea.setAttribute('readonly', '');
+                    textarea.style.position = 'absolute';
+                    textarea.style.left = '-9999px';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    
+                    try {
+                        document.execCommand('copy');
+                        
+                        // Feedback visual
+                        const original = this.innerHTML;
+                        this.innerHTML = '✅ Copiado! Redirecionando...';
+                        this.style.background = '#10B981';
+                        this.disabled = true;
+                        
+                        // Aguardar um pouco para mostrar o feedback
+                        setTimeout(() => {
+                            // Redirecionar para a loja
+                            window.open(link, '_blank');
+                            
+                            // Restaurar o botão após um tempo
+                            setTimeout(() => {
+                                this.innerHTML = original;
+                                this.style.background = '';
+                                this.disabled = false;
+                            }, 3000);
+                        }, 1000);
+                        
+                    } catch (e) {
+                        // Se não conseguir copiar, pelo menos redirecionar
+                        alert(`Código do cupom: ${code}\n\nRedirecionando para ${store}...`);
+                        window.open(link, '_blank');
+                    }
+                    
+                    document.body.removeChild(textarea);
+                });
+            } else if (link) {
+                // Se não há código, apenas redirecionar
+                const original = this.innerHTML;
+                this.innerHTML = '🛒 Redirecionando...';
+                this.style.background = '#10B981';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    window.open(link, '_blank');
+                    
+                    // Restaurar o botão após um tempo
+                    setTimeout(() => {
+                        this.innerHTML = original;
+                        this.style.background = '';
+                        this.disabled = false;
+                    }, 2000);
+                }, 500);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

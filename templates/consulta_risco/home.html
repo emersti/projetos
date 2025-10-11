@@ -1,0 +1,691 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Consulte o City Safety Score - Stigliani{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-background"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">City Safety Score do Brasil</h1>
+        <p class="hero-subtitle">Selecione sua cidade de origem e destino para obter informações sobre a segurança delas</p>
+    </div>
+</div>
+
+<div class="form-container">
+    <form class="consulta-form" id="consultaForm">
+        {% csrf_token %}
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="estado-origem" class="form-label">Estado de Origem</label>
+                <select id="estado-origem" name="estado_origem" class="form-select" required>
+                    <option value="">Selecione o estado</option>
+                    {% for estado in estados %}
+                        <option value="{{ estado.id }}">{{ estado.nome|upper }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cidade-origem" class="form-label">Cidade de Origem</label>
+                <select id="cidade-origem" name="cidade_origem" class="form-select" required disabled>
+                    <option value="">Primeiro selecione o estado</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="estado-destino" class="form-label">Estado de Destino</label>
+                <select id="estado-destino" name="estado_destino" class="form-select" required>
+                    <option value="">Selecione o estado</option>
+                    {% for estado in estados %}
+                        <option value="{{ estado.id }}">{{ estado.nome|upper }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cidade-destino" class="form-label">Cidade de Destino</label>
+                <select id="cidade-destino" name="cidade_destino" class="form-select" required disabled>
+                    <option value="">Primeiro selecione o estado</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Captcha -->
+        <div class="captcha-container">
+            <div class="captcha-box">
+                <div class="captcha-question">
+                    <span id="captchaQuestion">Digite o código: ABC123</span>
+                </div>
+                <div class="captcha-input-group">
+                    <input type="text" id="captchaAnswer" placeholder="Digite o código" required>
+                    <button type="button" id="btnRefreshCaptcha" class="btn-refresh" title="Gerar novo código">
+                        🔄
+                    </button>
+                </div>
+                <div class="captcha-status" id="captchaStatus"></div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-text">Consultar Risco</span>
+                <span class="btn-icon">→</span>
+            </button>
+            <button type="button" class="btn btn-secondary" id="btnLimpar">
+                <span class="btn-text">Limpar Seleção</span>
+                <span class="btn-icon">🔄</span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="result-container" id="resultContainer" style="display: none;">
+    <div class="result-card">
+        <h2 class="result-title">Resultado da Consulta</h2>
+        <div class="result-content" id="resultContent">
+            <!-- Conteúdo será preenchido via JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Seção de Cupons -->
+<div class="cupons-section">
+    <div class="cupons-invite">
+        <div class="cupons-invite-content">
+            <div class="cupons-icon">🎫</div>
+            <h2 class="cupons-invite-title">Cupons de Desconto</h2>
+            <p class="cupons-invite-description">
+                Aproveite nossos cupons especiais e economize em suas compras nas principais lojas online!
+                Temos ofertas exclusivas do Mercado Livre, Amazon, Magazine Luiza e muito mais.
+            </p>
+            <div class="cupons-features">
+                <div class="feature">
+                    <span class="feature-icon">✅</span>
+                    <span class="feature-text">Cupons atualizados diariamente</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🛒</span>
+                    <span class="feature-text">Válidos nas principais lojas</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">💰</span>
+                    <span class="feature-text">Economia garantida</span>
+                </div>
+            </div>
+            <a href="{% url 'cupons' %}" class="btn btn-primary btn-large">
+                <span class="btn-text">Ver Todos os Cupons</span>
+                <span class="btn-icon">🎫</span>
+            </a>
+        </div>
+        <div class="cupons-preview">
+            <div class="preview-card shopping-cart">
+                <div class="cart-header">
+                    <div class="cart-icon">🛒</div>
+                    <div class="cart-title">Carrinho de Compras</div>
+                </div>
+                <div class="cart-content">
+                    <div class="cart-item">
+                        <div class="item-badge">Pegue seu Cupom</div>
+                        <div class="item-name">Desconto Especial</div>
+                        <div class="item-price">Economize em suas compras</div>
+                    </div>
+                    <div class="cart-code">
+                        <span class="code-label">Código:</span>
+                        <span class="code-value">SAFETY***10</span>
+                    </div>
+                </div>
+                <div class="cart-footer">
+                    <div class="cart-total">Seus R$ rendem mais!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.cupons-section {
+    margin: 3rem 0;
+    padding: 0 20px;
+}
+
+.cupons-invite {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px;
+    padding: 3rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-cinza-claro);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cupons-invite-content {
+    text-align: left;
+}
+
+.cupons-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.cupons-invite-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.cupons-invite-description {
+    font-size: 1.1rem;
+    color: var(--cor-cinza);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.cupons-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.feature-icon {
+    font-size: 1.2rem;
+}
+
+.feature-text {
+    font-weight: 500;
+    color: var(--cor-azul-escuro);
+}
+
+.btn-large {
+    padding: 1.2rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.cupons-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.preview-card {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: var(--sombra-forte);
+    border: 1px solid var(--cor-cinza-claro);
+    text-align: left;
+    transform: rotate(3deg);
+    transition: var(--transicao-media);
+    overflow: hidden;
+    width: 280px;
+}
+
+.preview-card:hover {
+    transform: rotate(0deg) scale(1.05);
+}
+
+/* Estilos do carrinho de compras */
+.shopping-cart {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.cart-header {
+    background: var(--cor-laranja);
+    color: white;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+}
+
+.cart-icon {
+    font-size: 1.2rem;
+}
+
+.cart-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cart-content {
+    padding: 1rem;
+    flex: 1;
+}
+
+.cart-item {
+    margin-bottom: 1rem;
+}
+
+.item-badge {
+    background: var(--cor-laranja);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.item-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.25rem;
+}
+
+.item-price {
+    font-size: 0.8rem;
+    color: var(--cor-cinza);
+}
+
+.cart-code {
+    background: var(--cor-cinza-claro);
+    padding: 0.75rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.code-label {
+    font-size: 0.8rem;
+    color: var(--cor-cinza);
+    font-weight: 500;
+}
+
+.code-value {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.cart-footer {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-top: 1px solid var(--cor-cinza-claro);
+}
+
+.cart-total {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .cupons-section {
+        margin: 2rem 0;
+        padding: 0 15px;
+    }
+    
+    .cupons-invite {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .cupons-invite-content {
+        text-align: center;
+    }
+    
+    .cupons-invite-title {
+        font-size: 1.8rem;
+    }
+    
+    .cupons-features {
+        align-items: center;
+    }
+    
+    .preview-card {
+        transform: rotate(0deg);
+        max-width: 300px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    
+    .cart-header {
+        padding: 0.75rem;
+    }
+    
+    .cart-content {
+        padding: 0.75rem;
+    }
+    
+    .cart-footer {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cupons-invite {
+        padding: 1.5rem;
+    }
+    
+    .cupons-invite-title {
+        font-size: 1.5rem;
+    }
+    
+    .cupons-invite-description {
+        font-size: 1rem;
+    }
+    
+    .btn-large {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+    
+    .preview-card {
+        padding: 0;
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .cart-header {
+        padding: 0.5rem;
+    }
+    
+    .cart-title {
+        font-size: 0.8rem;
+    }
+    
+    .cart-content {
+        padding: 0.5rem;
+    }
+    
+    .cart-footer {
+        padding: 0.5rem;
+    }
+    
+    .cart-total {
+        font-size: 0.9rem;
+    }
+}
+
+/* Hero Section com imagem de fundo */
+.hero {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    padding: 4rem 2rem;
+    border-radius: 20px;
+    overflow: hidden;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/static/Brasil.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.7;
+    z-index: 1;
+}
+
+.hero-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
+    z-index: 2;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'Clarendon Condensed', serif;
+}
+
+.hero-subtitle {
+    font-size: 1.3rem;
+    color: #FFFFFF;
+    margin-bottom: 0;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    line-height: 1.5;
+    opacity: 0.95;
+    font-weight: 500;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Captcha Styles */
+.captcha-container {
+    margin: 1.5rem 0;
+    padding: 0 20px;
+}
+
+.captcha-box {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 2px solid var(--cor-cinza-claro);
+    box-shadow: var(--sombra-media);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.captcha-question {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.captcha-question span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    display: block;
+    padding: 0.75rem;
+    background: var(--cor-branco);
+    border-radius: 8px;
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+.captcha-input-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.captcha-input-group input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: var(--transicao-media);
+    background: var(--cor-branco);
+}
+
+.captcha-input-group input:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.captcha-input-group input.error {
+    border-color: #EF4444;
+    background-color: #FEF2F2;
+}
+
+.captcha-input-group input.success {
+    border-color: #10B981;
+    background-color: #F0FDF4;
+}
+
+.btn-refresh {
+    background: var(--cor-laranja);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: var(--transicao-media);
+    min-width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-refresh:hover {
+    background: #e55a2b;
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+.btn-refresh:active {
+    transform: translateY(0);
+}
+
+.captcha-status {
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    min-height: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.captcha-status.success {
+    color: #10B981;
+}
+
+.captcha-status.error {
+    color: #EF4444;
+}
+
+.captcha-status.loading {
+    color: #F59E0B;
+}
+
+/* Responsividade para Captcha */
+@media (max-width: 768px) {
+    .captcha-container {
+        margin: 1rem 0;
+        padding: 0 15px;
+    }
+    
+    .captcha-box {
+        padding: 1rem;
+    }
+    
+    .captcha-question span {
+        font-size: 1rem;
+        padding: 0.5rem;
+    }
+    
+    .captcha-input-group {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .captcha-input-group input {
+        width: 100%;
+        padding: 0.75rem;
+    }
+    
+    .btn-refresh {
+        width: 100%;
+        height: 45px;
+    }
+}
+
+/* Responsividade para Hero */
+@media (max-width: 768px) {
+    .hero {
+        padding: 3rem 1rem;
+        min-height: 250px;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+        letter-spacing: 1.5px;
+        text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+        max-width: 500px;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 2rem 1rem;
+        min-height: 200px;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+        text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.8);
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        max-width: 400px;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+    }
+}
+
+</style>
+
+{% endblock %}
+
+
+

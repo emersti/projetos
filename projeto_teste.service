@@ -1,0 +1,35 @@
+[Unit]
+Description=Gunicorn instance to serve safetyscorebrasil
+After=network.target
+
+[Service]
+User=django
+Group=www-data
+WorkingDirectory=/var/www/safetyscorebrasil
+Environment="PATH=/var/www/safetyscorebrasil/venv/bin"
+ExecStart=/var/www/safetyscorebrasil/venv/bin/gunicorn --workers 3 --bind unix:/var/www/safetyscorebrasil/safetyscorebrasil.sock projeto_teste.wsgi:application --settings=projeto_teste.settings_prod
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

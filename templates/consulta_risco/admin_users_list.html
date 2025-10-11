@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+
+{% block title %}Gerenciar Usuários - Stigliani{% endblock %}
+
+{% block content %}
+<div class="admin-users-container">
+    <div class="admin-users-header">
+        <h1 class="admin-users-title">👥 Gerenciar Usuários Administrativos</h1>
+        <div class="admin-users-actions">
+            {% if admin_user.pode_criar_usuarios %}
+                <a href="{% url 'admin_user_create' %}" class="btn btn-primary">
+                    <span class="btn-text">+ Novo Usuário</span>
+                    <span class="btn-icon">+</span>
+                </a>
+            {% endif %}
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                ← Voltar ao Dashboard
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="users-grid">
+        {% for usuario in usuarios %}
+            <div class="user-card {% if not usuario.ativo %}user-inativo{% endif %}">
+                <div class="user-header">
+                    <div class="user-badge user-badge-{{ usuario.nivel_acesso }}">
+                        {{ usuario.get_nivel_acesso_display }}
+                    </div>
+                    <div class="user-status">
+                        {% if usuario.ativo %}
+                            <span class="status-ativo">✅ Ativo</span>
+                        {% else %}
+                            <span class="status-inativo">❌ Inativo</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="user-content">
+                    <h3 class="user-username">{{ usuario.username }}</h3>
+                    {% if usuario.email %}
+                        <p class="user-email">{{ usuario.email }}</p>
+                    {% endif %}
+                    
+                    <div class="user-meta">
+                        <div class="user-info">
+                            <strong>Criado em:</strong> {{ usuario.data_criacao|date:"d/m/Y H:i" }}
+                        </div>
+                        {% if usuario.ultimo_login %}
+                            <div class="user-info">
+                                <strong>Último login:</strong> {{ usuario.ultimo_login|date:"d/m/Y H:i" }}
+                            </div>
+                        {% endif %}
+                        {% if usuario.criado_por %}
+                            <div class="user-info">
+                                <strong>Criado por:</strong> {{ usuario.criado_por.username }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="user-actions">
+                    {% if admin_user.pode_gerenciar_usuarios %}
+                        {% if usuario.nivel_acesso != 'super_admin' or admin_user.pode_editar_super_admin %}
+                            <a href="{% url 'admin_user_edit' usuario.id %}" class="btn btn-secondary btn-small">
+                                ✏️ Editar
+                            </a>
+                        {% endif %}
+                        
+                        {% if usuario.id != admin_user.id %}
+                            {% if usuario.nivel_acesso != 'super_admin' or admin_user.pode_editar_super_admin %}
+                                <a href="{% url 'admin_user_delete' usuario.id %}" class="btn btn-danger btn-small">
+                                    🗑️ Excluir
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if not usuarios %}
+        <div class="empty-state">
+            <div class="empty-icon">👥</div>
+            <h3 class="empty-title">Nenhum usuário encontrado</h3>
+            <p class="empty-description">Comece criando o primeiro usuário administrativo!</p>
+            {% if admin_user.pode_criar_usuarios %}
+                <a href="{% url 'admin_user_create' %}" class="btn btn-primary">
+                    <span class="btn-text">Criar Primeiro Usuário</span>
+                    <span class="btn-icon">+</span>
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.admin-users-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 20px;
+}
+
+.admin-users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-users-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin: 0;
+}
+
+.admin-users-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.user-card {
+    background: var(--cor-branco);
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: var(--transicao-media);
+}
+
+.user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+.user-inativo {
+    opacity: 0.7;
+    border-color: var(--cor-cinza);
+}
+
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.user-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.user-badge-super_admin {
+    background: #8B5CF6;
+    color: white;
+}
+
+.user-badge-admin {
+    background: var(--cor-laranja);
+    color: white;
+}
+
+.user-badge-editor {
+    background: #10B981;
+    color: white;
+}
+
+.user-status {
+    font-size: 0.85rem;
+}
+
+.status-ativo {
+    color: #10B981;
+    font-weight: 600;
+}
+
+.status-inativo {
+    color: #EF4444;
+    font-weight: 600;
+}
+
+.user-username {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.user-email {
+    color: var(--cor-cinza);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.user-meta {
+    margin-bottom: 1rem;
+}
+
+.user-info {
+    font-size: 0.85rem;
+    color: var(--cor-cinza);
+    margin-bottom: 0.25rem;
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--cor-branco);
+    border-radius: 16px;
+    box-shadow: var(--sombra-media);
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.empty-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+}
+
+.empty-description {
+    color: var(--cor-cinza);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.messages-container {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+
+.alert-error {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+}
+
+.alert-info {
+    background: #DBEAFE;
+    color: #1E40AF;
+    border: 1px solid #BFDBFE;
+}
+
+@media (max-width: 768px) {
+    .admin-users-container {
+        padding: 1rem 15px;
+    }
+    
+    .admin-users-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .admin-users-title {
+        font-size: 1.6rem;
+    }
+    
+    .users-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .user-card {
+        padding: 1rem;
+    }
+    
+    .user-actions {
+        flex-direction: column;
+    }
+    
+    .user-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-users-title {
+        font-size: 1.4rem;
+    }
+    
+    .user-card {
+        padding: 0.75rem;
+    }
+}
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

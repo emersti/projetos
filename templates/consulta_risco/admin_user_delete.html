@@ -1,0 +1,361 @@
+{% extends 'base.html' %}
+
+{% block title %}Excluir Usuário - Stigliani{% endblock %}
+
+{% block content %}
+<div class="admin-user-delete-container">
+    <div class="admin-user-delete-card">
+        <div class="admin-user-delete-header">
+            <h1 class="admin-user-delete-title">🗑️ Excluir Usuário</h1>
+            <a href="{% url 'admin_users_list' %}" class="btn btn-secondary btn-small">
+                ← Voltar à Lista
+            </a>
+        </div>
+
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="delete-warning">
+            <div class="warning-icon">⚠️</div>
+            <h3 class="warning-title">Atenção!</h3>
+            <p class="warning-text">
+                Você está prestes a excluir permanentemente o usuário <strong>{{ usuario_deletado.username }}</strong>.
+                Esta ação não pode ser desfeita.
+            </p>
+        </div>
+
+        <div class="user-info">
+            <div class="user-badge user-badge-{{ usuario_deletado.nivel_acesso }}">
+                {{ usuario_deletado.get_nivel_acesso_display }}
+            </div>
+            <h3 class="user-username">{{ usuario_deletado.username }}</h3>
+            {% if usuario_deletado.email %}
+                <p class="user-email">{{ usuario_deletado.email }}</p>
+            {% endif %}
+            <div class="user-meta">
+                <div class="user-info-item">
+                    <strong>Criado em:</strong> {{ usuario_deletado.data_criacao|date:"d/m/Y H:i" }}
+                </div>
+                {% if usuario_deletado.ultimo_login %}
+                    <div class="user-info-item">
+                        <strong>Último login:</strong> {{ usuario_deletado.ultimo_login|date:"d/m/Y H:i" }}
+                    </div>
+                {% endif %}
+                {% if usuario_deletado.criado_por %}
+                    <div class="user-info-item">
+                        <strong>Criado por:</strong> {{ usuario_deletado.criado_por.username }}
+                    </div>
+                {% endif %}
+                <div class="user-info-item">
+                    <strong>Status:</strong> 
+                    {% if usuario_deletado.ativo %}
+                        <span class="status-ativo">✅ Ativo</span>
+                    {% else %}
+                        <span class="status-inativo">❌ Inativo</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <form method="post" class="delete-form">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">
+                    <span class="btn-text">Sim, Excluir Usuário</span>
+                    <span class="btn-icon">🗑️</span>
+                </button>
+                
+                <a href="{% url 'admin_users_list' %}" class="btn btn-secondary">
+                    <span class="btn-text">Cancelar</span>
+                    <span class="btn-icon">❌</span>
+                </a>
+            </div>
+        </form>
+
+        <div class="delete-consequences">
+            <h4 class="consequences-title">📋 O que acontecerá:</h4>
+            <ul class="consequences-list">
+                <li>❌ O usuário não poderá mais fazer login</li>
+                <li>❌ Todos os dados do usuário serão removidos permanentemente</li>
+                <li>❌ O histórico de ações do usuário será perdido</li>
+                <li>⚠️ Cupons criados por este usuário permanecerão no sistema</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-user-delete-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem 20px;
+}
+
+.admin-user-delete-card {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: var(--sombra-forte);
+    border: 1px solid var(--cor-cinza-claro);
+    animation: slideUp 0.6s ease-out;
+}
+
+.admin-user-delete-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-user-delete-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin: 0;
+}
+
+.delete-warning {
+    background: #FEF3C7;
+    border: 2px solid #F59E0B;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.warning-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.warning-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #92400E;
+    margin-bottom: 0.5rem;
+}
+
+.warning-text {
+    color: #92400E;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.user-info {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+.user-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.user-badge-super_admin {
+    background: #8B5CF6;
+    color: white;
+}
+
+.user-badge-admin {
+    background: var(--cor-laranja);
+    color: white;
+}
+
+.user-badge-editor {
+    background: #10B981;
+    color: white;
+}
+
+.user-username {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 0.5rem;
+}
+
+.user-email {
+    color: var(--cor-cinza);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.user-meta {
+    margin-bottom: 1rem;
+}
+
+.user-info-item {
+    font-size: 0.85rem;
+    color: var(--cor-cinza);
+    margin-bottom: 0.25rem;
+}
+
+.status-ativo {
+    color: #10B981;
+    font-weight: 600;
+}
+
+.status-inativo {
+    color: #EF4444;
+    font-weight: 600;
+}
+
+.delete-form {
+    margin-bottom: 2rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.delete-consequences {
+    background: #F3F4F6;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+.consequences-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+}
+
+.consequences-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.consequences-list li {
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    color: var(--cor-cinza);
+    border-bottom: 1px solid var(--cor-cinza-claro);
+}
+
+.consequences-list li:last-child {
+    border-bottom: none;
+}
+
+.messages-container {
+    margin-bottom: 2rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+}
+
+.alert-error {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FECACA;
+}
+
+.alert-info {
+    background: #DBEAFE;
+    color: #1E40AF;
+    border: 1px solid #BFDBFE;
+}
+
+@media (max-width: 768px) {
+    .admin-user-delete-container {
+        padding: 1rem 15px;
+    }
+    
+    .admin-user-delete-card {
+        padding: 1.5rem;
+    }
+    
+    .admin-user-delete-title {
+        font-size: 1.6rem;
+    }
+    
+    .admin-user-delete-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-user-delete-card {
+        padding: 1rem;
+    }
+    
+    .admin-user-delete-title {
+        font-size: 1.4rem;
+    }
+    
+    .user-info {
+        padding: 1rem;
+    }
+    
+    .delete-warning {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

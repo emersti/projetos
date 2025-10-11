@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Sistema Temporariamente Indisponível - Stigliani{% endblock %}
+
+{% block content %}
+<div class="maintenance-container">
+    <div class="maintenance-card">
+        <div class="maintenance-icon">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z" fill="var(--cor-laranja)"/>
+                <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z" stroke="var(--cor-azul-escuro)" stroke-width="2"/>
+            </svg>
+        </div>
+        
+        <h1 class="maintenance-title">Sistema Temporariamente Indisponível</h1>
+        
+        <div class="maintenance-message">
+            <p class="maintenance-text">
+                <strong>Estamos enfrentando instabilidade.</strong><br>
+                Em breve retornaremos.
+            </p>
+        </div>
+        
+        <div class="maintenance-details">
+            <p>Nossa equipe está trabalhando para resolver os problemas técnicos e restaurar o serviço o mais rápido possível.</p>
+            <p>Agradecemos sua compreensão e paciência.</p>
+        </div>
+        
+        <div class="maintenance-actions">
+            <button class="btn btn-secondary" onclick="location.reload()">
+                <span class="btn-text">Tentar Novamente</span>
+                <span class="btn-icon">🔄</span>
+            </button>
+        </div>
+        
+        <div class="maintenance-footer">
+            <p class="maintenance-contact">
+                Para suporte urgente, entre em contato: 
+                <a href="mailto:suporte@stigliani.com">suporte@stigliani.com</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
