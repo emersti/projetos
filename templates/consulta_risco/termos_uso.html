@@ -1,0 +1,436 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load consulta_risco_tags %}
+
+{% block title %}Termos de Uso - Stigliani{% endblock %}
+
+{% block content %}
+<div class="termos-section">
+    <div class="termos-container">
+        <div class="termos-content">
+            <div class="termos-intro">
+                <div class="intro-card">
+                    <h2 class="intro-title">Termos de Uso</h2>
+                    <p class="intro-text">
+                        Bem-vindo ao site <strong>safetyscorebrasil.com.br</strong>. Estes termos de uso regulam 
+                        o acesso e utilização de nossos serviços. Ao utilizar nosso site, você concorda com 
+                        estes termos e condições.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="termos-sections">
+                <div class="termos-section-item">
+                    <div class="section-icon">📋</div>
+                    <h3 class="section-title">1. Aceitação dos Termos</h3>
+                    <div class="section-content">
+                        <p>Ao acessar e utilizar este site, você concorda em cumprir e estar vinculado aos seguintes termos e condições de uso. Se você não concordar com qualquer parte destes termos, não deve utilizar nosso site.</p>
+                        <ul>
+                            <li>Você deve ter pelo menos 18 anos de idade para utilizar nossos serviços</li>
+                            <li>É responsável por manter a confidencialidade de suas informações</li>
+                            <li>Deve fornecer informações precisas e atualizadas</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="termos-section-item">
+                    <div class="section-icon">🎯</div>
+                    <h3 class="section-title">2. Descrição dos Serviços</h3>
+                    <div class="section-content">
+                        <p>O site safetyscorebrasil.com.br oferece:</p>
+                        <ul>
+                            <li><strong>Consulta de Risco:</strong> Análise comparativa de segurança entre cidades brasileiras</li>
+                            <li><strong>Ranking de Criminalidade:</strong> Dados baseados em informações públicas oficiais</li>
+                            <li><strong>Cupons de Desconto:</strong> Benefícios exclusivos para usuários</li>
+                            <li><strong>Informações de Segurança:</strong> Conteúdo educativo sobre segurança urbana</li>
+                        </ul>
+                        <p><em>Nota: Os dados apresentados são baseados em informações públicas e não constituem aconselhamento profissional de segurança.</em></p>
+                    </div>
+                </div>
+                
+                <div class="termos-section-item">
+                    <div class="section-icon">⚖️</div>
+                    <h3 class="section-title">3. Uso Aceitável</h3>
+                    <div class="section-content">
+                        <p>Você concorda em utilizar nosso site apenas para fins legais e de acordo com estes termos. É proibido:</p>
+                        <ul>
+                            <li>Utilizar o site para atividades ilegais ou não autorizadas</li>
+                            <li>Tentar obter acesso não autorizado a sistemas ou dados</li>
+                            <li>Interferir no funcionamento normal do site</li>
+                            <li>Reproduzir, distribuir ou modificar conteúdo sem autorização</li>
+                            <li>Utilizar bots, spiders ou outros meios automatizados</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="termos-section-item">
+                    <div class="section-icon">📊</div>
+                    <h3 class="section-title">4. Precisão das Informações</h3>
+                    <div class="section-content">
+                        <p>Embora nos esforcemos para fornecer informações precisas e atualizadas:</p>
+                        <ul>
+                            <li>Os dados são baseados em fontes públicas oficiais</li>
+                            <li>Podem haver atrasos na atualização das informações</li>
+                            <li>Não garantimos a precisão absoluta de todos os dados</li>
+                            <li>Recomendamos verificar informações importantes em fontes oficiais</li>
+                        </ul>
+                        <p><strong>Isenção de Responsabilidade:</strong> As informações fornecidas são apenas para fins informativos e não constituem aconselhamento profissional.</p>
+                    </div>
+                </div>
+                
+                <div class="termos-section-item">
+                    <div class="section-icon">🔒</div>
+                    <h3 class="section-title">5. Propriedade Intelectual</h3>
+                    <div class="section-content">
+                        <p>Todo o conteúdo do site, incluindo textos, gráficos, logotipos, ícones e software, é propriedade da Stigliani ou de seus licenciadores e está protegido por leis de direitos autorais.</p>
+                        <ul>
+                            <li>Você não pode reproduzir ou distribuir nosso conteúdo sem autorização</li>
+                            <li>Marcas registradas são propriedade de seus respectivos proprietários</li>
+                            <li>Uso não autorizado pode resultar em ações legais</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="termos-section-item">
+                    <div class="section-icon">⚠️</div>
+                    <h3 class="section-title">6. Limitação de Responsabilidade</h3>
+                    <div class="section-content">
+                        <p>Em nenhuma circunstância a Stigliani será responsável por:</p>
+                        <ul>
+                            <li>Danos diretos, indiretos, incidentais ou consequenciais</li>
+                            <li>Perda de lucros, dados ou oportunidades de negócio</li>
+                            <li>Interrupção de serviços ou falhas técnicas</li>
+                            <li>Decisões baseadas nas informações do site</li>
+                        </ul>
+                        <p><strong>Limitação:</strong> Nossa responsabilidade total não excederá o valor pago pelos serviços, se houver.</p>
+                    </div>
+                </div>
+                
+                <div class="termos-section-item">
+                    <div class="section-icon">🔗</div>
+                    <h3 class="section-title">7. Links Externos</h3>
+                    <div class="section-content">
+                        <p>Nosso site pode conter links para sites de terceiros. Estes links são fornecidos apenas para conveniência:</p>
+                        <ul>
+                            <li>Não endossamos ou controlamos sites de terceiros</li>
+                            <li>Não somos responsáveis pelo conteúdo de sites externos</li>
+                            <li>Você acessa sites externos por sua própria conta e risco</li>
+                            <li>Recomendamos revisar os termos de uso de sites externos</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="termos-section-item">
+                    <div class="section-icon">📅</div>
+                    <h3 class="section-title">8. Modificações dos Termos</h3>
+                    <div class="section-content">
+                        <p>Reservamo-nos o direito de modificar estes termos a qualquer momento:</p>
+                        <ul>
+                            <li>Alterações serão publicadas nesta página</li>
+                            <li>O uso continuado constitui aceitação das modificações</li>
+                            <li>Recomendamos revisar periodicamente estes termos</li>
+                            <li>Alterações significativas serão comunicadas aos usuários</li>
+                        </ul>
+                        <p class="last-update">
+                            <strong>Última atualização:</strong> {% get_ultima_atualizacao_pagina 'termos_uso' %}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="termos-section-item">
+                    <div class="section-icon">⚖️</div>
+                    <h3 class="section-title">9. Lei Aplicável</h3>
+                    <div class="section-content">
+                        <p>Estes termos são regidos pelas leis brasileiras:</p>
+                        <ul>
+                            <li>Qualquer disputa será resolvida nos tribunais competentes do Brasil</li>
+                            <li>Se alguma disposição for considerada inválida, as demais permanecem em vigor</li>
+                            <li>O não exercício de direitos não constitui renúncia</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="termos-section-item">
+                    <div class="section-icon">📧</div>
+                    <h3 class="section-title">10. Contato</h3>
+                    <div class="section-content">
+                        <p>Para questões relacionadas a estes termos de uso:</p>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <strong>E-mail:</strong> <span class="email-address">atendimento@safetyscorebrasil.com.br</span>
+                            </div>
+                            <div class="contact-item">
+                                <strong>Assunto:</strong> <span class="email-subject">Termos de Uso</span>
+                            </div>
+                            <div class="contact-item">
+                                <strong>Endereço:</strong> São Paulo, SP - Brasil
+                            </div>
+                        </div>
+                        <p class="response-time">
+                            <strong>Tempo de resposta:</strong> Até 5 dias úteis para questões sobre termos de uso.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="termos-footer">
+                <div class="footer-actions">
+                    <a href="{% url 'home' %}" class="btn btn-primary">
+                        <span class="btn-text">Voltar ao Início</span>
+                        <span class="btn-icon">←</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para página de Termos de Uso */
+.termos-section {
+    margin: 2rem 0;
+    padding: 0 20px;
+    min-height: calc(100vh - 200px);
+}
+
+.termos-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.termos-content {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 24px;
+    padding: 4rem 3rem;
+    box-shadow: var(--sombra-forte);
+    border: 1px solid var(--cor-cinza-claro);
+    position: relative;
+    overflow: hidden;
+}
+
+.termos-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradiente-principal);
+    z-index: 1;
+}
+
+.termos-intro {
+    margin-bottom: 3rem;
+}
+
+.intro-card {
+    background: linear-gradient(135deg, var(--cor-azul-escuro) 0%, var(--cor-azul-medio) 100%);
+    border-radius: 16px;
+    padding: 2.5rem;
+    color: var(--cor-branco);
+    text-align: center;
+}
+
+.intro-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--cor-branco);
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.termos-sections {
+    display: grid;
+    gap: 2rem;
+}
+
+.termos-section-item {
+    background: var(--cor-branco);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-cinza-claro);
+    transition: all 0.3s ease;
+}
+
+.termos-section-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+.section-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+}
+
+.section-content {
+    color: var(--cor-cinza);
+    line-height: 1.6;
+}
+
+.section-content h4 {
+    color: var(--cor-azul-escuro);
+    font-size: 1.1rem;
+    margin: 1.5rem 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.section-content ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.section-content li {
+    margin-bottom: 0.5rem;
+    color: var(--cor-cinza);
+}
+
+.section-content strong {
+    color: var(--cor-azul-escuro);
+    font-weight: 600;
+}
+
+.section-content em {
+    color: var(--cor-laranja);
+    font-style: italic;
+}
+
+.contact-info {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.contact-item {
+    margin-bottom: 0.5rem;
+}
+
+.email-address {
+    color: var(--cor-azul-escuro);
+    font-weight: 600;
+}
+
+.email-subject {
+    color: var(--cor-cinza);
+    font-weight: 600;
+}
+
+.response-time {
+    background: #e8f5e8;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+    margin-top: 1rem;
+}
+
+.last-update {
+    background: linear-gradient(135deg, #e6f3ff 0%, #cce7ff 100%);
+    border: 2px solid var(--cor-azul-medio);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 1rem;
+    color: var(--cor-azul-escuro);
+    font-weight: 500;
+}
+
+.termos-footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--cor-cinza-claro);
+}
+
+.footer-actions {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.footer-disclaimer {
+    text-align: center;
+    color: var(--cor-cinza);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .termos-section {
+        margin: 1rem 0;
+        padding: 0 15px;
+    }
+    
+    .termos-content {
+        padding: 2rem 1.5rem;
+        border-radius: 16px;
+    }
+    
+    .intro-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .intro-title {
+        font-size: 1.6rem;
+    }
+    
+    .intro-text {
+        font-size: 1rem;
+    }
+    
+    .termos-section-item {
+        padding: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+    }
+    
+    .section-icon {
+        font-size: 2rem;
+    }
+    
+    .response-time,
+    .last-update {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .termos-content {
+        padding: 1.5rem 1rem;
+    }
+    
+    .intro-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .intro-title {
+        font-size: 1.4rem;
+    }
+    
+    .termos-section-item {
+        padding: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}

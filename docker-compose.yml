@@ -2,42 +2,71 @@ version: '3.8'
 
 services:
   web:
-    build: .
-    ports:
-      - "8000:8000"
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: safetyscorebrasil-web
+    restart: unless-stopped
     environment:
       - DEBUG=False
-      - DB_HOST=db
-      - DB_NAME=safetyscore_db
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
+      - DJANGO_SETTINGS_MODULE=projeto_teste.settings_prod
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/safetyscore_db
       - REDIS_URL=redis://redis:6379/1
+      - SECRET_KEY=sua-chave-secreta-super-segura-aqui
+      - ALLOWED_HOSTS=safetyscorebrasil.com.br,www.safetyscorebrasil.com.br
     depends_on:
       - db
       - redis
     volumes:
       - ./media:/app/media
       - ./logs:/app/logs
-    restart: unless-stopped
+      - ./staticfiles:/app/staticfiles
+    networks:
+      - safetyscorebrasil-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   db:
-    image: postgres:15
+    image: postgres:15-alpine
+    container_name: safetyscorebrasil-db
+    restart: unless-stopped
     environment:
       - POSTGRES_DB=safetyscore_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
+      - ./backups:/backups
+    networks:
+      - safetyscorebrasil-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   redis:
     image: redis:7-alpine
+    container_name: safetyscorebrasil-redis
+    restart: unless-stopped
     volumes:
       - redis_data:/data
-    restart: unless-stopped
+    networks:
+      - safetyscorebrasil-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   nginx:
     image: nginx:alpine
+    container_name: safetyscorebrasil-nginx
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
@@ -48,8 +77,80 @@ services:
       - ./ssl:/etc/ssl/certs
     depends_on:
       - web
+    networks:
+      - safetyscorebrasil-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  celery:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: safetyscorebrasil-celery
     restart: unless-stopped
+    command: celery -A projeto_teste worker -l info
+    environment:
+      - DEBUG=False
+      - DJANGO_SETTINGS_MODULE=projeto_teste.settings_prod
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/safetyscore_db
+      - REDIS_URL=redis://redis:6379/1
+      - SECRET_KEY=sua-chave-secreta-super-segura-aqui
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./media:/app/media
+      - ./logs:/app/logs
+    networks:
+      - safetyscorebrasil-network
+
+  celery-beat:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: safetyscorebrasil-celery-beat
+    restart: unless-stopped
+    command: celery -A projeto_teste beat -l info
+    environment:
+      - DEBUG=False
+      - DJANGO_SETTINGS_MODULE=projeto_teste.settings_prod
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/safetyscore_db
+      - REDIS_URL=redis://redis:6379/1
+      - SECRET_KEY=sua-chave-secreta-super-segura-aqui
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./media:/app/media
+      - ./logs:/app/logs
+    networks:
+      - safetyscorebrasil-network
 
 volumes:
   postgres_data:
+    driver: local
   redis_data:
+    driver: local
+
+networks:
+  safetyscorebrasil-network:
+    driver: bridge
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

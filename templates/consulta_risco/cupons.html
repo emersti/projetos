@@ -51,12 +51,12 @@
             {% for cupom in cupons %}
                 <div class="cupom-card">
                     <div class="cupom-header">
-                        <div class="cupom-badge" 
-                             style="background-color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}#ff6b35{% endif %}; 
-                                    color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_texto }}{% else %}white{% endif %};
-                                    border: 2px solid {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}#ff6b35{% endif %};">
-                            {{ cupom.loja }}
-                        </div>
+    <div class="cupom-badge" 
+         style="background-color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}#ff6b35{% endif %}; 
+                color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_texto }}{% else %}white{% endif %};
+                border: 2px solid {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}#ff6b35{% endif %};">
+        {{ cupom.loja }}
+    </div>
                         <div class="cupom-status">
                             <span class="status-ativo">✅ Ativo</span>
                         </div>
@@ -73,17 +73,17 @@
                                     data-store="{{ cupom.loja }}"
                                     style="background-color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}var(--cor-laranja){% endif %}; 
                                            border-color: {% if cupom.tipo_cupom %}{{ cupom.tipo_cupom.cor_fundo }}{% else %}var(--cor-laranja){% endif %};">
-                                {% if cupom.codigo %}
-                                    🎫 Copiar e Ir para {{ cupom.loja }}
-                                {% else %}
-                                    🛒 Ir para {{ cupom.loja }}
-                                {% endif %}
+        {% if cupom.codigo %}
+            🎫 Copiar e Ir para <span class="notranslate">{{ cupom.loja }}</span>
+        {% else %}
+            🛒 Ir para <span class="notranslate">{{ cupom.loja }}</span>
+        {% endif %}
                             </button>
                         </div>
                         
                         <div class="cupom-footer">
                             <small class="cupom-disclaimer">
-                                Sujeito a regras e disponibilidade no {{ cupom.loja }}.
+                                Sujeito a regras e disponibilidade no <span class="notranslate">{{ cupom.loja }}</span>.
                             </small>
                         </div>
                     </div>

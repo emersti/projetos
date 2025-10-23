@@ -5,12 +5,29 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils import timezone
+from django.utils.timezone import localtime
 from django.db import transaction
 import hashlib
 import json
 import secrets
 import string
 from .models import Estado, Cidade, Cupom, AdminUser, TipoCupom, AvaliacaoSeguranca, SistemaAtualizacao
+
+
+def formatar_data_brasil(datetime_obj):
+    """
+    Formata uma data/hora para o timezone brasileiro (Brasília)
+    """
+    if datetime_obj is None:
+        return None
+    
+    # Se a data não tem timezone (naive), assumir que já é UTC-3
+    if datetime_obj.tzinfo is None:
+        return datetime_obj.strftime('%d/%m/%Y %H:%M')
+    
+    # Se tem timezone, converter para timezone local (Brasília)
+    data_local = localtime(datetime_obj)
+    return data_local.strftime('%d/%m/%Y %H:%M')
 
 
 def reordenar_cupons(cupom_atualizado, nova_ordem, cupom_id=None):
@@ -59,6 +76,11 @@ def faq(request):
 def lgpd(request):
     """View para página LGPD"""
     return render(request, 'consulta_risco/lgpd.html')
+
+
+def termos_uso(request):
+    """View para página de Termos de Uso"""
+    return render(request, 'consulta_risco/termos_uso.html')
 
 
 def maintenance(request):
@@ -140,19 +162,29 @@ def avaliar_seguranca(request):
         )
         
         if not created:
-            # Se já existe, atualizar a nota
+            # Se já existe, atualizar a nota e a data de avaliação
             avaliacao.nota = nota
+            # Usar função do modelo para garantir UTC-3
+            from .models import get_brasilia_time
+            avaliacao.data_avaliacao = get_brasilia_time()
             avaliacao.save()
         
         # Atualizar data do sistema
         SistemaAtualizacao.atualizar_sistema(f"Avaliação de segurança para {cidade_nome} recebida")
         
+        # Mensagem personalizada baseada se foi criada ou atualizada
+        if created:
+            message = 'Avaliação salva com sucesso!'
+        else:
+            message = 'Avaliação atualizada com sucesso!'
+        
         return JsonResponse({
             'success': True,
-            'message': 'Avaliação salva com sucesso!',
+            'message': message,
             'created': created,
             'nota': avaliacao.nota,
-            'data_avaliacao': avaliacao.data_avaliacao.strftime('%d/%m/%Y %H:%M')
+            'data_avaliacao': formatar_data_brasil(avaliacao.data_avaliacao),
+            'timezone': 'America/Sao_Paulo'
         })
         
     except json.JSONDecodeError:
@@ -851,8 +883,5 @@ def admin_profile_edit(request):
             messages.error(request, f'Erro ao atualizar perfil: {str(e)}')
     
     return render(request, 'consulta_risco/admin_profile_edit.html', {'admin_user': admin_user})
-
-
-
 
 

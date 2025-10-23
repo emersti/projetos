@@ -148,17 +148,17 @@
 
 <style>
 .cupons-section {
-    margin: 3rem 0;
-    padding: 0 20px;
+    margin: 1rem 0;
+    padding: 0 10px;
 }
 
 .cupons-invite {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-radius: 20px;
-    padding: 3rem;
+    padding: 1rem;
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 3rem;
+    gap: 1rem;
     align-items: center;
     box-shadow: var(--sombra-media);
     border: 1px solid var(--cor-cinza-claro);
@@ -177,7 +177,7 @@
 }
 
 .cupons-invite-title {
-    font-size: 2.2rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: var(--cor-azul-escuro);
     margin-bottom: 1rem;
@@ -185,7 +185,7 @@
 }
 
 .cupons-invite-description {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     color: var(--cor-cinza);
     margin-bottom: 2rem;
     line-height: 1.6;
@@ -209,13 +209,14 @@
 }
 
 .feature-text {
+    font-size: 0.85rem;
     font-weight: 500;
     color: var(--cor-azul-escuro);
 }
 
 .btn-large {
     padding: 1.2rem 2.5rem;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 700;
 }
 
@@ -341,14 +342,14 @@
 
 @media (max-width: 768px) {
     .cupons-section {
-        margin: 2rem 0;
-        padding: 0 15px;
+        margin: 0.75rem 0;
+        padding: 0 7.5px;
     }
     
     .cupons-invite {
         grid-template-columns: 1fr;
-        gap: 2rem;
-        padding: 2rem;
+        gap: 0.75rem;
+        padding: 0.75rem;
         text-align: center;
     }
     
@@ -357,7 +358,7 @@
     }
     
     .cupons-invite-title {
-        font-size: 1.8rem;
+        font-size: 1.4rem;
     }
     
     .cupons-features {
@@ -390,16 +391,16 @@
     }
     
     .cupons-invite-title {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
     
     .cupons-invite-description {
-        font-size: 1rem;
+        font-size: 0.8rem;
     }
     
     .btn-large {
         padding: 1rem 2rem;
-        font-size: 1.1rem;
+        font-size: 0.9rem;
     }
     
     .preview-card {
@@ -443,31 +444,6 @@
     justify-content: center;
 }
 
-.hero-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url('/static/Brasil.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.7;
-    z-index: 1;
-}
-
-.hero-background::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
-    z-index: 2;
-}
-
 .hero-content {
     position: relative;
     z-index: 3;
@@ -475,29 +451,6 @@
     margin: 0 auto;
 }
 
-.hero-title {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: var(--cor-azul-escuro);
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
-    line-height: 1.2;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-family: 'Clarendon Condensed', serif;
-}
-
-.hero-subtitle {
-    font-size: 1.3rem;
-    color: #FFFFFF;
-    margin-bottom: 0;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
-    line-height: 1.5;
-    opacity: 0.95;
-    font-weight: 500;
-    max-width: 600px;
-    margin: 0 auto;
-}
 
 /* Captcha Styles */
 .captcha-container {
@@ -650,36 +603,12 @@
         padding: 3rem 1rem;
         min-height: 250px;
     }
-    
-    .hero-title {
-        font-size: 2.2rem;
-        letter-spacing: 1.5px;
-        text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8);
-    }
-    
-    .hero-subtitle {
-        font-size: 1.1rem;
-        max-width: 500px;
-        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
-    }
 }
 
 @media (max-width: 480px) {
     .hero {
         padding: 2rem 1rem;
         min-height: 200px;
-    }
-    
-    .hero-title {
-        font-size: 1.8rem;
-        letter-spacing: 1px;
-        text-shadow: 2px 2px 6px rgba(255, 255, 255, 0.8);
-    }
-    
-    .hero-subtitle {
-        font-size: 1rem;
-        max-width: 400px;
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
     }
 }
 

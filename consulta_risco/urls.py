@@ -6,6 +6,7 @@ urlpatterns = [
     path('sobre/', views.sobre, name='sobre'),
     path('faq/', views.faq, name='faq'),
     path('lgpd/', views.lgpd, name='lgpd'),
+    path('termos-uso/', views.termos_uso, name='termos_uso'),
     path('maintenance/', views.maintenance, name='maintenance'),
     path('cupons/', views.cupons, name='cupons'),
     path('api/cidades/', views.get_cidades, name='get_cidades'),

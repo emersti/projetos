@@ -1,4 +1,35 @@
 from django.db import models
+from django.utils import timezone
+import pytz
+from django.db.models import DateTimeField
+
+
+class BrasiliaDateTimeField(DateTimeField):
+    """
+    Campo DateTimeField que salva diretamente em UTC-3 (Brasília)
+    """
+    def get_prep_value(self, value):
+        if value is None:
+            return value
+        
+        # Se tem timezone, converter para Brasília e remover timezone
+        if hasattr(value, 'tzinfo') and value.tzinfo is not None:
+            brasilia_tz = pytz.timezone('America/Sao_Paulo')
+            brasilia_time = value.astimezone(brasilia_tz)
+            return brasilia_time.replace(tzinfo=None)
+        
+        # Se não tem timezone, assumir que já é UTC-3
+        return value
+
+
+def get_brasilia_time():
+    """
+    Retorna o horário atual em UTC-3 (Brasília) sem timezone info
+    """
+    brasilia_tz = pytz.timezone('America/Sao_Paulo')
+    brasilia_time = timezone.now().astimezone(brasilia_tz)
+    # Retornar apenas a data/hora sem timezone para salvar diretamente em UTC-3
+    return brasilia_time.replace(tzinfo=None)
 
 
 class TipoCupom(models.Model):
@@ -202,13 +233,20 @@ class AvaliacaoSeguranca(models.Model):
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE, help_text="Estado da cidade avaliada")
     cidade = models.CharField(max_length=100, help_text="Nome da cidade avaliada")
     nota = models.IntegerField(help_text="Nota de 1 a 10 para o nível de segurança")
-    data_avaliacao = models.DateTimeField(auto_now_add=True, help_text="Data e hora da avaliação")
+    data_avaliacao = BrasiliaDateTimeField(default=get_brasilia_time, help_text="Data e hora da avaliação em UTC-3 (Brasília)")
     
     class Meta:
         ordering = ['-data_avaliacao']
         unique_together = ['email', 'estado', 'cidade']
         verbose_name = 'Avaliação de Segurança'
         verbose_name_plural = 'Avaliações de Segurança'
+    
+    def save(self, *args, **kwargs):
+        """Override save para garantir que a data seja sempre em UTC-3"""
+        if not self.data_avaliacao:
+            self.data_avaliacao = get_brasilia_time()
+        
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"{self.email} - {self.cidade}/{self.estado.sigla}: {self.nota}/10"

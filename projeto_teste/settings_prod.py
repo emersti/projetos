@@ -146,6 +146,87 @@ LOGGING = {
 # Criar diretório de logs se não existir
 os.makedirs(BASE_DIR / 'logs', exist_ok=True)
 
+# Configurações de arquivos de mídia
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Configurações de CSRF
+CSRF_TRUSTED_ORIGINS = [
+    "https://safetyscorebrasil.com.br",
+    "https://www.safetyscorebrasil.com.br",
+]
+
+# Configurações de CORS
+CORS_ALLOWED_ORIGINS = [
+    "https://safetyscorebrasil.com.br",
+    "https://www.safetyscorebrasil.com.br",
+]
+
+# Configurações de email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@safetyscorebrasil.com.br')
+
+# Configurações de cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': config('REDIS_URL', default='redis://127.0.0.1:6379/1'),
+    }
+}
+
+# Configurações de AWS S3 (opcional)
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
+AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
+
+# Configurações de internacionalização
+USE_I18N = False
+USE_L10N = False
+
+# Configurações de middleware de idioma
+MIDDLEWARE.insert(2, 'django.middleware.locale.LocaleMiddleware')
+
+# Configurações de context processors
+TEMPLATES[0]['OPTIONS']['context_processors'].extend([
+    'django.template.context_processors.i18n',
+    'consulta_risco.context_processors.ultima_atualizacao',
+])
+
+# Configurações de idiomas suportados
+LANGUAGES = [
+    ('pt-br', 'Português'),
+    ('en', 'English'),
+]
+
+# Diretório para arquivos de tradução
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+# Configurações de segurança adicional
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+
+# Configurações de sessão adicional
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Configurações de arquivos estáticos adicionais
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+# Configurações de WhiteNoise
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
+
 
 
 

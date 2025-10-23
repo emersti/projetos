@@ -93,3 +93,19 @@ python manage.py atualizar_pagina sobre --descricao "Atualização do histórico
 - **Fuso horário**: Brasília/Brasil (UTC-3)
 - **Idioma**: Português brasileiro
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

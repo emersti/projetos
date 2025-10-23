@@ -151,3 +151,19 @@ DEBUG=False
 - Multi-AZ para RDS
 - Backup em região diferente
 - Plano de recuperação documentado
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

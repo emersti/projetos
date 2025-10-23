@@ -66,3 +66,19 @@ jobs:
           python manage.py collectstatic --noinput --settings=projeto_teste.settings_production
           sudo systemctl restart safetyscorebrasil
           sudo systemctl reload nginx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

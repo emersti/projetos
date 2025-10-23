@@ -238,3 +238,19 @@ sudo certbot --nginx -d seu-dominio.com -d www.seu-dominio.com
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

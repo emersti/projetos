@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Tradução Simples - Google Translate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .language-selector {
+            position: relative;
+        }
+        
+        .language-icon-btn {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 24px;
+        }
+        
+        .language-icon-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: scale(1.1);
+        }
+        
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 10px;
+            margin-top: 10px;
+            min-width: 160px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .language-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .language-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .language-option:hover {
+            background: #f8f9fa;
+        }
+        
+        .flag {
+            font-size: 20px;
+        }
+        
+        .test-content {
+            padding: 20px 0;
+        }
+        
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .notranslate {
+            font-weight: bold;
+            color: #e74c3c;
+            background: #ffe6e6;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+        
+        .method-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .method-info h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Teste Tradução Simples</div>
+            <div class="language-selector">
+                <button id="languageToggle" class="language-icon-btn" aria-label="Selecionar idioma">
+                    🌐
+                </button>
+                <div class="language-dropdown" id="languageDropdown">
+                    <div class="language-option" data-lang="pt">
+                        <span class="flag">🇧🇷</span>
+                        <span>Português</span>
+                    </div>
+                    <div class="language-option" data-lang="en">
+                        <span class="flag">🇺🇸</span>
+                        <span>English</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-content">
+            <div class="method-info">
+                <h4>🔧 Método de Tradução</h4>
+                <p>Este teste usa o método mais simples e confiável: redirecionamento direto para o Google Translate. Quando você selecionar "English", será redirecionado para a versão traduzida da página.</p>
+            </div>
+            
+            <div class="instructions">
+                <h3>📋 Instruções de Teste</h3>
+                <ol>
+                    <li><strong>Clique no ícone 🌐</strong> no canto superior direito</li>
+                    <li><strong>Verifique se o dropdown aparece</strong> com as opções de idioma</li>
+                    <li><strong>Clique em "English"</strong> - você será redirecionado para a versão traduzida</li>
+                    <li><strong>Verifique se os textos em vermelho</strong> (nomes próprios) não foram traduzidos</li>
+                    <li><strong>Clique em "Português"</strong> para voltar à página original</li>
+                </ol>
+            </div>
+            
+            <div class="test-item">
+                <strong>✅ Texto que deve ser traduzido:</strong><br>
+                Este é um texto de exemplo que deve ser traduzido pelo Google Translate quando você selecionar "English".
+            </div>
+            
+            <div class="test-item">
+                <strong>🚫 Texto que NÃO deve ser traduzido:</strong><br>
+                Estados: <span class="notranslate">SÃO PAULO</span>, <span class="notranslate">RIO DE JANEIRO</span>, <span class="notranslate">MINAS GERAIS</span><br>
+                Cidades: <span class="notranslate">SÃO PAULO</span>, <span class="notranslate">RIO DE JANEIRO</span>, <span class="notranslate">BELO HORIZONTE</span><br>
+                Lojas: <span class="notranslate">MERCADO LIVRE</span>, <span class="notranslate">AMAZON</span>, <span class="notranslate">MAGAZINE LUIZA</span>
+            </div>
+            
+            <div class="test-item">
+                <strong>🔧 Status do Sistema:</strong><br>
+                <span id="systemStatus">Verificando...</span>
+            </div>
+        </div>
+        
+        <div id="statusMessage" class="status" style="display: none;"></div>
+    </div>
+
+    <!-- Google Translate Script -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            try {
+                new google.translate.TranslateElement({
+                    pageLanguage: 'pt',
+                    includedLanguages: 'pt,en',
+                    layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL,
+                    autoDisplay: false,
+                    multilanguagePage: true
+                }, 'google_translate_element');
+                console.log('✅ Google Translate inicializado');
+                updateStatus('Google Translate carregado com sucesso', 'success');
+            } catch (error) {
+                console.error('❌ Erro ao inicializar Google Translate:', error);
+                updateStatus('Erro ao carregar Google Translate', 'error');
+            }
+        }
+        
+        // Função simples para traduzir usando redirecionamento
+        function translatePage(lang) {
+            console.log('🌍 Traduzindo para:', lang);
+            
+            if (lang === 'en') {
+                // Traduzir para inglês usando Google Translate
+                const currentUrl = window.location.href;
+                const translateUrl = `https://translate.google.com/translate?sl=pt&tl=en&u=${encodeURIComponent(currentUrl)}`;
+                
+                console.log('🔗 Redirecionando para:', translateUrl);
+                updateStatus('Redirecionando para versão em inglês...', 'success');
+                
+                // Redirecionar após um pequeno delay para mostrar a mensagem
+                setTimeout(() => {
+                    window.location.href = translateUrl;
+                }, 500);
+                
+            } else if (lang === 'pt') {
+                // Voltar para português (recarregar página original)
+                const originalUrl = window.location.href.split('?')[0];
+                
+                console.log('🔗 Voltando para:', originalUrl);
+                updateStatus('Voltando para versão em português...', 'success');
+                
+                // Redirecionar após um pequeno delay
+                setTimeout(() => {
+                    window.location.href = originalUrl;
+                }, 500);
+            }
+        }
+        
+        // Configurar dropdown
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DOM carregado');
+            
+            const toggle = document.getElementById('languageToggle');
+            const dropdown = document.getElementById('languageDropdown');
+            const systemStatus = document.getElementById('systemStatus');
+            
+            if (toggle && dropdown) {
+                console.log('✅ Elementos encontrados');
+                
+                // Toggle do dropdown
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    dropdown.classList.toggle('show');
+                    console.log('🔄 Dropdown toggleado:', dropdown.classList.contains('show'));
+                    updateStatus('Dropdown ' + (dropdown.classList.contains('show') ? 'aberto' : 'fechado'), 'success');
+                });
+                
+                // Fechar ao clicar fora
+                document.addEventListener('click', function(e) {
+                    if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+                
+                // Seleção de idioma
+                const options = dropdown.querySelectorAll('.language-option');
+                console.log('🌍 Opções encontradas:', options.length);
+                
+                options.forEach((option, index) => {
+                    option.addEventListener('click', function() {
+                        const lang = this.dataset.lang;
+                        console.log('🌍 Idioma selecionado:', lang, '(opção', index + 1, ')');
+                        
+                        // Executar tradução
+                        translatePage(lang);
+                        
+                        dropdown.classList.remove('show');
+                        console.log('❌ Dropdown fechado após seleção');
+                    });
+                });
+                
+                systemStatus.textContent = '✅ Sistema configurado e funcionando';
+                updateStatus('Sistema configurado com sucesso!', 'success');
+                
+            } else {
+                console.error('❌ Elementos não encontrados');
+                systemStatus.textContent = '❌ Erro: Elementos não encontrados';
+                updateStatus('Erro: Elementos não encontrados', 'error');
+            }
+        });
+        
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+    
+    <!-- Google Translate Widget (oculto) -->
+    <div id="google_translate_element" style="display: none;"></div>
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
+</body>
+</html>
+
+

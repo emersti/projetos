@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Favicon Generator - SafeScore Brasil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .favicon-container {
+            display: inline-block;
+            margin: 20px;
+            text-align: center;
+        }
+        .favicon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #FF6B35;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            margin: 0 auto 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 Favicon SafeScore Brasil</h1>
+    
+    <div class="favicon-container">
+        <div class="favicon">S</div>
+        <p><strong>Favicon Preview</strong></p>
+    </div>
+    
+    <div class="instructions">
+        <h2>📋 Instruções para Implementar o Favicon</h2>
+        
+        <h3>1. Adicionar ao template base.html:</h3>
+        <div class="code-block">
+&lt;!-- No &lt;head&gt; do base.html --&gt;
+&lt;link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}"&gt;
+&lt;link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}"&gt;
+&lt;link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}"&gt;
+        </div>
+        
+        <h3>2. Para múltiplos tamanhos (opcional):</h3>
+        <div class="code-block">
+&lt;link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}"&gt;
+&lt;link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}"&gt;
+&lt;link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}"&gt;
+        </div>
+        
+        <h3>3. Estrutura de arquivos:</h3>
+        <div class="code-block">
+static/
+└── images/
+    ├── favicon.svg      (já criado)
+    ├── favicon.ico      (converter do SVG)
+    ├── favicon-16x16.png
+    ├── favicon-32x32.png
+    └── apple-touch-icon.png
+        </div>
+        
+        <h3>4. Conversão de SVG para ICO:</h3>
+        <p>Use ferramentas online como:</p>
+        <ul>
+            <li><a href="https://favicon.io/favicon-converter/" target="_blank">favicon.io</a></li>
+            <li><a href="https://realfavicongenerator.net/" target="_blank">RealFaviconGenerator</a></li>
+            <li><a href="https://convertio.co/svg-ico/" target="_blank">Convertio</a></li>
+        </ul>
+    </div>
+    
+    <div class="instructions">
+        <h2>🎨 Especificações do Favicon</h2>
+        <ul>
+            <li><strong>Forma:</strong> Círculo</li>
+            <li><strong>Cor de fundo:</strong> Laranja (#FF6B35)</li>
+            <li><strong>Letra:</strong> "S" em branco</li>
+            <li><strong>Fonte:</strong> Arial, Bold</li>
+            <li><strong>Tamanho:</strong> 32x32px (escalável)</li>
+        </ul>
+    </div>
+    
+    <div class="instructions">
+        <h2>🔧 Implementação Automática</h2>
+        <p>Para implementar automaticamente no projeto Django:</p>
+        <div class="code-block">
+# 1. Adicionar ao base.html
+# 2. Executar collectstatic
+python manage.py collectstatic --noinput
+
+# 3. Testar no navegador
+# 4. Limpar cache do navegador se necessário
+        </div>
+    </div>
+    
+    <script>
+        // Gerar favicon dinamicamente
+        function generateFavicon() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            
+            // Desenhar círculo laranja
+            ctx.fillStyle = '#FF6B35';
+            ctx.beginPath();
+            ctx.arc(16, 16, 16, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Desenhar letra S branca
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('S', 16, 16);
+            
+            // Converter para data URL
+            const dataURL = canvas.toDataURL('image/png');
+            
+            // Aplicar como favicon
+            const link = document.createElement('link');
+            link.type = 'image/png';
+            link.rel = 'icon';
+            link.href = dataURL;
+            document.head.appendChild(link);
+        }
+        
+        // Aplicar favicon quando a página carregar
+        window.onload = generateFavicon;
+    </script>
+</body>
+</html>

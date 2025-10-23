@@ -26,3 +26,19 @@ class Command(BaseCommand):
                 self.style.ERROR(f'❌ Erro ao atualizar página "{pagina}": {str(e)}')
             )
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,15 +1,37 @@
 [Unit]
-Description=Gunicorn instance to serve safetyscorebrasil
-After=network.target
+Description=Gunicorn instance to serve safetyscorebrasil.com.br
+After=network.target postgresql.service redis.service
+Wants=postgresql.service redis.service
 
 [Service]
+Type=notify
 User=django
 Group=www-data
-WorkingDirectory=/var/www/safetyscorebrasil
-Environment="PATH=/var/www/safetyscorebrasil/venv/bin"
-ExecStart=/var/www/safetyscorebrasil/venv/bin/gunicorn --workers 3 --bind unix:/var/www/safetyscorebrasil/safetyscorebrasil.sock projeto_teste.wsgi:application --settings=projeto_teste.settings_prod
+WorkingDirectory=/var/www/safetyscorebrasil.com.br
+Environment="PATH=/var/www/safetyscorebrasil.com.br/venv/bin"
+Environment="DJANGO_SETTINGS_MODULE=projeto_teste.settings_prod"
+Environment="PYTHONPATH=/var/www/safetyscorebrasil.com.br"
+ExecStart=/var/www/safetyscorebrasil.com.br/venv/bin/gunicorn \
+    --config /var/www/safetyscorebrasil.com.br/gunicorn_config.py \
+    projeto_teste.wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
 Restart=on-failure
+RestartSec=5
+KillMode=mixed
+TimeoutStopSec=30
+NotifyAccess=all
+
+# Configurações de segurança
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/safetyscorebrasil.com.br
+ReadWritePaths=/var/log/safetyscorebrasil
+
+# Configurações de recursos
+LimitNOFILE=65536
+LimitNPROC=4096
 
 [Install]
 WantedBy=multi-user.target

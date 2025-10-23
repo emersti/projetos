@@ -130,6 +130,7 @@ resource "aws_security_group" "ec2" {
   }
 
   egress {
+    description = "All outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -138,6 +139,40 @@ resource "aws_security_group" "ec2" {
 
   tags = {
     Name = "${var.project_name}-ec2-sg"
+  }
+}
+
+# Security Group para ALB (Application Load Balancer)
+resource "aws_security_group" "alb" {
+  name_prefix = "${var.project_name}-alb"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "All outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project_name}-alb-sg"
   }
 }
 
@@ -178,7 +213,7 @@ resource "aws_key_pair" "main" {
 # Instância EC2
 resource "aws_instance" "app" {
   ami                    = data.aws_ami.ubuntu.id
-  instance_type          = "t3.micro"
+  instance_type          = "t3.small"  # Aumentado para melhor performance
   key_name              = aws_key_pair.main.key_name
   subnet_id             = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.ec2.id]
@@ -187,13 +222,71 @@ resource "aws_instance" "app" {
 
   root_block_device {
     volume_type = "gp3"
-    volume_size = 20
+    volume_size = 30  # Aumentado para 30GB
     encrypted   = true
   }
 
+  # Configurações de monitoramento
+  monitoring = true
+
+  # Configurações de IAM
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+
   tags = {
     Name = "${var.project_name}-app"
+    Environment = "production"
+    Project = var.project_name
   }
+}
+
+# IAM Role para EC2
+resource "aws_iam_role" "ec2_role" {
+  name = "${var.project_name}-ec2-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name = "${var.project_name}-ec2-role"
+  }
+}
+
+# IAM Instance Profile
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "${var.project_name}-ec2-profile"
+  role = aws_iam_role.ec2_role.name
+}
+
+# IAM Policy para CloudWatch Logs
+resource "aws_iam_role_policy" "ec2_cloudwatch_policy" {
+  name = "${var.project_name}-ec2-cloudwatch-policy"
+  role = aws_iam_role.ec2_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams"
+        ]
+        Resource = "arn:aws:logs:*:*:*"
+      }
+    ]
+  })
 }
 
 # Elastic IP

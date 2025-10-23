@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  # Middleware de idioma
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -64,6 +65,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',  # Context processor para i18n
+                'consulta_risco.context_processors.ultima_atualizacao',  # Context processor para data de atualização
             ],
         },
     },
@@ -113,6 +116,17 @@ USE_I18N = False
 USE_L10N = False
 
 USE_TZ = True
+
+# Idiomas suportados
+LANGUAGES = [
+    ('pt-br', 'Português'),
+    ('en', 'English'),
+]
+
+# Diretório para arquivos de tradução
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 
 
 # Static files (CSS, JavaScript, Images)

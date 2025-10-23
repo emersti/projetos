@@ -1,28 +1,37 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" id="html-lang">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}City Safety Score do Brasil{% endblock %}</title>
     {% load static %}
     {% load consulta_risco_tags %}
+    
+    <!-- Favicon SafeScore Brasil -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
 </head>
 <body>
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <div class="logo-icon">
-                    <a href="{% url 'home' %}" class="icon-link">
-                        <div class="icon-circle">
-                            <span class="icon-letter">S</span>
-                        </div>
-                    </a>
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <a href="{% url 'home' %}" class="icon-link">
+                            <div class="icon-circle">
+                                <span class="icon-letter">S</span>
+                            </div>
+                        </a>
+                    </div>
+                    <h1 class="logo">
+                        <a href="{% url 'home' %}" class="logo-link" style="color: white !important; text-decoration: none !important;">Stigliani</a>
+                    </h1>
                 </div>
-                <h1 class="logo">
-                    <a href="{% url 'home' %}" class="logo-link" style="color: white !important; text-decoration: none !important;">Stigliani</a>
-                </h1>
             </div>
         </div>
     </header>
@@ -39,19 +48,47 @@
             <div class="footer-content">
                 <div class="footer-info">
                     <p>&copy; 2025 Stigliani. Todos os direitos reservados.</p>
-                    <p class="footer-update">
-                        <small>Dados atualizados em: {% get_ultima_atualizacao %}</small>
+                    <p class="footer-privacy">
+                        <small>Ao navegar pelo site safetyscorebrasil.com.br e resgatar algum benefício, você concorda com nossos termos de uso e política de privacidade.</small>
                     </p>
                 </div>
                 <div class="footer-links">
                     <a href="{% url 'sobre' %}" class="footer-link">Quem Somos</a>
                     <a href="{% url 'faq' %}" class="footer-link">FAQ</a>
+                    <a href="{% url 'termos_uso' %}" class="footer-link">Termos de Uso</a>
                     <a href="{% url 'lgpd' %}" class="footer-link">Política de Privacidade</a>
                     <a href="{% url 'cupons' %}" class="footer-link">Cupons</a>
+                </div>
+                <div class="footer-update">
+                    <p><small>Dados atualizados em: {% get_ultima_atualizacao %}</small></p>
                 </div>
             </div>
         </div>
     </footer>
+
+    <!-- Overlay para bloquear navegação até aceitar cookies -->
+    <div id="privacyOverlay" class="privacy-overlay"></div>
+
+    <!-- Banner de Política de Privacidade e Cookies -->
+    <div id="privacyBanner" class="privacy-banner" role="dialog" aria-modal="true" aria-labelledby="privacy-banner-title" aria-describedby="privacy-banner-description">
+        <div class="privacy-banner-content">
+            <div class="privacy-banner-text">
+                <div class="privacy-banner-icon">
+                    <div class="icon-circle">
+                        <span class="icon-letter">S</span>
+                    </div>
+                </div>
+                <div class="privacy-banner-message">
+                    <strong id="privacy-banner-title">Política de Privacidade e Cookies</strong>
+                    <p id="privacy-banner-description">Ao navegar pelo site safetyscorebrasil.com.br e resgatar algum benefício, você concorda com nossos termos de uso e política de privacidade. Utilizamos cookies para melhorar sua experiência.</p>
+                </div>
+            </div>
+            <div class="privacy-banner-actions">
+                <button id="acceptAllPrivacy" class="privacy-btn privacy-btn-accept">Aceitar</button>
+            </div>
+        </div>
+    </div>
+
 
     <script src="{% static 'js/main.js' %}"></script>
 </body>

@@ -135,3 +135,19 @@ tar -czf backup_files.tar.gz /var/www/safetyscorebrasil/
 **Data**: 09 de outubro de 2025
 **Status**: Pronto para deploy
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
