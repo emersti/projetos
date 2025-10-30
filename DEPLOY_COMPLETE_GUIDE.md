@@ -438,3 +438,4 @@ sudo journalctl -u safetyscorebrasil --since "1 hour ago"
 **Última Atualização**: Janeiro 2025  
 **Versão**: 2.0.0  
 **Favicon**: ✅ Implementado (círculo laranja com "S" branca)
+

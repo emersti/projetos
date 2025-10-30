@@ -52,3 +52,4 @@ python manage.py collectstatic --noinput
 - ✅ Tags HTML adicionadas
 - ⏳ Aguardando conversão para ICO
 - ⏳ Aguardando teste no navegador
+

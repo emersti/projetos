@@ -268,3 +268,4 @@ sudo tail -f /var/log/nginx/safetyscorebrasil_access.log
 **Domínio**: safetyscorebrasil.com.br  
 **Última Atualização**: Janeiro 2025  
 **Versão**: 1.0.0
+

@@ -13,6 +13,7 @@ VENV_DIR="$PROJECT_DIR/venv"
 REPO_URL="https://github.com/seu-usuario/seu-repositorio.git"
 BRANCH="main"
 SERVICE_NAME="safetyscorebrasil"
+USER_NAME="django"  # Usuário para rodar a aplicação
 
 # Cores para output
 RED='\033[0;31m'
@@ -110,40 +111,45 @@ EOF
 systemctl enable fail2ban
 systemctl start fail2ban
 
-# Criar usuário para o projeto
+# Criar usuário para o projeto (usar 'django' se não existir)
 log "Criando usuário para o projeto..."
-if ! id "$PROJECT_NAME" &>/dev/null; then
-    useradd -m -s /bin/bash $PROJECT_NAME
-    usermod -aG sudo $PROJECT_NAME
-    info "Usuário $PROJECT_NAME criado"
+if ! id "$USER_NAME" &>/dev/null; then
+    if ! id "$PROJECT_NAME" &>/dev/null; then
+        useradd -m -s /bin/bash $USER_NAME
+        usermod -aG sudo $USER_NAME
+        info "Usuário $USER_NAME criado"
+    else
+        USER_NAME="$PROJECT_NAME"
+        info "Usando usuário $USER_NAME existente"
+    fi
 else
-    info "Usuário $PROJECT_NAME já existe"
+    info "Usuário $USER_NAME já existe"
 fi
 
 # Criar diretório do projeto
 log "Criando diretório do projeto..."
 mkdir -p $PROJECT_DIR
-chown $PROJECT_NAME:$PROJECT_NAME $PROJECT_DIR
+chown $USER_NAME:$USER_NAME $PROJECT_DIR
 
 # Clonar ou atualizar repositório
 log "Clonando/atualizando repositório..."
 if [ -d "$PROJECT_DIR/.git" ]; then
     cd $PROJECT_DIR
-    sudo -u $PROJECT_NAME git fetch origin
-    sudo -u $PROJECT_NAME git reset --hard origin/$BRANCH
+    sudo -u $USER_NAME git fetch origin
+    sudo -u $USER_NAME git reset --hard origin/$BRANCH
     info "Repositório atualizado"
 else
     cd /var/www
-    sudo -u $PROJECT_NAME git clone $REPO_URL $DOMAIN
+    sudo -u $USER_NAME git clone $REPO_URL $DOMAIN
     cd $PROJECT_DIR
-    sudo -u $PROJECT_NAME git checkout $BRANCH
+    sudo -u $USER_NAME git checkout $BRANCH
     info "Repositório clonado"
 fi
 
 # Criar ambiente virtual
 log "Criando ambiente virtual..."
 if [ ! -d "$VENV_DIR" ]; then
-    sudo -u $PROJECT_NAME python3 -m venv $VENV_DIR
+    sudo -u $USER_NAME python3 -m venv $VENV_DIR
     info "Ambiente virtual criado"
 else
     info "Ambiente virtual já existe"
@@ -151,8 +157,8 @@ fi
 
 # Ativar ambiente virtual e instalar dependências
 log "Instalando dependências Python..."
-sudo -u $PROJECT_NAME $VENV_DIR/bin/pip install --upgrade pip
-sudo -u $PROJECT_NAME $VENV_DIR/bin/pip install -r requirements-prod.txt
+sudo -u $USER_NAME $VENV_DIR/bin/pip install --upgrade pip
+sudo -u $USER_NAME $VENV_DIR/bin/pip install -r requirements-prod.txt
 
 # Configurar banco de dados PostgreSQL
 log "Configurando banco de dados PostgreSQL..."
@@ -171,22 +177,22 @@ fi
 
 # Executar migrações
 log "Executando migrações do banco de dados..."
-sudo -u $PROJECT_NAME $VENV_DIR/bin/python manage.py migrate --settings=projeto_teste.settings_prod
+sudo -u $USER_NAME $VENV_DIR/bin/python manage.py migrate --settings=projeto_teste.settings_prod
 
 # Criar superusuário (opcional)
 log "Criando superusuário..."
-echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@safetyscorebrasil.com.br', 'admin123')" | sudo -u $PROJECT_NAME $VENV_DIR/bin/python manage.py shell --settings=projeto_teste.settings_prod || true
+echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@safetyscorebrasil.com.br', 'admin123')" | sudo -u $USER_NAME $VENV_DIR/bin/python manage.py shell --settings=projeto_teste.settings_prod || true
 
 # Coletar arquivos estáticos
 log "Coletando arquivos estáticos..."
-sudo -u $PROJECT_NAME $VENV_DIR/bin/python manage.py collectstatic --noinput --settings=projeto_teste.settings_prod
+sudo -u $USER_NAME $VENV_DIR/bin/python manage.py collectstatic --noinput --settings=projeto_teste.settings_prod
 
 # Criar diretórios necessários
 log "Criando diretórios necessários..."
 mkdir -p $PROJECT_DIR/logs
 mkdir -p $PROJECT_DIR/media
 mkdir -p $PROJECT_DIR/staticfiles
-chown -R $PROJECT_NAME:$PROJECT_NAME $PROJECT_DIR
+chown -R $USER_NAME:$USER_NAME $PROJECT_DIR
 
 # Configurar Nginx
 log "Configurando Nginx..."
