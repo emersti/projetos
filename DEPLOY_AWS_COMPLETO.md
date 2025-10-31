@@ -444,3 +444,4 @@ Para problemas ou dúvidas:
 **Domínio**: safetyscorebrasil.com.br  
 **Última Atualização**: Janeiro 2025
 
+

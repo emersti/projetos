@@ -1,0 +1,101 @@
+# Arquivos e diretórios a ignorar no build do Docker
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentação
+*.md
+!README.md
+docs/
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+*.env
+env.example
+env_example.txt
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Scripts de deploy
+deploy.sh
+deploy_*.sh
+terraform/
+*.tf
+*.tfvars
+
+# Logs e backups
+logs/
+*.log
+backups/
+*.sql.gz
+
+# Arquivos temporários
+*.tmp
+*.bak
+*.swp
+.cache/
+
+# SSL (não deve estar no build)
+ssl/
+*.pem
+*.key
+*.crt
+
+# Configurações locais
+apache_config.conf
+nginx_config.conf
+*.service
+
+# Arquivos de teste
+test_*.html
+test_*.py
+
+# Excel e arquivos de dados grandes
+*.xlsx
+*.xls
+*.csv
+
+# Arquivos de build e migrações antigas (opcional)
+# migrations/  # Comente esta linha se quiser incluir migrations
+

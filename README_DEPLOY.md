@@ -85,3 +85,4 @@ Em caso de problemas, consulte:
 **Domínio**: safetyscorebrasil.com.br  
 **Última Atualização**: Janeiro 2025
 
+

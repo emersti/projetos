@@ -197,3 +197,4 @@ Se algo não funcionar, verifique:
 
 **Última atualização:** Janeiro 2025
 
+

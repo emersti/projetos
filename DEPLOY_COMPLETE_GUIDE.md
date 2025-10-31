@@ -439,3 +439,4 @@ sudo journalctl -u safetyscorebrasil --since "1 hour ago"
 **Versão**: 2.0.0  
 **Favicon**: ✅ Implementado (círculo laranja com "S" branca)
 
+

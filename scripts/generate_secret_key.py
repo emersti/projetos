@@ -17,3 +17,4 @@ if __name__ == "__main__":
     print("Arquivo: /var/www/safetyscorebrasil.com.br/.env")
     print("\n")
 
+

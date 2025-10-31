@@ -15,8 +15,8 @@ preload_app = True
 worker_tmp_dir = "/dev/shm"
 
 # Configurações de logging
-accesslog = "/var/www/safetyscorebrasil.com.br/logs/gunicorn_access.log"
-errorlog = "/var/www/safetyscorebrasil.com.br/logs/gunicorn_error.log"
+accesslog = "/app/logs/gunicorn_access.log"
+errorlog = "/app/logs/gunicorn_error.log"
 loglevel = "info"
 access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(D)s'
 
