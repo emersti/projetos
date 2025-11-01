@@ -1,0 +1,370 @@
+<svg width="1920" height="600" viewBox="0 0 1920 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradientes sofisticados -->
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0F172A;stop-opacity:1" />
+      <stop offset="20%" style="stop-color:#1E293B;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#334155;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#475569;stop-opacity:1" />
+      <stop offset="80%" style="stop-color:#64748B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#94A3B8;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="cityGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0F172A;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#1E293B;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#334155;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#475569;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="securityGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#FF8A65;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#FFB74D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFD54F;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#10B981;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#34D399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6EE7B7;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="warningGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#D97706;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#FBBF24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FCD34D;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="dangerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#DC2626;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#EF4444;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#F87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FCA5A5;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="glowGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </radialGradient>
+    
+    <!-- Filtros para efeitos especiais -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Fundo do céu com gradiente sofisticado -->
+  <rect width="1920" height="400" fill="url(#skyGradient)"/>
+  
+  <!-- Estrelas com diferentes tamanhos e brilhos -->
+  <g fill="#FFFFFF" opacity="0.9">
+    <!-- Estrelas grandes -->
+    <circle cx="150" cy="50" r="2" filter="url(#softGlow)"/>
+    <circle cx="300" cy="80" r="1.5" filter="url(#softGlow)"/>
+    <circle cx="450" cy="40" r="2.5" filter="url(#softGlow)"/>
+    <circle cx="600" cy="70" r="1" filter="url(#softGlow)"/>
+    <circle cx="750" cy="30" r="2" filter="url(#softGlow)"/>
+    <circle cx="900" cy="60" r="1.5" filter="url(#softGlow)"/>
+    <circle cx="1050" cy="45" r="2" filter="url(#softGlow)"/>
+    <circle cx="1200" cy="75" r="1" filter="url(#softGlow)"/>
+    <circle cx="1350" cy="35" r="2.5" filter="url(#softGlow)"/>
+    <circle cx="1500" cy="65" r="1.5" filter="url(#softGlow)"/>
+    <circle cx="1650" cy="55" r="2" filter="url(#softGlow)"/>
+    <circle cx="1800" cy="40" r="1" filter="url(#softGlow)"/>
+    
+    <!-- Estrelas pequenas -->
+    <circle cx="100" cy="20" r="0.5"/>
+    <circle cx="250" cy="60" r="0.5"/>
+    <circle cx="400" cy="25" r="0.5"/>
+    <circle cx="550" cy="45" r="0.5"/>
+    <circle cx="700" cy="15" r="0.5"/>
+    <circle cx="850" cy="35" r="0.5"/>
+    <circle cx="1000" cy="20" r="0.5"/>
+    <circle cx="1150" cy="50" r="0.5"/>
+    <circle cx="1300" cy="10" r="0.5"/>
+    <circle cx="1450" cy="40" r="0.5"/>
+    <circle cx="1600" cy="25" r="0.5"/>
+    <circle cx="1750" cy="55" r="0.5"/>
+  </g>
+  
+  <!-- Silhueta da cidade brasileira com profundidade -->
+  <g fill="url(#cityGradient)" filter="url(#shadow)">
+    <!-- São Paulo - Prédios altos -->
+    <rect x="200" y="120" width="100" height="480"/>
+    <rect x="210" y="110" width="80" height="490"/>
+    <rect x="220" y="100" width="60" height="500"/>
+    <rect x="230" y="90" width="40" height="510"/>
+    
+    <!-- Rio de Janeiro - Prédios médios -->
+    <rect x="400" y="180" width="90" height="420"/>
+    <rect x="410" y="170" width="70" height="430"/>
+    <rect x="420" y="160" width="50" height="440"/>
+    
+    <!-- Brasília - Prédios modernos -->
+    <rect x="600" y="150" width="80" height="450"/>
+    <rect x="610" y="140" width="60" height="460"/>
+    <rect x="620" y="130" width="40" height="470"/>
+    
+    <!-- Belo Horizonte - Prédios variados -->
+    <rect x="800" y="200" width="100" height="400"/>
+    <rect x="810" y="190" width="80" height="410"/>
+    <rect x="820" y="180" width="60" height="420"/>
+    
+    <!-- Salvador - Prédios históricos -->
+    <rect x="1000" y="180" width="90" height="420"/>
+    <rect x="1010" y="170" width="70" height="430"/>
+    <rect x="1020" y="160" width="50" height="440"/>
+    
+    <!-- Fortaleza - Prédios costeiros -->
+    <rect x="1200" y="160" width="80" height="440"/>
+    <rect x="1210" y="150" width="60" height="450"/>
+    <rect x="1220" y="140" width="40" height="460"/>
+    
+    <!-- Manaus - Prédios amazônicos -->
+    <rect x="1400" y="220" width="70" height="380"/>
+    <rect x="1410" y="210" width="50" height="390"/>
+    <rect x="1420" y="200" width="30" height="400"/>
+    
+    <!-- Curitiba - Prédios planejados -->
+    <rect x="1600" y="180" width="90" height="420"/>
+    <rect x="1610" y="170" width="70" height="430"/>
+    <rect x="1620" y="160" width="50" height="440"/>
+    
+    <!-- Porto Alegre - Prédios gaúchos -->
+    <rect x="1800" y="200" width="80" height="400"/>
+    <rect x="1810" y="190" width="60" height="410"/>
+    <rect x="1820" y="180" width="40" height="420"/>
+  </g>
+  
+  <!-- Janelas iluminadas com cores de segurança -->
+  <g opacity="0.8">
+    <!-- São Paulo - Verde (Seguro) -->
+    <rect x="220" y="150" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="240" y="150" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="260" y="150" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="280" y="150" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="220" y="180" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="240" y="180" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="260" y="180" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="280" y="180" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    
+    <!-- Rio de Janeiro - Amarelo (Atenção) -->
+    <rect x="420" y="210" width="8" height="12" fill="url(#warningGradient)" filter="url(#softGlow)"/>
+    <rect x="440" y="210" width="8" height="12" fill="url(#warningGradient)" filter="url(#softGlow)"/>
+    <rect x="460" y="210" width="8" height="12" fill="url(#warningGradient)" filter="url(#softGlow)"/>
+    <rect x="420" y="240" width="8" height="12" fill="url(#warningGradient)" filter="url(#softGlow)"/>
+    <rect x="440" y="240" width="8" height="12" fill="url(#warningGradient)" filter="url(#softGlow)"/>
+    <rect x="460" y="240" width="8" height="12" fill="url(#warningGradient)" filter="url(#softGlow)"/>
+    
+    <!-- Brasília - Verde (Seguro) -->
+    <rect x="620" y="180" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="640" y="180" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="660" y="180" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="620" y="210" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="640" y="210" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    <rect x="660" y="210" width="8" height="12" fill="url(#scoreGradient)" filter="url(#softGlow)"/>
+    
+    <!-- Belo Horizonte - Vermelho (Perigo) -->
+    <rect x="820" y="230" width="8" height="12" fill="url(#dangerGradient)" filter="url(#softGlow)"/>
+    <rect x="840" y="230" width="8" height="12" fill="url(#dangerGradient)" filter="url(#softGlow)"/>
+    <rect x="860" y="230" width="8" height="12" fill="url(#dangerGradient)" filter="url(#softGlow)"/>
+    <rect x="820" y="260" width="8" height="12" fill="url(#dangerGradient)" filter="url(#softGlow)"/>
+    <rect x="840" y="260" width="8" height="12" fill="url(#dangerGradient)" filter="url(#softGlow)"/>
+    <rect x="860" y="260" width="8" height="12" fill="url(#dangerGradient)" filter="url(#softGlow)"/>
+  </g>
+  
+  <!-- Ícone de segurança central com efeitos especiais -->
+  <g transform="translate(960, 120)">
+    <!-- Escudo principal com gradiente e brilho -->
+    <path d="M -70 -50 L 0 -80 L 70 -50 L 70 40 L 0 70 L -70 40 Z" fill="url(#securityGradient)" opacity="0.95" filter="url(#glow)"/>
+    <path d="M -50 -30 L 0 -55 L 50 -30 L 50 25 L 0 50 L -50 25 Z" fill="#FFFFFF" opacity="0.9"/>
+    
+    <!-- Score no centro com efeito de brilho -->
+    <circle cx="0" cy="0" r="30" fill="#0F172A" opacity="0.8"/>
+    <circle cx="0" cy="0" r="25" fill="#1E293B"/>
+    <text x="0" y="8" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="24" font-weight="bold">85</text>
+    <text x="0" y="-20" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="10" font-weight="bold">SCORE</text>
+    
+    <!-- Efeito de brilho ao redor -->
+    <circle cx="0" cy="0" r="40" fill="url(#glowGradient)" opacity="0.3"/>
+  </g>
+  
+  <!-- Scores flutuantes com efeitos especiais -->
+  <g opacity="0.9">
+    <!-- São Paulo Score -->
+    <g transform="translate(250, 80)">
+      <circle cx="0" cy="0" r="25" fill="url(#scoreGradient)" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">92</text>
+    </g>
+    
+    <!-- Rio de Janeiro Score -->
+    <g transform="translate(450, 110)">
+      <circle cx="0" cy="0" r="25" fill="url(#warningGradient)" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">67</text>
+    </g>
+    
+    <!-- Brasília Score -->
+    <g transform="translate(650, 90)">
+      <circle cx="0" cy="0" r="25" fill="url(#scoreGradient)" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">88</text>
+    </g>
+    
+    <!-- Belo Horizonte Score -->
+    <g transform="translate(850, 130)">
+      <circle cx="0" cy="0" r="25" fill="url(#dangerGradient)" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">45</text>
+    </g>
+    
+    <!-- Salvador Score -->
+    <g transform="translate(1050, 110)">
+      <circle cx="0" cy="0" r="25" fill="url(#warningGradient)" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">72</text>
+    </g>
+    
+    <!-- Fortaleza Score -->
+    <g transform="translate(1250, 90)">
+      <circle cx="0" cy="0" r="25" fill="url(#scoreGradient)" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">81</text>
+    </g>
+    
+    <!-- Manaus Score -->
+    <g transform="translate(1450, 160)">
+      <circle cx="0" cy="0" r="25" fill="url(#warningGradient)" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">63</text>
+    </g>
+    
+    <!-- Curitiba Score -->
+    <g transform="translate(1650, 110)">
+      <circle cx="0" cy="0" r="25" fill="url(#scoreGradient)" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">89</text>
+    </g>
+    
+    <!-- Porto Alegre Score -->
+    <g transform="translate(1850, 130)">
+      <circle cx="0" cy="0" r="25" fill="url(#scoreGradient)" filter="url(#glow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">86</text>
+    </g>
+  </g>
+  
+  <!-- Linhas de conexão com efeito de brilho -->
+  <g stroke="#FF6B35" stroke-width="3" opacity="0.4" fill="none" filter="url(#softGlow)">
+    <path d="M 250 80 Q 350 60 450 110"/>
+    <path d="M 450 110 Q 550 80 650 90"/>
+    <path d="M 650 90 Q 750 100 850 130"/>
+    <path d="M 850 130 Q 950 120 1050 110"/>
+    <path d="M 1050 110 Q 1150 90 1250 90"/>
+    <path d="M 1250 90 Q 1350 110 1450 160"/>
+    <path d="M 1450 160 Q 1550 120 1650 110"/>
+    <path d="M 1650 110 Q 1750 120 1850 130"/>
+  </g>
+  
+  <!-- Elementos de segurança com efeitos especiais -->
+  <g opacity="0.7">
+    <!-- Câmeras de segurança com brilho -->
+    <g transform="translate(300, 450)">
+      <circle cx="0" cy="0" r="10" fill="url(#securityGradient)" filter="url(#glow)"/>
+      <rect x="-2" y="-5" width="4" height="10" fill="#0F172A"/>
+      <circle cx="0" cy="0" r="15" fill="url(#glowGradient)" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(700, 480)">
+      <circle cx="0" cy="0" r="10" fill="url(#securityGradient)" filter="url(#glow)"/>
+      <rect x="-2" y="-5" width="4" height="10" fill="#0F172A"/>
+      <circle cx="0" cy="0" r="15" fill="url(#glowGradient)" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(1100, 460)">
+      <circle cx="0" cy="0" r="10" fill="url(#securityGradient)" filter="url(#glow)"/>
+      <rect x="-2" y="-5" width="4" height="10" fill="#0F172A"/>
+      <circle cx="0" cy="0" r="15" fill="url(#glowGradient)" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(1500, 490)">
+      <circle cx="0" cy="0" r="10" fill="url(#securityGradient)" filter="url(#glow)"/>
+      <rect x="-2" y="-5" width="4" height="10" fill="#0F172A"/>
+      <circle cx="0" cy="0" r="15" fill="url(#glowGradient)" opacity="0.3"/>
+    </g>
+    
+    <!-- Escudos de segurança com efeitos -->
+    <g transform="translate(500, 520)">
+      <path d="M -8 -12 L 0 -18 L 8 -12 L 8 6 L 0 12 L -8 6 Z" fill="url(#securityGradient)" opacity="0.8" filter="url(#softGlow)"/>
+      <path d="M -6 -8 L 0 -12 L 6 -8 L 6 4 L 0 8 L -6 4 Z" fill="#FFFFFF" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(900, 540)">
+      <path d="M -8 -12 L 0 -18 L 8 -12 L 8 6 L 0 12 L -8 6 Z" fill="url(#securityGradient)" opacity="0.8" filter="url(#softGlow)"/>
+      <path d="M -6 -8 L 0 -12 L 6 -8 L 6 4 L 0 8 L -6 4 Z" fill="#FFFFFF" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(1300, 530)">
+      <path d="M -8 -12 L 0 -18 L 8 -12 L 8 6 L 0 12 L -8 6 Z" fill="url(#securityGradient)" opacity="0.8" filter="url(#softGlow)"/>
+      <path d="M -6 -8 L 0 -12 L 6 -8 L 6 4 L 0 8 L -6 4 Z" fill="#FFFFFF" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(1700, 550)">
+      <path d="M -8 -12 L 0 -18 L 8 -12 L 8 6 L 0 12 L -8 6 Z" fill="url(#securityGradient)" opacity="0.8" filter="url(#softGlow)"/>
+      <path d="M -6 -8 L 0 -12 L 6 -8 L 6 4 L 0 8 L -6 4 Z" fill="#FFFFFF" opacity="0.3"/>
+    </g>
+  </g>
+  
+  <!-- Partículas de luz flutuantes -->
+  <g opacity="0.6">
+    <circle cx="100" cy="300" r="2" fill="#FF6B35" filter="url(#softGlow)"/>
+    <circle cx="300" cy="250" r="1.5" fill="#10B981" filter="url(#softGlow)"/>
+    <circle cx="500" cy="350" r="2" fill="#F59E0B" filter="url(#softGlow)"/>
+    <circle cx="700" cy="280" r="1.5" fill="#EF4444" filter="url(#softGlow)"/>
+    <circle cx="900" cy="320" r="2" fill="#FF6B35" filter="url(#softGlow)"/>
+    <circle cx="1100" cy="290" r="1.5" fill="#10B981" filter="url(#softGlow)"/>
+    <circle cx="1300" cy="310" r="2" fill="#F59E0B" filter="url(#softGlow)"/>
+    <circle cx="1500" cy="270" r="1.5" fill="#EF4444" filter="url(#softGlow)"/>
+    <circle cx="1700" cy="330" r="2" fill="#FF6B35" filter="url(#softGlow)"/>
+    <circle cx="1900" cy="300" r="1.5" fill="#10B981" filter="url(#softGlow)"/>
+  </g>
+  
+  <!-- Overlay gradiente sofisticado para contraste -->
+  <rect width="1920" height="600" fill="linear-gradient(135deg, rgba(15,23,42,0.3) 0%, rgba(30,41,59,0.4) 50%, rgba(51,65,85,0.5) 100%)" opacity="0.6"/>
+</svg>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

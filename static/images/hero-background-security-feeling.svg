@@ -1,0 +1,371 @@
+<svg width="1920" height="600" viewBox="0 0 1920 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradientes que transmitem segurança e tranquilidade -->
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E3A8A;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#60A5FA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#93C5FD;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="cityGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1F2937;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#374151;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4B5563;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="securityGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#10B981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34D399;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="safeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#047857;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#059669;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10B981;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="attentionGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#D97706;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FBBF24;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="riskGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#DC2626;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#EF4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F87171;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="protectionGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#10B981;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#10B981;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#10B981;stop-opacity:0" />
+    </radialGradient>
+    
+    <radialGradient id="shieldGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.6" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </radialGradient>
+    
+    <!-- Filtros para efeitos de segurança -->
+    <filter id="securityGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="protectionShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#10B981" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  
+  <!-- Fundo do céu que transmite tranquilidade -->
+  <rect width="1920" height="400" fill="url(#skyGradient)"/>
+  
+  <!-- Nuvens suaves que transmitem calma -->
+  <g opacity="0.7">
+    <ellipse cx="200" cy="80" rx="80" ry="30" fill="#FFFFFF"/>
+    <ellipse cx="220" cy="70" rx="60" ry="25" fill="#FFFFFF"/>
+    <ellipse cx="180" cy="70" rx="50" ry="20" fill="#FFFFFF"/>
+    
+    <ellipse cx="500" cy="60" rx="90" ry="35" fill="#FFFFFF"/>
+    <ellipse cx="520" cy="50" rx="70" ry="30" fill="#FFFFFF"/>
+    <ellipse cx="480" cy="50" rx="55" ry="25" fill="#FFFFFF"/>
+    
+    <ellipse cx="800" cy="90" rx="85" ry="32" fill="#FFFFFF"/>
+    <ellipse cx="820" cy="80" rx="65" ry="28" fill="#FFFFFF"/>
+    <ellipse cx="780" cy="80" rx="50" ry="22" fill="#FFFFFF"/>
+    
+    <ellipse cx="1200" cy="70" rx="80" ry="30" fill="#FFFFFF"/>
+    <ellipse cx="1220" cy="60" rx="60" ry="25" fill="#FFFFFF"/>
+    <ellipse cx="1180" cy="60" rx="45" ry="20" fill="#FFFFFF"/>
+    
+    <ellipse cx="1600" cy="85" rx="90" ry="35" fill="#FFFFFF"/>
+    <ellipse cx="1620" cy="75" rx="70" ry="30" fill="#FFFFFF"/>
+    <ellipse cx="1580" cy="75" rx="55" ry="25" fill="#FFFFFF"/>
+  </g>
+  
+  <!-- Silhueta da cidade brasileira com sensação de estabilidade -->
+  <g fill="url(#cityGradient)">
+    <!-- São Paulo - Prédios sólidos e seguros -->
+    <rect x="200" y="150" width="120" height="450"/>
+    <rect x="210" y="140" width="100" height="460"/>
+    <rect x="220" y="130" width="80" height="470"/>
+    <rect x="230" y="120" width="60" height="480"/>
+    
+    <!-- Rio de Janeiro - Prédios costeiros estáveis -->
+    <rect x="400" y="200" width="100" height="400"/>
+    <rect x="410" y="190" width="80" height="410"/>
+    <rect x="420" y="180" width="60" height="420"/>
+    
+    <!-- Brasília - Prédios governamentais seguros -->
+    <rect x="600" y="180" width="90" height="420"/>
+    <rect x="610" y="170" width="70" height="430"/>
+    <rect x="620" y="160" width="50" height="440"/>
+    
+    <!-- Belo Horizonte - Prédios mineiros robustos -->
+    <rect x="800" y="220" width="110" height="380"/>
+    <rect x="810" y="210" width="90" height="390"/>
+    <rect x="820" y="200" width="70" height="400"/>
+    
+    <!-- Salvador - Prédios históricos protegidos -->
+    <rect x="1000" y="200" width="100" height="400"/>
+    <rect x="1010" y="190" width="80" height="410"/>
+    <rect x="1020" y="180" width="60" height="420"/>
+    
+    <!-- Fortaleza - Prédios costeiros seguros -->
+    <rect x="1200" y="180" width="90" height="420"/>
+    <rect x="1210" y="170" width="70" height="430"/>
+    <rect x="1220" y="160" width="50" height="440"/>
+    
+    <!-- Manaus - Prédios amazônicos protegidos -->
+    <rect x="1400" y="240" width="80" height="360"/>
+    <rect x="1410" y="230" width="60" height="370"/>
+    <rect x="1420" y="220" width="40" height="380"/>
+    
+    <!-- Curitiba - Prédios planejados seguros -->
+    <rect x="1600" y="200" width="100" height="400"/>
+    <rect x="1610" y="190" width="80" height="410"/>
+    <rect x="1620" y="180" width="60" height="420"/>
+    
+    <!-- Porto Alegre - Prédios gaúchos estáveis -->
+    <rect x="1800" y="220" width="90" height="380"/>
+    <rect x="1810" y="210" width="70" height="390"/>
+    <rect x="1820" y="200" width="50" height="400"/>
+  </g>
+  
+  <!-- Janelas que transmitem segurança através de cores -->
+  <g opacity="0.9">
+    <!-- São Paulo - Verde (Seguro) -->
+    <rect x="220" y="180" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="240" y="180" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="260" y="180" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="280" y="180" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="220" y="210" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="240" y="210" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="260" y="210" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="280" y="210" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    
+    <!-- Rio de Janeiro - Amarelo (Atenção) -->
+    <rect x="420" y="230" width="8" height="12" fill="url(#attentionGradient)" filter="url(#securityGlow)"/>
+    <rect x="440" y="230" width="8" height="12" fill="url(#attentionGradient)" filter="url(#securityGlow)"/>
+    <rect x="460" y="230" width="8" height="12" fill="url(#attentionGradient)" filter="url(#securityGlow)"/>
+    <rect x="420" y="260" width="8" height="12" fill="url(#attentionGradient)" filter="url(#securityGlow)"/>
+    <rect x="440" y="260" width="8" height="12" fill="url(#attentionGradient)" filter="url(#securityGlow)"/>
+    <rect x="460" y="260" width="8" height="12" fill="url(#attentionGradient)" filter="url(#securityGlow)"/>
+    
+    <!-- Brasília - Verde (Seguro) -->
+    <rect x="620" y="210" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="640" y="210" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="660" y="210" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="620" y="240" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="640" y="240" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    <rect x="660" y="240" width="8" height="12" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+    
+    <!-- Belo Horizonte - Vermelho (Risco) -->
+    <rect x="820" y="250" width="8" height="12" fill="url(#riskGradient)" filter="url(#securityGlow)"/>
+    <rect x="840" y="250" width="8" height="12" fill="url(#riskGradient)" filter="url(#securityGlow)"/>
+    <rect x="860" y="250" width="8" height="12" fill="url(#riskGradient)" filter="url(#securityGlow)"/>
+    <rect x="820" y="280" width="8" height="12" fill="url(#riskGradient)" filter="url(#securityGlow)"/>
+    <rect x="840" y="280" width="8" height="12" fill="url(#riskGradient)" filter="url(#securityGlow)"/>
+    <rect x="860" y="280" width="8" height="12" fill="url(#riskGradient)" filter="url(#securityGlow)"/>
+  </g>
+  
+  <!-- Ícone central de proteção e segurança -->
+  <g transform="translate(960, 100)">
+    <!-- Escudo principal com aura de proteção -->
+    <circle cx="0" cy="0" r="80" fill="url(#protectionGlow)" opacity="0.6"/>
+    <path d="M -60 -40 L 0 -70 L 60 -40 L 60 30 L 0 60 L -60 30 Z" fill="url(#securityGradient)" opacity="0.95" filter="url(#protectionShadow)"/>
+    <path d="M -40 -25 L 0 -50 L 40 -25 L 40 20 L 0 45 L -40 20 Z" fill="#FFFFFF" opacity="0.9"/>
+    
+    <!-- Score de segurança no centro -->
+    <circle cx="0" cy="0" r="30" fill="#1F2937" opacity="0.8"/>
+    <circle cx="0" cy="0" r="25" fill="#374151"/>
+    <text x="0" y="8" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="24" font-weight="bold">85</text>
+    <text x="0" y="-20" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="10" font-weight="bold">SEGURANÇA</text>
+    
+    <!-- Efeito de brilho de proteção -->
+    <circle cx="0" cy="0" r="50" fill="url(#shieldGlow)" opacity="0.4"/>
+  </g>
+  
+  <!-- Scores de segurança das cidades com aura de proteção -->
+  <g opacity="0.9">
+    <!-- São Paulo - Seguro -->
+    <g transform="translate(250, 80)">
+      <circle cx="0" cy="0" r="30" fill="url(#protectionGlow)" opacity="0.5"/>
+      <circle cx="0" cy="0" r="25" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">92</text>
+    </g>
+    
+    <!-- Rio de Janeiro - Atenção -->
+    <g transform="translate(450, 110)">
+      <circle cx="0" cy="0" r="30" fill="url(#protectionGlow)" opacity="0.3"/>
+      <circle cx="0" cy="0" r="25" fill="url(#attentionGradient)" filter="url(#securityGlow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">67</text>
+    </g>
+    
+    <!-- Brasília - Seguro -->
+    <g transform="translate(650, 90)">
+      <circle cx="0" cy="0" r="30" fill="url(#protectionGlow)" opacity="0.5"/>
+      <circle cx="0" cy="0" r="25" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">88</text>
+    </g>
+    
+    <!-- Belo Horizonte - Risco -->
+    <g transform="translate(850, 130)">
+      <circle cx="0" cy="0" r="30" fill="url(#protectionGlow)" opacity="0.2"/>
+      <circle cx="0" cy="0" r="25" fill="url(#riskGradient)" filter="url(#securityGlow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">45</text>
+    </g>
+    
+    <!-- Salvador - Atenção -->
+    <g transform="translate(1050, 110)">
+      <circle cx="0" cy="0" r="30" fill="url(#protectionGlow)" opacity="0.3"/>
+      <circle cx="0" cy="0" r="25" fill="url(#attentionGradient)" filter="url(#securityGlow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">72</text>
+    </g>
+    
+    <!-- Fortaleza - Seguro -->
+    <g transform="translate(1250, 90)">
+      <circle cx="0" cy="0" r="30" fill="url(#protectionGlow)" opacity="0.5"/>
+      <circle cx="0" cy="0" r="25" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">81</text>
+    </g>
+    
+    <!-- Manaus - Atenção -->
+    <g transform="translate(1450, 160)">
+      <circle cx="0" cy="0" r="30" fill="url(#protectionGlow)" opacity="0.3"/>
+      <circle cx="0" cy="0" r="25" fill="url(#attentionGradient)" filter="url(#securityGlow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">63</text>
+    </g>
+    
+    <!-- Curitiba - Seguro -->
+    <g transform="translate(1650, 110)">
+      <circle cx="0" cy="0" r="30" fill="url(#protectionGlow)" opacity="0.5"/>
+      <circle cx="0" cy="0" r="25" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">89</text>
+    </g>
+    
+    <!-- Porto Alegre - Seguro -->
+    <g transform="translate(1850, 130)">
+      <circle cx="0" cy="0" r="30" fill="url(#protectionGlow)" opacity="0.5"/>
+      <circle cx="0" cy="0" r="25" fill="url(#safeGradient)" filter="url(#securityGlow)"/>
+      <circle cx="0" cy="0" r="20" fill="#FFFFFF" opacity="0.2"/>
+      <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="16" font-weight="bold">86</text>
+    </g>
+  </g>
+  
+  <!-- Linhas de conexão que transmitem rede de segurança -->
+  <g stroke="#10B981" stroke-width="3" opacity="0.5" fill="none" filter="url(#securityGlow)">
+    <path d="M 250 80 Q 350 60 450 110"/>
+    <path d="M 450 110 Q 550 80 650 90"/>
+    <path d="M 650 90 Q 750 100 850 130"/>
+    <path d="M 850 130 Q 950 120 1050 110"/>
+    <path d="M 1050 110 Q 1150 90 1250 90"/>
+    <path d="M 1250 90 Q 1350 110 1450 160"/>
+    <path d="M 1450 160 Q 1550 120 1650 110"/>
+    <path d="M 1650 110 Q 1750 120 1850 130"/>
+  </g>
+  
+  <!-- Elementos de vigilância e proteção -->
+  <g opacity="0.8">
+    <!-- Câmeras de segurança com aura de proteção -->
+    <g transform="translate(300, 450)">
+      <circle cx="0" cy="0" r="15" fill="url(#protectionGlow)" opacity="0.4"/>
+      <circle cx="0" cy="0" r="12" fill="url(#securityGradient)" filter="url(#securityGlow)"/>
+      <rect x="-2" y="-6" width="4" height="12" fill="#1F2937"/>
+      <circle cx="0" cy="0" r="20" fill="url(#shieldGlow)" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(700, 480)">
+      <circle cx="0" cy="0" r="15" fill="url(#protectionGlow)" opacity="0.4"/>
+      <circle cx="0" cy="0" r="12" fill="url(#securityGradient)" filter="url(#securityGlow)"/>
+      <rect x="-2" y="-6" width="4" height="12" fill="#1F2937"/>
+      <circle cx="0" cy="0" r="20" fill="url(#shieldGlow)" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(1100, 460)">
+      <circle cx="0" cy="0" r="15" fill="url(#protectionGlow)" opacity="0.4"/>
+      <circle cx="0" cy="0" r="12" fill="url(#securityGradient)" filter="url(#securityGlow)"/>
+      <rect x="-2" y="-6" width="4" height="12" fill="#1F2937"/>
+      <circle cx="0" cy="0" r="20" fill="url(#shieldGlow)" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(1500, 490)">
+      <circle cx="0" cy="0" r="15" fill="url(#protectionGlow)" opacity="0.4"/>
+      <circle cx="0" cy="0" r="12" fill="url(#securityGradient)" filter="url(#securityGlow)"/>
+      <rect x="-2" y="-6" width="4" height="12" fill="#1F2937"/>
+      <circle cx="0" cy="0" r="20" fill="url(#shieldGlow)" opacity="0.3"/>
+    </g>
+    
+    <!-- Escudos de proteção com aura -->
+    <g transform="translate(500, 520)">
+      <circle cx="0" cy="0" r="20" fill="url(#protectionGlow)" opacity="0.4"/>
+      <path d="M -10 -15 L 0 -20 L 10 -15 L 10 8 L 0 13 L -10 8 Z" fill="url(#securityGradient)" opacity="0.9" filter="url(#protectionShadow)"/>
+      <path d="M -6 -8 L 0 -12 L 6 -8 L 6 4 L 0 8 L -6 4 Z" fill="#FFFFFF" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(900, 540)">
+      <circle cx="0" cy="0" r="20" fill="url(#protectionGlow)" opacity="0.4"/>
+      <path d="M -10 -15 L 0 -20 L 10 -15 L 10 8 L 0 13 L -10 8 Z" fill="url(#securityGradient)" opacity="0.9" filter="url(#protectionShadow)"/>
+      <path d="M -6 -8 L 0 -12 L 6 -8 L 6 4 L 0 8 L -6 4 Z" fill="#FFFFFF" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(1300, 530)">
+      <circle cx="0" cy="0" r="20" fill="url(#protectionGlow)" opacity="0.4"/>
+      <path d="M -10 -15 L 0 -20 L 10 -15 L 10 8 L 0 13 L -10 8 Z" fill="url(#securityGradient)" opacity="0.9" filter="url(#protectionShadow)"/>
+      <path d="M -6 -8 L 0 -12 L 6 -8 L 6 4 L 0 8 L -6 4 Z" fill="#FFFFFF" opacity="0.3"/>
+    </g>
+    
+    <g transform="translate(1700, 550)">
+      <circle cx="0" cy="0" r="20" fill="url(#protectionGlow)" opacity="0.4"/>
+      <path d="M -10 -15 L 0 -20 L 10 -15 L 10 8 L 0 13 L -10 8 Z" fill="url(#securityGradient)" opacity="0.9" filter="url(#protectionShadow)"/>
+      <path d="M -6 -8 L 0 -12 L 6 -8 L 6 4 L 0 8 L -6 4 Z" fill="#FFFFFF" opacity="0.3"/>
+    </g>
+  </g>
+  
+  <!-- Partículas de segurança flutuantes -->
+  <g opacity="0.6">
+    <circle cx="150" cy="300" r="2" fill="#10B981" filter="url(#securityGlow)"/>
+    <circle cx="350" cy="250" r="1.5" fill="#10B981" filter="url(#securityGlow)"/>
+    <circle cx="550" cy="350" r="2" fill="#10B981" filter="url(#securityGlow)"/>
+    <circle cx="750" cy="280" r="1.5" fill="#10B981" filter="url(#securityGlow)"/>
+    <circle cx="950" cy="320" r="2" fill="#10B981" filter="url(#securityGlow)"/>
+    <circle cx="1150" cy="290" r="1.5" fill="#10B981" filter="url(#securityGlow)"/>
+    <circle cx="1350" cy="310" r="2" fill="#10B981" filter="url(#securityGlow)"/>
+    <circle cx="1550" cy="270" r="1.5" fill="#10B981" filter="url(#securityGlow)"/>
+    <circle cx="1750" cy="330" r="2" fill="#10B981" filter="url(#securityGlow)"/>
+    <circle cx="1950" cy="300" r="1.5" fill="#10B981" filter="url(#securityGlow)"/>
+  </g>
+  
+  <!-- Overlay gradiente que transmite tranquilidade -->
+  <rect width="1920" height="600" fill="linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(59,130,246,0.2) 50%, rgba(16,185,129,0.1) 100%)" opacity="0.3"/>
+</svg>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -28,8 +28,14 @@ htmlcov/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-/media
-/staticfiles
+
+# Arquivos gerados (serão criados dentro do container)
+/media          # Arquivos de mídia enviados pelos usuários (não devem estar na imagem)
+/staticfiles    # Arquivos estáticos coletados (gerados por collectstatic dentro do container)
+                # Se você quiser incluir staticfiles pré-coletados, remova esta linha
+
+# NOTA: static/ NÃO está aqui porque contém os arquivos FONTE (CSS, JS, imagens)
+# que DEVEM estar na imagem para o collectstatic funcionar corretamente
 
 # IDEs
 .vscode/
@@ -49,6 +55,7 @@ docs/
 .env.local
 .env.*.local
 *.env
+env.production          # Não copiar env.production (mesmo que seja exemplo)
 env.example
 env_example.txt
 
@@ -96,6 +103,7 @@ test_*.py
 *.xls
 *.csv
 
-# Arquivos de build e migrações antigas (opcional)
-# migrations/  # Comente esta linha se quiser incluir migrations
+# IMPORTANTE: migrations/ NÃO está aqui!
+# As migrations DEVEM estar na imagem Docker para funcionar corretamente.
+# Django precisa das migrations para executar: python manage.py migrate
 

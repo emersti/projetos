@@ -1,0 +1,182 @@
+<svg width="1920" height="600" viewBox="0 0 1920 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradientes -->
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#B0E0E6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0F6FF;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="cityGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2D3748;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4A5568;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#718096;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="buildingGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A365D;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#2D5A87;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4A90E2;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FF8A65;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFB74D;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Padrões -->
+    <pattern id="gridPattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#FFFFFF" stroke-width="0.5" opacity="0.1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Fundo do céu -->
+  <rect width="1920" height="400" fill="url(#skyGradient)"/>
+  
+  <!-- Nuvens -->
+  <g opacity="0.6">
+    <ellipse cx="200" cy="80" rx="60" ry="25" fill="#FFFFFF"/>
+    <ellipse cx="220" cy="70" rx="50" ry="20" fill="#FFFFFF"/>
+    <ellipse cx="180" cy="70" rx="40" ry="18" fill="#FFFFFF"/>
+    
+    <ellipse cx="500" cy="60" rx="70" ry="30" fill="#FFFFFF"/>
+    <ellipse cx="520" cy="50" rx="55" ry="25" fill="#FFFFFF"/>
+    <ellipse cx="480" cy="50" rx="45" ry="20" fill="#FFFFFF"/>
+    
+    <ellipse cx="800" cy="90" rx="65" ry="28" fill="#FFFFFF"/>
+    <ellipse cx="820" cy="80" rx="50" ry="22" fill="#FFFFFF"/>
+    <ellipse cx="780" cy="80" rx="40" ry="18" fill="#FFFFFF"/>
+    
+    <ellipse cx="1200" cy="70" rx="60" ry="25" fill="#FFFFFF"/>
+    <ellipse cx="1220" cy="60" rx="45" ry="20" fill="#FFFFFF"/>
+    <ellipse cx="1180" cy="60" rx="35" ry="15" fill="#FFFFFF"/>
+    
+    <ellipse cx="1600" cy="85" rx="70" ry="30" fill="#FFFFFF"/>
+    <ellipse cx="1620" cy="75" rx="55" ry="25" fill="#FFFFFF"/>
+    <ellipse cx="1580" cy="75" rx="45" ry="20" fill="#FFFFFF"/>
+  </g>
+  
+  <!-- Silhueta da cidade -->
+  <g fill="url(#cityGradient)">
+    <!-- Prédios principais -->
+    <rect x="0" y="300" width="80" height="300"/>
+    <rect x="70" y="250" width="90" height="350"/>
+    <rect x="150" y="280" width="70" height="320"/>
+    <rect x="210" y="200" width="100" height="400"/>
+    <rect x="300" y="320" width="85" height="280"/>
+    <rect x="375" y="180" width="120" height="420"/>
+    <rect x="485" y="300" width="90" height="300"/>
+    <rect x="565" y="220" width="110" height="380"/>
+    <rect x="665" y="350" width="75" height="250"/>
+    <rect x="730" y="150" width="140" height="450"/>
+    <rect x="860" y="280" width="95" height="320"/>
+    <rect x="945" y="200" width="105" height="400"/>
+    <rect x="1040" y="320" width="80" height="280"/>
+    <rect x="1110" y="180" width="130" height="420"/>
+    <rect x="1230" y="300" width="90" height="300"/>
+    <rect x="1310" y="250" width="100" height="350"/>
+    <rect x="1400" y="280" width="85" height="320"/>
+    <rect x="1475" y="200" width="120" height="400"/>
+    <rect x="1585" y="320" width="90" height="280"/>
+    <rect x="1665" y="180" width="110" height="420"/>
+    <rect x="1765" y="300" width="80" height="300"/>
+    <rect x="1835" y="250" width="85" height="350"/>
+  </g>
+  
+  <!-- Janelas dos prédios -->
+  <g fill="#FFD700" opacity="0.7">
+    <!-- Prédio 1 -->
+    <rect x="10" y="320" width="8" height="12"/>
+    <rect x="25" y="320" width="8" height="12"/>
+    <rect x="40" y="320" width="8" height="12"/>
+    <rect x="55" y="320" width="8" height="12"/>
+    <rect x="10" y="350" width="8" height="12"/>
+    <rect x="25" y="350" width="8" height="12"/>
+    <rect x="40" y="350" width="8" height="12"/>
+    <rect x="55" y="350" width="8" height="12"/>
+    
+    <!-- Prédio 2 -->
+    <rect x="90" y="270" width="8" height="12"/>
+    <rect x="105" y="270" width="8" height="12"/>
+    <rect x="120" y="270" width="8" height="12"/>
+    <rect x="135" y="270" width="8" height="12"/>
+    <rect x="90" y="300" width="8" height="12"/>
+    <rect x="105" y="300" width="8" height="12"/>
+    <rect x="120" y="300" width="8" height="12"/>
+    <rect x="135" y="300" width="8" height="12"/>
+    
+    <!-- Prédio 3 -->
+    <rect x="170" y="300" width="8" height="12"/>
+    <rect x="185" y="300" width="8" height="12"/>
+    <rect x="200" y="300" width="8" height="12"/>
+    <rect x="215" y="300" width="8" height="12"/>
+    <rect x="170" y="330" width="8" height="12"/>
+    <rect x="185" y="330" width="8" height="12"/>
+    <rect x="200" y="330" width="8" height="12"/>
+    <rect x="215" y="330" width="8" height="12"/>
+    
+    <!-- Prédio principal -->
+    <rect x="230" y="220" width="10" height="15"/>
+    <rect x="250" y="220" width="10" height="15"/>
+    <rect x="270" y="220" width="10" height="15"/>
+    <rect x="290" y="220" width="10" height="15"/>
+    <rect x="230" y="250" width="10" height="15"/>
+    <rect x="250" y="250" width="10" height="15"/>
+    <rect x="270" y="250" width="10" height="15"/>
+    <rect x="290" y="250" width="10" height="15"/>
+    <rect x="230" y="280" width="10" height="15"/>
+    <rect x="250" y="280" width="10" height="15"/>
+    <rect x="270" y="280" width="10" height="15"/>
+    <rect x="290" y="280" width="10" height="15"/>
+  </g>
+  
+  <!-- Ícones de segurança -->
+  <g transform="translate(960, 200)">
+    <!-- Escudo principal -->
+    <path d="M -40 -30 L 0 -50 L 40 -30 L 40 20 L 0 40 L -40 20 Z" fill="url(#shieldGradient)" opacity="0.9"/>
+    <path d="M -30 -20 L 0 -35 L 30 -20 L 30 15 L 0 30 L -30 15 Z" fill="#FFFFFF" opacity="0.8"/>
+    
+    <!-- Ícone de segurança no centro -->
+    <circle cx="0" cy="0" r="12" fill="#1A365D"/>
+    <path d="M -6 -2 L -2 2 L 6 -8" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Ícones de segurança menores -->
+  <g transform="translate(400, 150)" opacity="0.7">
+    <circle cx="0" cy="0" r="15" fill="url(#shieldGradient)"/>
+    <path d="M -5 -2 L -2 1 L 5 -6" stroke="#FFFFFF" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <g transform="translate(1500, 180)" opacity="0.7">
+    <circle cx="0" cy="0" r="15" fill="url(#shieldGradient)"/>
+    <path d="M -5 -2 L -2 1 L 5 -6" stroke="#FFFFFF" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Linhas de conexão (representando segurança) -->
+  <g stroke="#FF6B35" stroke-width="2" opacity="0.4" fill="none">
+    <path d="M 400 150 Q 600 100 800 120 Q 1000 140 1200 160 Q 1400 180 1500 180"/>
+    <path d="M 200 200 Q 400 180 600 200 Q 800 220 1000 240 Q 1200 260 1400 280"/>
+  </g>
+  
+  <!-- Padrão de grade sutil -->
+  <rect width="1920" height="600" fill="url(#gridPattern)"/>
+  
+  <!-- Overlay gradiente para melhor contraste do texto -->
+  <rect width="1920" height="600" fill="linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%)" opacity="0.3"/>
+</svg>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
