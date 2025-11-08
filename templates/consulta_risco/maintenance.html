@@ -27,7 +27,7 @@
         </div>
         
         <div class="maintenance-actions">
-            <button class="btn btn-secondary" onclick="location.reload()">
+            <button class="btn btn-secondary" id="btn-tentar-novamente" onclick="tentarAcessarHome()">
                 <span class="btn-text">Tentar Novamente</span>
                 <span class="btn-icon">🔄</span>
             </button>
@@ -36,12 +36,94 @@
         <div class="maintenance-footer">
             <p class="maintenance-contact">
                 Para suporte urgente, entre em contato: 
-                <a href="mailto:suporte@stigliani.com">suporte@stigliani.com</a>
+                <a href="mailto:atendimento@safetyscorebrasil.com.br">atendimento@safetyscorebrasil.com.br</a>
             </p>
         </div>
     </div>
 </div>
+
+<script>
+function tentarAcessarHome() {
+    const btn = document.getElementById('btn-tentar-novamente');
+    const btnText = btn.querySelector('.btn-text');
+    const btnIcon = btn.querySelector('.btn-icon');
+    
+    // Desabilitar botão e mostrar loading
+    btn.disabled = true;
+    btnText.textContent = 'Verificando...';
+    btnIcon.textContent = '⏳';
+    
+    // Fazer requisição para verificar se a home está funcionando
+    fetch('{% url "home" %}', {
+        method: 'GET',
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        // Verificar a URL final após seguir redirecionamentos
+        const finalUrl = response.url || window.location.href;
+        
+        // Se a URL final contém /maintenance/, ainda está em manutenção
+        if (finalUrl.includes('/maintenance/')) {
+            // Ainda está em manutenção
+            btnText.textContent = 'Ainda em Manutenção';
+            btnIcon.textContent = '⚠️';
+            
+            setTimeout(() => {
+                btnText.textContent = 'Tentar Novamente';
+                btnIcon.textContent = '🔄';
+                btn.disabled = false;
+            }, 2000);
+        } else if (response.ok || response.status === 200) {
+            // Verificar o conteúdo da resposta para garantir que não é a página de manutenção
+            return response.text().then(html => {
+                // Se o HTML contém indicadores da página de manutenção, ainda está em manutenção
+                if (html.includes('Sistema Temporariamente Indisponível') || 
+                    html.includes('maintenance-container')) {
+                    btnText.textContent = 'Ainda em Manutenção';
+                    btnIcon.textContent = '⚠️';
+                    
+                    setTimeout(() => {
+                        btnText.textContent = 'Tentar Novamente';
+                        btnIcon.textContent = '🔄';
+                        btn.disabled = false;
+                    }, 2000);
+                } else {
+                    // Home está funcionando, redirecionar
+                    window.location.href = '{% url "home" %}';
+                }
+            });
+        } else {
+            // Erro ou status inesperado
+            btnText.textContent = 'Ainda Indisponível';
+            btnIcon.textContent = '⚠️';
+            
+            setTimeout(() => {
+                btnText.textContent = 'Tentar Novamente';
+                btnIcon.textContent = '🔄';
+                btn.disabled = false;
+            }, 2000);
+        }
+    })
+    .catch(error => {
+        // Erro na requisição (rede, CORS, etc.)
+        console.error('Erro ao verificar home:', error);
+        btnText.textContent = 'Ainda Indisponível';
+        btnIcon.textContent = '⚠️';
+        
+        setTimeout(() => {
+            btnText.textContent = 'Tentar Novamente';
+            btnIcon.textContent = '🔄';
+            btn.disabled = false;
+        }, 2000);
+    });
+}
+</script>
 {% endblock %}
+
+
+
+
 
 
 
