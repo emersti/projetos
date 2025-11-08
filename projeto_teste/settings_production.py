@@ -5,13 +5,22 @@ import os
 from .settings import *
 
 # Configurações de segurança para produção
-DEBUG = False
-ALLOWED_HOSTS = [
-    'safetyscorebrasil.com.br',
-    'www.safetyscorebrasil.com.br',
-    'localhost',
-    '127.0.0.1',
-]
+DEBUG = True
+#ALLOWED_HOSTS = [
+#    'safetyscorebrasil.com.br',
+#    'www.safetyscorebrasil.com.br',
+#    '54.244.42.1',
+#    '127.0.0.1',
+#]
+#ALLOWED_HOSTS = ['*']
+
+import os
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED", "").split(",")
 
 # Configurações de banco de dados para produção
 DATABASES = {
@@ -123,10 +132,10 @@ SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Configurações de CSRF
-CSRF_TRUSTED_ORIGINS = [
-    "https://safetyscorebrasil.com.br",
-    "https://www.safetyscorebrasil.com.br",
-]
+#CSRF_TRUSTED_ORIGINS = [
+#    "https://safetyscorebrasil.com.br",
+#    "https://www.safetyscorebrasil.com.br",
+#]
 
 # Configurações de internacionalização
 USE_I18N = False

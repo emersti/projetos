@@ -14,9 +14,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+#DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = True
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,safetyscorebrasil.com.br,www.safetyscorebrasil.com.br', cast=lambda v: [s.strip() for s in v.split(',')])
+#ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='54.244.42.1,127.0.0.1,safetyscorebrasil.com.br,www.safetyscorebrasil.com.br', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -152,6 +154,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Configurações de CSRF
 CSRF_TRUSTED_ORIGINS = [
+    "https://54.244.42.1",
+    "http://54.244.42.1",
     "https://safetyscorebrasil.com.br",
     "https://www.safetyscorebrasil.com.br",
 ]
