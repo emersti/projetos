@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mapa da Segurança - SafeScore Brasil{% endblock %}
+
+{% block content %}
+<div class="hero" style="padding: 2rem 0; margin-bottom: 2rem;">
+    <div class="hero-content">
+        <h1 class="hero-title" style="font-size: 2.2rem; color: #362a63;">Mapa da Segurança do Brasil</h1>
+        <p class="hero-subtitle" style="color: #a1a3c1e0; text-shadow: none; opacity: 1;">Visualize o ranking de criminalidade das cidades brasileiras em um mapa interativo</p>
+    </div>
+</div>
+
+<div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 1rem;">
+    <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+                <h2 style="color: var(--cor-azul-escuro); margin: 0; font-size: 1.5rem;">Mapa de Calor da Criminalidade</h2>
+                {% if total_cidades %}
+                <p style="color: var(--cor-cinza); margin: 0.5rem 0 0 0; font-size: 0.95rem;">
+                    Exibindo {{ total_cidades }} cidades no mapa
+                </p>
+                {% endif %}
+            </div>
+            <a href="{% url 'home' %}" style="background: var(--cor-laranja); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+                ← Voltar para Consulta
+            </a>
+        </div>
+        
+    </div>
+    
+    <div style="background: white; border-radius: 12px; padding: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-height: 600px;">
+        {% if mapa_html %}
+            <div style="width: 100%; height: 600px; border-radius: 8px; overflow: hidden;">
+                {{ mapa_html|safe }}
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 4rem 2rem;">
+                <p style="color: var(--cor-cinza); font-size: 1.1rem; margin-bottom: 1rem;">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div style="color: #dc3545; background: #f8d7da; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        Erro ao carregar o mapa. Por favor, tente novamente mais tarde.
+                    {% endif %}
+                </p>
+                <a href="{% url 'home' %}" style="background: var(--cor-laranja); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">
+                    Voltar para Consulta
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 2rem;">
+        <h3 style="color: var(--cor-azul-escuro); margin: 0 0 1rem 0; font-size: 1.2rem;">ℹ️ Sobre o Mapa</h3>
+        <p style="color: var(--cor-cinza); margin: 0; line-height: 1.6; font-size: 0.95rem;">
+            Este mapa exibe um <strong>mapa de calor (heatmap)</strong> baseado na <strong>posição no ranking de criminalidade</strong> de cada cidade brasileira, 
+            obtido por nossa metodologia de análise. 
+            Quanto mais próximo do <strong style="color: #8B0000;">vermelho</strong>, maior a criminalidade. 
+            Quanto mais próximo do <strong style="color: #00008B;">azul</strong>, maior a segurança.
+        </p>
+        <p style="color: var(--cor-cinza); margin: 1rem 0 0 0; line-height: 1.6; font-size: 0.95rem;">
+            <strong>Fonte de dados:</strong> Ministério da Justiça e Segurança Pública, IBGE. 
+            A metodologia aplicada no cálculo do Score de Ranking não tem nenhum vínculo com estas instituições.
+        </p>
+    </div>
+</div>
+
+<style>
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 0.5rem;
+        }
+        
+        .hero-content h1 {
+            font-size: 1.5rem;
+        }
+        
+        .hero-content p {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+

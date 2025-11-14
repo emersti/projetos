@@ -11,6 +11,7 @@ urlpatterns = [
     path('cupons/', views.cupons, name='cupons'),
     path('api/cidades/', views.get_cidades, name='get_cidades'),
     path('api/avaliar-seguranca/', views.avaliar_seguranca, name='avaliar_seguranca'),
+    path('mapa-seguranca/', views.mapa_seguranca, name='mapa_seguranca'),
     
             # URLs do sistema administrativo (alteradas para evitar conflito com Django admin)
             path('painel/login/', views.admin_login, name='admin_login'),

@@ -67,6 +67,8 @@ python-dateutil==2.8.2
 requests==2.31.0
 pandas==2.2.2
 openpyxl==3.1.5
+folium==0.15.1
+geopy==2.4.1
 
 # ===========================================
 # DESENVOLVIMENTO E TESTES (OPCIONAL)

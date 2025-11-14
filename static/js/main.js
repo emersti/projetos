@@ -455,10 +455,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </div>
                         
-                        <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                             <button type="submit" id="btnAvaliar" 
                                     style="background: var(--cor-laranja); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem;">
                                 <span>⭐ Avaliar</span>
+                            </button>
+                            <button type="button" id="btnMapaSeguranca" 
+                                    style="background: var(--cor-azul-escuro); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem;">
+                                <span>🗺️ Veja o mapa da Segurança</span>
                             </button>
                             <div id="avaliacaoStatus" style="font-size: 0.9rem; font-weight: 500;"></div>
                         </div>
@@ -478,6 +482,16 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Configurar evento do formulário de avaliação
             configurarAvaliacaoForm(estadoOrigemSelect.value, cidadeOrigem);
+            
+            // Configurar botão do mapa de segurança
+            const btnMapaSeguranca = document.getElementById('btnMapaSeguranca');
+            if (btnMapaSeguranca) {
+                btnMapaSeguranca.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.href = '/mapa-seguranca/';
+                });
+            }
             
             // Restaurar botão
             submitBtn.innerHTML = originalText;

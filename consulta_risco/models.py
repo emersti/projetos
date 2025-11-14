@@ -68,6 +68,8 @@ class Cidade(models.Model):
     nome = models.CharField(max_length=100)
     estado = models.ForeignKey(Estado, on_delete=models.CASCADE, related_name='cidades')
     posicao = models.IntegerField(null=True, blank=True, help_text="Posição no ranking de criminalidade")
+    latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True, help_text="Latitude da cidade")
+    longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True, help_text="Longitude da cidade")
     
     class Meta:
         ordering = ['nome']

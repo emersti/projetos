@@ -7,10 +7,16 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.utils.timezone import localtime
 from django.db import transaction
+from django.db.models import Q
 import hashlib
 import json
 import secrets
 import string
+import os
+import pandas as pd
+import folium
+from folium.plugins import HeatMap, MarkerCluster
+import unicodedata
 from .models import Estado, Cidade, Cupom, AdminUser, TipoCupom, AvaliacaoSeguranca, SistemaAtualizacao
 
 
@@ -883,5 +889,250 @@ def admin_profile_edit(request):
             messages.error(request, f'Erro ao atualizar perfil: {str(e)}')
     
     return render(request, 'consulta_risco/admin_profile_edit.html', {'admin_user': admin_user})
+
+
+def mapa_seguranca(request):
+    """View para exibir o mapa de calor da segurança do Brasil"""
+    try:
+        # Caminho do arquivo Excel
+        file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'ResumoCriminalidadeCidades.xlsx')
+        
+        if not os.path.exists(file_path):
+            messages.error(request, 'Arquivo de dados não encontrado.')
+            return render(request, 'consulta_risco/mapa_seguranca.html', {'mapa_html': ''})
+        
+        # Ler o arquivo Excel
+        df = pd.read_excel(file_path)
+        
+        # Normalizar cabeçalhos
+        def normalize_header(name):
+            if not isinstance(name, str):
+                return name
+            n = unicodedata.normalize('NFKD', name)
+            n = ''.join(c for c in n if not unicodedata.combining(c))
+            n = n.strip().lower()
+            return n
+        
+        original_cols = list(df.columns)
+        normalized_cols = [normalize_header(c) for c in df.columns]
+        df.columns = normalized_cols
+        
+        # Procurar a coluna Indicador_Crime
+        indicador_col = None
+        for col in df.columns:
+            if 'indicador' in col and 'crime' in col:
+                indicador_col = col
+                break
+        
+        if indicador_col is None:
+            messages.error(request, 'Coluna Indicador_Crime não encontrada no arquivo Excel.')
+            return render(request, 'consulta_risco/mapa_seguranca.html', {'mapa_html': ''})
+        
+        # Procurar colunas de município e UF
+        uf_col = None
+        mun_col = None
+        for col in df.columns:
+            if col in ['uf', 'estado']:
+                uf_col = col
+            elif col in ['municipio', 'município', 'cidade']:
+                mun_col = col
+        
+        if not uf_col or not mun_col:
+            messages.error(request, 'Colunas UF ou Município não encontradas no arquivo Excel.')
+            return render(request, 'consulta_risco/mapa_seguranca.html', {'mapa_html': ''})
+        
+        # Limpar dados
+        df = df.dropna(subset=[uf_col, mun_col, indicador_col])
+        df[uf_col] = df[uf_col].astype(str).str.strip().str.upper()
+        df[mun_col] = df[mun_col].astype(str).str.strip()
+        
+        # Converter Indicador_Crime para numérico
+        df[indicador_col] = pd.to_numeric(df[indicador_col], errors='coerce')
+        df = df.dropna(subset=[indicador_col])
+        
+        # Calcular valores min e max do indicador para normalização (caso necessário)
+        min_val = float(df[indicador_col].min()) if len(df) > 0 else 0
+        max_val = float(df[indicador_col].max()) if len(df) > 0 else 1
+        
+        # Criar dicionário com indicadores por cidade
+        indicadores_dict = {}
+        for _, row in df.iterrows():
+            municipio = str(row[mun_col]).strip()
+            uf = str(row[uf_col]).strip()
+            indicador = float(row[indicador_col])
+            indicadores_dict[(municipio.upper(), uf)] = indicador
+        
+        # Buscar cidades do banco com coordenadas
+        cidades_com_coords = Cidade.objects.select_related('estado').filter(
+            latitude__isnull=False,
+            longitude__isnull=False
+        )
+        
+        # Função para determinar cor baseada na posição
+        def get_color_by_position(posicao):
+            """Retorna a cor baseada na posição no ranking"""
+            if posicao is None:
+                return '#808080'  # Cinza para cidades sem posição
+            
+            if posicao <= 10:
+                return '#8B0000'  # Vermelho escuro (1-10)
+            elif posicao <= 50:
+                return '#FF4500'  # Vermelho claro (11-50)
+            elif posicao <= 150:
+                return '#FF6347'  # Laranja escuro (51-150)
+            elif posicao <= 300:
+                return '#FFA500'  # Laranja claro (151-300)
+            elif posicao <= 600:
+                return '#FFFF00'  # Amarelo (301-600)
+            elif posicao <= 2000:
+                return '#87CEEB'  # Azul claro (601-2000)
+            else:
+                return '#00008B'  # Azul escuro (2001+)
+        
+        # Função para normalizar posição para o heatmap
+        # Posição alta (melhor) = valor alto, Posição baixa (pior) = valor baixo
+        def normalize_position(posicao, max_pos):
+            """Normaliza a posição: posição alta (melhor) = valor alto, posição baixa (pior) = valor baixo"""
+            if posicao is None:
+                return 0.5
+            # Posição alta (ex: 5000) = valor alto (1.0), posição baixa (1) = valor baixo (0.0)
+            # Quanto maior a posição, maior o valor normalizado
+            return (posicao - 1) / (max_pos - 1) if max_pos > 1 else 0.5
+        
+        # Preparar dados para o mapa de calor
+        heat_data = []
+        markers_data = []
+        posicoes_validas = []
+        
+        for cidade in cidades_com_coords:
+            # Buscar indicador do Excel
+            chave = (cidade.nome.upper().strip(), cidade.estado.sigla)
+            indicador = indicadores_dict.get(chave)
+            
+            # Usar posição da cidade (se disponível) ou calcular baseado no indicador
+            posicao = cidade.posicao
+            
+            if indicador is not None or posicao is not None:
+                lat = float(cidade.latitude)
+                lon = float(cidade.longitude)
+                
+                # Coletar posições válidas
+                if posicao is not None:
+                    posicoes_validas.append(posicao)
+                
+                markers_data.append({
+                    'coords': [lat, lon],
+                    'municipio': cidade.nome,
+                    'uf': cidade.estado.sigla,
+                    'indicador': indicador,
+                    'posicao': posicao,
+                    'cor': get_color_by_position(posicao)
+                })
+        
+        # Calcular máximo de posições para normalização
+        max_posicao = max(posicoes_validas) if posicoes_validas else 1
+        
+        # Preparar dados do heatmap usando posição normalizada
+        for marker in markers_data:
+            lat, lon = marker['coords']
+            if marker['posicao'] is not None:
+                peso = normalize_position(marker['posicao'], max_posicao)
+            elif marker['indicador'] is not None:
+                # Fallback: usar indicador normalizado
+                peso = 1.0 - ((marker['indicador'] - min_val) / (max_val - min_val)) if max_val > min_val else 0.5
+            else:
+                peso = 0.5
+            
+            heat_data.append([lat, lon, peso])
+        
+        if not heat_data:
+            messages.warning(request, 'Nenhuma cidade com coordenadas encontrada. Execute o comando: python manage.py importar_coordenadas_ibge')
+            return render(request, 'consulta_risco/mapa_seguranca.html', {'mapa_html': ''})
+        
+        # Criar mapa centrado no Brasil
+        mapa = folium.Map(
+            location=[-14.2350, -51.9253],  # Centro do Brasil
+            zoom_start=5,
+            tiles='OpenStreetMap'
+        )
+        
+        # Adicionar mapa de calor com gradiente baseado em posição
+        # Valor baixo (posição baixa/pior) = vermelho, Valor alto (posição alta/melhor) = azul
+        HeatMap(
+            heat_data,
+            min_opacity=0.2,
+            max_zoom=18,
+            radius=25,
+            blur=25,
+            gradient={
+                0.0: '#8B0000',    # Vermelho escuro (posição 1 - pior)
+                0.15: '#FF4500',   # Vermelho claro (11-50)
+                0.3: '#FF6347',    # Laranja escuro (51-150)
+                0.45: '#FFA500',   # Laranja claro (151-300)
+                0.6: '#FFFF00',    # Amarelo (301-600)
+                0.85: '#87CEEB',  # Azul claro (601-2000)
+                1.0: '#00008B'     # Azul escuro (2001+ - melhor)
+            }
+        ).add_to(mapa)
+        
+        # Criar cluster de marcadores para exibir TODAS as cidades de forma otimizada
+        marker_cluster = MarkerCluster(
+            name='Cidades',
+            overlay=True,
+            control=True,
+            icon_create_function=None
+        )
+        
+        # Adicionar TODOS os marcadores
+        # Ordenar por posição (menor posição primeiro - mais crítico)
+        markers_sorted = sorted(markers_data, key=lambda x: x['posicao'] if x['posicao'] is not None else 99999)
+        
+        for marker in markers_sorted:
+            # Usar cor baseada na posição
+            cor = marker['cor']
+            
+            # Criar popup com informações da cidade (apenas ranking)
+            info_posicao = f"<strong>Posição no Ranking:</strong> {marker['posicao']}" if marker['posicao'] else "<strong>Posição:</strong> Não disponível"
+            
+            popup_html = f"""
+            <div style="font-family: Arial, sans-serif; min-width: 180px;">
+                <h4 style="margin: 0 0 10px 0; color: var(--cor-azul-escuro); font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">
+                    {marker['municipio']} - {marker['uf']}
+                </h4>
+                <p style="margin: 5px 0; font-size: 12px; color: #333;">
+                    {info_posicao}
+                </p>
+            </div>
+            """
+            
+            folium.CircleMarker(
+                location=marker['coords'],
+                radius=4,
+                popup=folium.Popup(popup_html, max_width=200),
+                tooltip=f"{marker['municipio']} - {marker['uf']}",
+                color=cor,
+                fill=True,
+                fillColor=cor,
+                fillOpacity=0.7,
+                weight=1
+            ).add_to(marker_cluster)
+        
+        # Adicionar o cluster ao mapa
+        marker_cluster.add_to(mapa)
+        
+        # Adicionar controle de camadas
+        folium.LayerControl().add_to(mapa)
+        
+        # Converter mapa para HTML
+        mapa_html = mapa._repr_html_()
+        
+        return render(request, 'consulta_risco/mapa_seguranca.html', {
+            'mapa_html': mapa_html,
+            'total_cidades': len(markers_data)
+        })
+        
+    except Exception as e:
+        messages.error(request, f'Erro ao gerar mapa: {str(e)}')
+        return render(request, 'consulta_risco/mapa_seguranca.html', {'mapa_html': ''})
 
 
