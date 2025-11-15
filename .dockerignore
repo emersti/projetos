@@ -98,11 +98,6 @@ nginx_config.conf
 test_*.html
 test_*.py
 
-# Excel e arquivos de dados grandes
-*.xlsx
-*.xls
-*.csv
-
 # IMPORTANTE: migrations/ NÃO está aqui!
 # As migrations DEVEM estar na imagem Docker para funcionar corretamente.
 # Django precisa das migrations para executar: python manage.py migrate

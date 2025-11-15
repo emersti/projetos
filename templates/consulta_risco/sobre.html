@@ -85,6 +85,21 @@
                 </div>
             </div>
             
+            <div id="fale-conosco" class="about-contact">
+                <h3 class="contact-title">Fale Conosco</h3>
+                <p class="contact-description">
+                    Tem alguma dúvida, sugestão ou solicitar algum serviço analítico? Entre em contato conosco através do nosso email abaixo, informando o assunto: Dúvida, Sugestão ou Solicitação de Serviço.
+                </p>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <span class="contact-icon">📧</span>
+                        <a href="mailto:atendimento@safetyscorebrasil.com.br" class="contact-email">
+                            atendimento@safetyscorebrasil.com.br
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
             <div class="about-cta">
                 <h3 class="cta-title">Pronto para Consultar?</h3>
                 <p class="cta-description">
@@ -340,6 +355,73 @@
     font-size: 0.95rem;
 }
 
+.about-contact {
+    text-align: center;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+    border-radius: 16px;
+    padding: 2.5rem;
+    border: 1px solid var(--cor-cinza-claro);
+    margin-bottom: 3rem;
+    box-shadow: var(--sombra-suave);
+}
+
+.contact-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.contact-description {
+    font-size: 1.1rem;
+    color: var(--cor-cinza);
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+}
+
+.contact-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--cor-branco);
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--cor-cinza-claro);
+    transition: var(--transicao-media);
+}
+
+.contact-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-media);
+}
+
+.contact-icon {
+    font-size: 2rem;
+}
+
+.contact-email {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+    text-decoration: none;
+    transition: var(--transicao-media);
+}
+
+.contact-email:hover {
+    color: var(--cor-laranja);
+    text-decoration: underline;
+}
+
 .about-cta {
     text-align: center;
     background: linear-gradient(135deg, var(--cor-laranja) 0%, var(--cor-laranja-claro) 100%);
@@ -444,6 +526,29 @@
         justify-content: center;
     }
     
+    .about-contact {
+        padding: 2rem 1.5rem;
+    }
+    
+    .contact-title {
+        font-size: 1.6rem;
+    }
+    
+    .contact-description {
+        font-size: 1rem;
+    }
+    
+    .contact-item {
+        padding: 1.25rem 1.5rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .contact-email {
+        font-size: 1rem;
+        word-break: break-word;
+    }
+    
     .about-cta {
         padding: 2rem 1.5rem;
     }
@@ -519,6 +624,31 @@
     
     .feature-text {
         font-size: 0.9rem;
+    }
+    
+    .about-contact {
+        padding: 1.5rem 1rem;
+    }
+    
+    .contact-title {
+        font-size: 1.4rem;
+    }
+    
+    .contact-description {
+        font-size: 0.95rem;
+    }
+    
+    .contact-item {
+        padding: 1rem;
+        width: 100%;
+    }
+    
+    .contact-icon {
+        font-size: 1.5rem;
+    }
+    
+    .contact-email {
+        font-size: 0.95rem;
     }
     
     .about-cta {

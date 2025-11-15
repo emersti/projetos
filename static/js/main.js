@@ -489,6 +489,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 btnMapaSeguranca.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
+                    
+                    // Salvar texto original
+                    const originalText = btnMapaSeguranca.innerHTML;
+                    
+                    // Alterar texto e desabilitar botão
+                    btnMapaSeguranca.innerHTML = '<span>⏳ Carregando mapa...</span>';
+                    btnMapaSeguranca.disabled = true;
+                    btnMapaSeguranca.style.opacity = '0.7';
+                    btnMapaSeguranca.style.cursor = 'wait';
+                    
+                    // Redirecionar para a página do mapa
                     window.location.href = '/mapa-seguranca/';
                 });
             }

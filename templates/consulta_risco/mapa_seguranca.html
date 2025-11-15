@@ -29,7 +29,12 @@
         
     </div>
     
-    <div style="background: white; border-radius: 12px; padding: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-height: 600px;">
+    <div style="background: white; border-radius: 12px; padding: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-height: 600px; position: relative;">
+        <div id="loadingMapa" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; border-radius: 12px;">
+            <div style="width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid var(--cor-azul-escuro); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem;"></div>
+            <p style="color: var(--cor-azul-escuro); font-size: 1.1rem; font-weight: 600; margin: 0;">Carregando mapa...</p>
+            <p style="color: var(--cor-cinza); font-size: 0.9rem; margin: 0.5rem 0 0 0;">Isso pode levar alguns segundos</p>
+        </div>
         {% if mapa_html %}
             <div style="width: 100%; height: 600px; border-radius: 8px; overflow: hidden;">
                 {{ mapa_html|safe }}
@@ -70,6 +75,11 @@
 </div>
 
 <style>
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
     @media (max-width: 768px) {
         .container {
             padding: 0 0.5rem;
@@ -84,6 +94,44 @@
         }
     }
 </style>
+
+<script>
+    // Ocultar indicador de carregamento quando o mapa estiver pronto
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadingMapa = document.getElementById('loadingMapa');
+        
+        if (loadingMapa) {
+            {% if mapa_html %}
+                // Tentar detectar quando o mapa do Folium foi renderizado
+                let tentativas = 0;
+                const maxTentativas = 50; // 5 segundos máximo
+                
+                const verificarMapa = setInterval(function() {
+                    tentativas++;
+                    // Verificar se existe um elemento do mapa (Folium cria elementos com id começando com 'map')
+                    const mapaElement = document.querySelector('[id^="map"]');
+                    const foliumMap = document.querySelector('.folium-map');
+                    
+                    if (mapaElement || foliumMap || tentativas >= maxTentativas) {
+                        clearInterval(verificarMapa);
+                        if (loadingMapa) {
+                            loadingMapa.style.transition = 'opacity 0.5s ease';
+                            loadingMapa.style.opacity = '0';
+                            setTimeout(function() {
+                                if (loadingMapa) {
+                                    loadingMapa.style.display = 'none';
+                                }
+                            }, 500);
+                        }
+                    }
+                }, 100);
+            {% else %}
+                // Se não há mapa, ocultar imediatamente
+                loadingMapa.style.display = 'none';
+            {% endif %}
+        }
+    });
+</script>
 {% endblock %}
 
 
