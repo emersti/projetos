@@ -175,10 +175,14 @@ def avaliar_seguranca(request):
             avaliacao.data_avaliacao = get_brasilia_time()
             avaliacao.save()
         
-        # Invalidar cache da média de avaliações para esta cidade
-        from django.core.cache import cache
-        cache_key = f'avaliacao_media_{estado_id}_{cidade_nome.lower()}'
-        cache.delete(cache_key)
+        # Invalidar cache da média de avaliações para esta cidade (se cache estiver disponível)
+        try:
+            from django.core.cache import cache
+            cache_key = f'avaliacao_media_{estado_id}_{cidade_nome.lower()}'
+            cache.delete(cache_key)
+        except Exception:
+            # Se o cache não estiver disponível, continuar sem invalidar
+            pass
         
         # Atualizar data do sistema
         SistemaAtualizacao.atualizar_sistema(f"Avaliação de segurança para {cidade_nome} recebida")
@@ -213,14 +217,17 @@ def obter_media_avaliacoes(request):
         if not estado_id or not cidade_nome:
             return JsonResponse({'success': False, 'error': 'Estado e cidade são obrigatórios'})
         
-        # Criar chave de cache
-        from django.core.cache import cache
-        cache_key = f'avaliacao_media_{estado_id}_{cidade_nome.lower()}'
-        
-        # Tentar obter do cache (TTL de 1 hora)
-        cached_result = cache.get(cache_key)
-        if cached_result is not None:
-            return JsonResponse(cached_result)
+        # Tentar obter do cache (se disponível)
+        cached_result = None
+        try:
+            from django.core.cache import cache
+            cache_key = f'avaliacao_media_{estado_id}_{cidade_nome.lower()}'
+            cached_result = cache.get(cache_key)
+            if cached_result is not None:
+                return JsonResponse(cached_result)
+        except Exception:
+            # Se o cache não estiver disponível, continuar sem cache
+            pass
         
         # Buscar o estado
         try:
@@ -268,8 +275,14 @@ def obter_media_avaliacoes(request):
                 'quantidade': quantidade
             }
             
-            # Armazenar no cache por 1 hora (3600 segundos)
-            cache.set(cache_key, response_data, 3600)
+            # Armazenar no cache por 1 hora (se cache estiver disponível)
+            try:
+                from django.core.cache import cache
+                cache_key = f'avaliacao_media_{estado_id}_{cidade_nome.lower()}'
+                cache.set(cache_key, response_data, 3600)
+            except Exception:
+                # Se o cache não estiver disponível, continuar sem cache
+                pass
             
             return JsonResponse(response_data)
         else:
@@ -278,8 +291,14 @@ def obter_media_avaliacoes(request):
                 'tem_avaliacoes': False
             }
             
-            # Armazenar no cache por 1 hora mesmo quando não há avaliações
-            cache.set(cache_key, response_data, 3600)
+            # Armazenar no cache por 1 hora mesmo quando não há avaliações (se cache estiver disponível)
+            try:
+                from django.core.cache import cache
+                cache_key = f'avaliacao_media_{estado_id}_{cidade_nome.lower()}'
+                cache.set(cache_key, response_data, 3600)
+            except Exception:
+                # Se o cache não estiver disponível, continuar sem cache
+                pass
             
             return JsonResponse(response_data)
             
