@@ -175,6 +175,11 @@ def avaliar_seguranca(request):
             avaliacao.data_avaliacao = get_brasilia_time()
             avaliacao.save()
         
+        # Invalidar cache da média de avaliações para esta cidade
+        from django.core.cache import cache
+        cache_key = f'avaliacao_media_{estado_id}_{cidade_nome.lower()}'
+        cache.delete(cache_key)
+        
         # Atualizar data do sistema
         SistemaAtualizacao.atualizar_sistema(f"Avaliação de segurança para {cidade_nome} recebida")
         
@@ -195,6 +200,89 @@ def avaliar_seguranca(request):
         
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Dados inválidos'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'Erro interno: {str(e)}'})
+
+@csrf_exempt
+def obter_media_avaliacoes(request):
+    """View para obter a média das avaliações de uma cidade (últimos 3 anos)"""
+    try:
+        estado_id = request.GET.get('estado_id')
+        cidade_nome = request.GET.get('cidade', '').strip()
+        
+        if not estado_id or not cidade_nome:
+            return JsonResponse({'success': False, 'error': 'Estado e cidade são obrigatórios'})
+        
+        # Criar chave de cache
+        from django.core.cache import cache
+        cache_key = f'avaliacao_media_{estado_id}_{cidade_nome.lower()}'
+        
+        # Tentar obter do cache (TTL de 1 hora)
+        cached_result = cache.get(cache_key)
+        if cached_result is not None:
+            return JsonResponse(cached_result)
+        
+        # Buscar o estado
+        try:
+            estado = Estado.objects.get(id=estado_id)
+        except Estado.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Estado não encontrado'})
+        
+        # Calcular data limite (ano corrente - 2 anos = últimos 3 anos)
+        from datetime import datetime, timedelta
+        from .models import get_brasilia_time
+        import pytz
+        
+        # Obter data atual em Brasília
+        brasilia_tz = pytz.timezone('America/Sao_Paulo')
+        data_atual = datetime.now(brasilia_tz)
+        
+        # Data limite: 1º de janeiro do ano há 2 anos atrás
+        ano_limite = data_atual.year - 2
+        data_limite = datetime(ano_limite, 1, 1, tzinfo=brasilia_tz)
+        # Remover timezone para comparar com campo que não tem timezone
+        data_limite = data_limite.replace(tzinfo=None)
+        
+        # Buscar avaliações da cidade dos últimos 3 anos (usando índice para otimizar)
+        avaliacoes = AvaliacaoSeguranca.objects.filter(
+            estado=estado,
+            cidade__iexact=cidade_nome,
+            data_avaliacao__gte=data_limite
+        ).only('nota')  # Selecionar apenas o campo necessário para otimizar
+        
+        if avaliacoes.exists():
+            # Calcular média usando aggregate (mais eficiente)
+            from django.db.models import Avg, Count
+            resultado = avaliacoes.aggregate(
+                media=Avg('nota'),
+                quantidade=Count('id')
+            )
+            
+            media = resultado['media']
+            quantidade = resultado['quantidade']
+            
+            response_data = {
+                'success': True,
+                'tem_avaliacoes': True,
+                'media': round(media, 2),
+                'quantidade': quantidade
+            }
+            
+            # Armazenar no cache por 1 hora (3600 segundos)
+            cache.set(cache_key, response_data, 3600)
+            
+            return JsonResponse(response_data)
+        else:
+            response_data = {
+                'success': True,
+                'tem_avaliacoes': False
+            }
+            
+            # Armazenar no cache por 1 hora mesmo quando não há avaliações
+            cache.set(cache_key, response_data, 3600)
+            
+            return JsonResponse(response_data)
+            
     except Exception as e:
         return JsonResponse({'success': False, 'error': f'Erro interno: {str(e)}'})
 

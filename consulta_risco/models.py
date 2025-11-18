@@ -242,6 +242,10 @@ class AvaliacaoSeguranca(models.Model):
         unique_together = ['email', 'estado', 'cidade']
         verbose_name = 'Avaliação de Segurança'
         verbose_name_plural = 'Avaliações de Segurança'
+        indexes = [
+            models.Index(fields=['estado', 'cidade', 'data_avaliacao'], name='aval_est_cid_data_idx'),
+            models.Index(fields=['data_avaliacao'], name='aval_data_idx'),
+        ]
     
     def save(self, *args, **kwargs):
         """Override save para garantir que a data seja sempre em UTC-3"""

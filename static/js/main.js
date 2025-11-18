@@ -126,6 +126,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Função para carregar cidades baseado no estado selecionado
     function carregarCidades(estadoSelect, cidadeSelect) {
+        if (!estadoSelect || !cidadeSelect) {
+            console.error('Elementos de estado ou cidade não encontrados');
+            return;
+        }
+        
         const estadoId = estadoSelect.value;
         
         if (!estadoId) {
@@ -184,13 +189,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Event listeners para os selects de estado
-    estadoOrigemSelect.addEventListener('change', function() {
-        carregarCidades(estadoOrigemSelect, cidadeOrigemSelect);
-    });
+    if (estadoOrigemSelect && cidadeOrigemSelect) {
+        estadoOrigemSelect.addEventListener('change', function() {
+            carregarCidades(estadoOrigemSelect, cidadeOrigemSelect);
+        });
+    }
 
-    estadoDestinoSelect.addEventListener('change', function() {
-        carregarCidades(estadoDestinoSelect, cidadeDestinoSelect);
-    });
+    if (estadoDestinoSelect && cidadeDestinoSelect) {
+        estadoDestinoSelect.addEventListener('change', function() {
+            carregarCidades(estadoDestinoSelect, cidadeDestinoSelect);
+        });
+    }
 
     // Event listener para o botão de limpar
     const btnLimpar = document.getElementById('btnLimpar');
@@ -332,6 +341,13 @@ document.addEventListener('DOMContentLoaded', function() {
         consultaForm.addEventListener('submit', function(e) {
             e.preventDefault();
         
+        // Verificar se os elementos existem
+        if (!estadoOrigemSelect || !cidadeOrigemSelect || !estadoDestinoSelect || !cidadeDestinoSelect) {
+            console.error('Elementos do formulário não encontrados');
+            alert('Erro: Elementos do formulário não encontrados. Por favor, recarregue a página.');
+            return;
+        }
+        
         const estadoOrigem = estadoOrigemSelect.options[estadoOrigemSelect.selectedIndex].text;
         const cidadeOrigemId = cidadeOrigemSelect.value;
         const cidadeOrigem = cidadeOrigemSelect.options[cidadeOrigemSelect.selectedIndex].text;
@@ -386,7 +402,111 @@ document.addEventListener('DOMContentLoaded', function() {
             const corRisco = obterCorRisco(resultado.nivel);
             const iconeRisco = obterIconeRisco(resultado.nivel);
             
-            resultContent.innerHTML = `
+            // Buscar médias das avaliações
+            if (typeof buscarMediaAvaliacoes === 'function' && typeof exibirResultado === 'function') {
+                buscarMediaAvaliacoes(estadoOrigemSelect.value, cidadeOrigem, estadoDestinoSelect.value, cidadeDestino, function(mediaOrigem, mediaDestino) {
+                    exibirResultado(resultado, corRisco, iconeRisco, cidadeOrigem, estadoOrigem, posicaoOrigem, cidadeDestino, estadoDestino, posicaoDestino, mediaOrigem, mediaDestino, originalText, submitBtn);
+                });
+            } else {
+                console.error('Funções buscarMediaAvaliacoes ou exibirResultado não encontradas');
+                // Exibir resultado sem avaliações se as funções não estiverem disponíveis
+                const resultContent = document.getElementById('resultContent');
+                const resultContainer = document.getElementById('resultContainer');
+                if (resultContent && resultContainer) {
+                    resultContent.innerHTML = `
+                        <div class="result-header">
+                            <h3 style="color: ${corRisco}; margin-bottom: 1rem;">
+                                ${iconeRisco} Nível de Risco: ${resultado.nivel}
+                            </h3>
+                            ${resultado.tipo === 'calculado' ? `
+                                <p style="font-size: 0.9rem; color: var(--cor-cinza); margin-bottom: 1rem;">
+                                    Diferença de posições: ${resultado.diferenca} posições
+                                </p>
+                            ` : ''}
+                            <p style="margin-bottom: 1.5rem; font-size: 1.1rem;">
+                                <strong>Trajeto:</strong> ${cidadeOrigem.toUpperCase()} (${estadoOrigem}) → ${cidadeDestino.toUpperCase()} (${estadoDestino})
+                            </p>
+                        </div>
+                    `;
+                    resultContainer.style.display = 'block';
+                    resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                // Restaurar botão
+                if (submitBtn && originalText) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+        }, 1500);
+        });
+    }
+    
+    // Função para buscar média de avaliações
+    function buscarMediaAvaliacoes(estadoOrigemId, cidadeOrigem, estadoDestinoId, cidadeDestino, callback) {
+        let mediaOrigem = null;
+        let mediaDestino = null;
+        let chamadasCompletas = 0;
+        
+        // Buscar média da cidade origem
+        fetch(`/api/media-avaliacoes/?estado_id=${estadoOrigemId}&cidade=${encodeURIComponent(cidadeOrigem)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.tem_avaliacoes) {
+                    mediaOrigem = data.media;
+                }
+                chamadasCompletas++;
+                if (chamadasCompletas === 2) {
+                    callback(mediaOrigem, mediaDestino);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar média de avaliações origem:', error);
+                chamadasCompletas++;
+                if (chamadasCompletas === 2) {
+                    callback(mediaOrigem, mediaDestino);
+                }
+            });
+        
+        // Buscar média da cidade destino
+        fetch(`/api/media-avaliacoes/?estado_id=${estadoDestinoId}&cidade=${encodeURIComponent(cidadeDestino)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.tem_avaliacoes) {
+                    mediaDestino = data.media;
+                }
+                chamadasCompletas++;
+                if (chamadasCompletas === 2) {
+                    callback(mediaOrigem, mediaDestino);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar média de avaliações destino:', error);
+                chamadasCompletas++;
+                if (chamadasCompletas === 2) {
+                    callback(mediaOrigem, mediaDestino);
+                }
+            });
+    }
+    
+    // Função para exibir resultado com avaliações
+    function exibirResultado(resultado, corRisco, iconeRisco, cidadeOrigem, estadoOrigem, posicaoOrigem, cidadeDestino, estadoDestino, posicaoDestino, mediaOrigem, mediaDestino, originalText, submitBtn) {
+        const resultContent = document.getElementById('resultContent');
+        const resultContainer = document.getElementById('resultContainer');
+        
+        // Função auxiliar para formatar avaliação
+        function formatarAvaliacao(media) {
+            if (media !== null && media !== undefined) {
+                return `<div style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--cor-azul-escuro);">
+                    <strong>Avaliação Usuários:</strong> ${media}/10
+                </div>`;
+            } else {
+                return `<div style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--cor-cinza); font-style: italic;">
+                    Cidade sem avaliações de usuários.
+                </div>`;
+            }
+        }
+        
+        resultContent.innerHTML = `
                 <div class="result-header">
                     <h3 style="color: ${corRisco}; margin-bottom: 1rem;">
                         ${iconeRisco} Nível de Risco: ${resultado.nivel}
@@ -407,12 +527,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                 ${cidadeOrigem.toUpperCase()}<br>
                                 <small style="color: var(--cor-cinza);">${estadoOrigem}</small><br>
                                 <span style="font-size: 1.2rem; font-weight: bold; color: var(--cor-azul-escuro);">#${posicaoOrigem}</span>
+                                ${formatarAvaliacao(mediaOrigem)}
                             </div>
                             <div>
                                 <strong style="color: var(--cor-laranja);">Destino:</strong><br>
                                 ${cidadeDestino.toUpperCase()}<br>
                                 <small style="color: var(--cor-cinza);">${estadoDestino}</small><br>
                                 <span style="font-size: 1.2rem; font-weight: bold; color: var(--cor-azul-escuro);">#${posicaoDestino}</span>
+                                ${formatarAvaliacao(mediaDestino)}
                             </div>
                         </div>
                     </div>
@@ -475,40 +597,43 @@ document.addEventListener('DOMContentLoaded', function() {
                     </p>
                 </div>
             `;
-            
-            // Mostrar resultado com animação
-            resultContainer.style.display = 'block';
-            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            // Configurar evento do formulário de avaliação
-            configurarAvaliacaoForm(estadoOrigemSelect.value, cidadeOrigem);
-            
-            // Configurar botão do mapa de segurança
-            const btnMapaSeguranca = document.getElementById('btnMapaSeguranca');
-            if (btnMapaSeguranca) {
-                btnMapaSeguranca.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Salvar texto original
-                    const originalText = btnMapaSeguranca.innerHTML;
-                    
-                    // Alterar texto e desabilitar botão
-                    btnMapaSeguranca.innerHTML = '<span>⏳ Carregando mapa...</span>';
-                    btnMapaSeguranca.disabled = true;
-                    btnMapaSeguranca.style.opacity = '0.7';
-                    btnMapaSeguranca.style.cursor = 'wait';
-                    
-                    // Redirecionar para a página do mapa
-                    window.location.href = '/mapa-seguranca/';
-                });
-            }
-            
-            // Restaurar botão
+        
+        // Mostrar resultado com animação
+        resultContainer.style.display = 'block';
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Configurar evento do formulário de avaliação
+        const estadoOrigemSelectElement = document.getElementById('estado-origem');
+        if (estadoOrigemSelectElement) {
+            configurarAvaliacaoForm(estadoOrigemSelectElement.value, cidadeOrigem);
+        }
+        
+        // Configurar botão do mapa de segurança
+        const btnMapaSeguranca = document.getElementById('btnMapaSeguranca');
+        if (btnMapaSeguranca) {
+            btnMapaSeguranca.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Salvar texto original
+                const originalText = btnMapaSeguranca.innerHTML;
+                
+                // Alterar texto e desabilitar botão
+                btnMapaSeguranca.innerHTML = '<span>⏳ Carregando mapa...</span>';
+                btnMapaSeguranca.disabled = true;
+                btnMapaSeguranca.style.opacity = '0.7';
+                btnMapaSeguranca.style.cursor = 'wait';
+                
+                // Redirecionar para a página do mapa
+                window.location.href = '/mapa-seguranca/';
+            });
+        }
+        
+        // Restaurar botão
+        if (submitBtn && originalText) {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
-        }, 1500);
-        });
+        }
     }
 
     // Função para configurar o formulário de avaliação
@@ -687,6 +812,13 @@ document.addEventListener('DOMContentLoaded', function() {
     inicializarCaptcha();
 
     console.log('Sistema de consulta de risco carregado com sucesso!');
+    console.log('Estado Origem Select:', estadoOrigemSelect);
+    console.log('Cidade Origem Select:', cidadeOrigemSelect);
+    console.log('Estado Destino Select:', estadoDestinoSelect);
+    console.log('Cidade Destino Select:', cidadeDestinoSelect);
+    console.log('Função carregarCidades:', typeof carregarCidades);
+    console.log('Função buscarMediaAvaliacoes:', typeof buscarMediaAvaliacoes);
+    console.log('Função exibirResultado:', typeof exibirResultado);
     
     // Configurar Google Translate para não traduzir elementos específicos
     function configureGoogleTranslate() {
