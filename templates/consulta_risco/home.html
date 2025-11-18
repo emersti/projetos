@@ -454,17 +454,17 @@
 
 /* Captcha Styles */
 .captcha-container {
-    margin: 1.5rem 0;
-    padding: 0 20px;
+    margin: 1rem 0;
+    padding: 0 10px;
 }
 
 .captcha-box {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 10px;
+    padding: 0.75rem;
+    border: 1px solid var(--cor-cinza-claro);
     box-shadow: var(--sombra-media);
-    max-width: 500px;
+    max-width: 300px;
     margin: 0 auto;
 }
 
@@ -474,11 +474,11 @@
 }
 
 .captcha-question span {
-    font-size: 1.1rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--cor-azul-escuro);
     display: block;
-    padding: 0.75rem;
+    padding: 0.35rem 0.5rem;
     background: var(--cor-branco);
     border-radius: 8px;
     border: 1px solid var(--cor-cinza-claro);
@@ -486,17 +486,17 @@
 
 .captcha-input-group {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.4rem;
     align-items: center;
     margin-bottom: 1rem;
 }
 
 .captcha-input-group input {
     flex: 1;
-    padding: 0.75rem;
+    padding: 0.5rem 0.65rem;
     border: 2px solid var(--cor-cinza-claro);
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 0.85rem;
     transition: var(--transicao-media);
     background: var(--cor-branco);
 }
@@ -522,12 +522,12 @@
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 0.75rem;
-    font-size: 1.2rem;
+    padding: 0.4rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: var(--transicao-media);
-    min-width: 50px;
-    height: 50px;
+    min-width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -568,32 +568,35 @@
 /* Responsividade para Captcha */
 @media (max-width: 768px) {
     .captcha-container {
-        margin: 1rem 0;
-        padding: 0 15px;
+        margin: 0.9rem 0;
+        padding: 0 5px;
     }
     
     .captcha-box {
-        padding: 1rem;
+        padding: 0.65rem;
+        max-width: 100%;
     }
     
     .captcha-question span {
-        font-size: 1rem;
-        padding: 0.5rem;
+        font-size: 0.8rem;
+        padding: 0.35rem;
     }
     
     .captcha-input-group {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.35rem;
     }
     
     .captcha-input-group input {
         width: 100%;
-        padding: 0.75rem;
+        padding: 0.55rem;
+        font-size: 0.8rem;
     }
     
     .btn-refresh {
         width: 100%;
-        height: 45px;
+        height: 34px;
+        font-size: 0.85rem;
     }
 }
 

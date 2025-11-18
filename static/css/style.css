@@ -374,12 +374,13 @@ body {
 
 /* Form Container */
 .form-container {
-    background: var(--cor-branco);
+    background: #e55a2b;
     border-radius: 16px;
     padding: 2.5rem;
     box-shadow: var(--sombra-forte);
     margin-bottom: 2rem;
-    border: 1px solid var(--cor-cinza-claro);
+    border: none;
+    color: #ffffff;
 }
 
 .consulta-form {
@@ -401,7 +402,7 @@ body {
 
 .form-label {
     font-weight: 600;
-    color: var(--cor-azul-escuro);
+    color: #e9ecef;
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
 }
@@ -441,6 +442,15 @@ body {
     gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;
+}
+
+.consulta-form .form-actions .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+.consulta-form .form-actions .btn-secondary {
+    padding: 0.65rem 1.4rem;
 }
 
 .btn {
