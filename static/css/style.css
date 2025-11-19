@@ -334,6 +334,9 @@ body {
     transition: transform 0.3s ease;
     animation: heroTitle3D 3s ease-in-out infinite;
     animation-delay: 0.5s;
+    -webkit-text-stroke: 2px rgba(0, 0, 0, 0.8);
+    text-stroke: 2px rgba(0, 0, 0, 0.8);
+    paint-order: stroke fill;
 }
 
 @keyframes heroTitle3D {
