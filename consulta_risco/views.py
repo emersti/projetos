@@ -1,3 +1,5 @@
+import logging
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
@@ -8,6 +10,8 @@ from django.utils import timezone
 from django.utils.timezone import localtime
 from django.db import transaction
 from django.db.models import Q
+from django.urls import reverse
+from django.core.mail import send_mail
 import hashlib
 import json
 import secrets
@@ -18,6 +22,8 @@ import folium
 from folium.plugins import HeatMap, MarkerCluster
 import unicodedata
 from .models import Estado, Cidade, Cupom, AdminUser, TipoCupom, AvaliacaoSeguranca, SistemaAtualizacao
+
+logger = logging.getLogger(__name__)
 
 
 def formatar_data_brasil(datetime_obj):
@@ -735,11 +741,46 @@ def admin_forgot_password(request):
             admin_user.reset_token_expires = timezone.now() + timezone.timedelta(hours=24)
             admin_user.save()
             
-            # Em um ambiente real, aqui você enviaria um email com o token
-            # Para desenvolvimento, vamos mostrar o token na tela
-            messages.success(request, f'Token de reset gerado para {username}. Em produção, este seria enviado por email.')
-            messages.info(request, f'Token de desenvolvimento: {token}')
+            reset_link = request.build_absolute_uri(reverse('admin_reset_password', args=[token]))
+            email_enviado = False
+            deve_mostrar_token = settings.DEBUG
             
+            if admin_user.email and getattr(settings, 'EMAIL_HOST_USER', ''):
+                try:
+                    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', settings.EMAIL_HOST_USER)
+                    assunto = 'Reset de Senha - Painel Administrativo SafeScore Brasil'
+                    mensagem = (
+                        f'Olá {admin_user.username},\n\n'
+                        f'Recebemos uma solicitação para redefinir a sua senha do painel administrativo.\n'
+                        f'Use o link abaixo para criar uma nova senha (válido por 24 horas):\n\n'
+                        f'{reset_link}\n\n'
+                        f'Se você não solicitou essa alteração, ignore esta mensagem.\n\n'
+                        f'Atenciosamente,\n'
+                        f'Equipe SafeScore Brasil'
+                    )
+                    send_mail(assunto, mensagem, from_email, [admin_user.email], fail_silently=False)
+                    email_enviado = True
+                except Exception as e:
+                    logger.error('Erro ao enviar email de reset para %s: %s', admin_user.username, str(e))
+            
+            if email_enviado:
+                messages.success(
+                    request,
+                    'Enviamos um email com o link de redefinição. Verifique sua caixa de entrada e siga as instruções.'
+                )
+                return redirect('admin_login')
+            
+            if not deve_mostrar_token:
+                messages.warning(
+                    request,
+                    'Não foi possível enviar o email de redefinição. Utilizamos um link direto temporário.'
+                )
+                return redirect('admin_reset_password', token=token)
+            
+            # Ambiente de desenvolvimento ou fallback explícito
+            messages.success(request, f'Token de reset gerado para {username}.')
+            messages.info(request, f'Token de desenvolvimento: {token}')
+            messages.info(request, f'Link de reset: {reset_link}')
             return redirect('admin_reset_password', token=token)
             
         except AdminUser.DoesNotExist:
