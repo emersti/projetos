@@ -60,6 +60,11 @@ body {
     min-height: 100vh;
 }
 
+.main {
+    background: linear-gradient(135deg, #c8d2e1 0%, #101010 100%);
+    min-height: calc(100vh - 140px);
+}
+
 
 
 
