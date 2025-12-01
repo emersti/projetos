@@ -752,6 +752,15 @@ def admin_forgot_password(request):
             reset_link = request.build_absolute_uri(reverse('admin_reset_password', args=[token]))
             email_enviado = False
             
+            # Detectar se está em produção de forma mais confiável
+            # Verifica DEBUG e também se o host é de produção
+            host = request.get_host().lower()
+            is_production = (
+                not settings.DEBUG or 
+                'safetyscorebrasil.com.br' in host or
+                'www.safetyscorebrasil.com.br' in host
+            )
+            
             # Tentar enviar email
             try:
                 # Obter email remetente (tenta DEFAULT_FROM_EMAIL primeiro, depois EMAIL_HOST_USER)
@@ -777,13 +786,26 @@ def admin_forgot_password(request):
                 email_enviado = True
             except Exception as e:
                 logger.error('Erro ao enviar email de reset para %s: %s', admin_user.username, str(e))
-                # Em produção, não mostrar detalhes do erro nem o token
-                if not settings.DEBUG:
+                # Em produção, NUNCA mostrar token ou link, apenas mensagem genérica
+                if is_production:
                     messages.error(
                         request,
                         'Não foi possível enviar o email de redefinição. Por favor, verifique se o serviço de email está configurado corretamente ou entre em contato com o administrador do sistema.'
                     )
+                    # Limpar o token para segurança
+                    admin_user.reset_token = None
+                    admin_user.reset_token_expires = None
+                    admin_user.save()
                     return render(request, 'consulta_risco/admin_forgot_password.html')
+                else:
+                    # Apenas em desenvolvimento, mostrar token
+                    messages.warning(
+                        request,
+                        'Não foi possível enviar o email de redefinição. Modo de desenvolvimento ativo.'
+                    )
+                    messages.info(request, f'Token de desenvolvimento: {token}')
+                    messages.info(request, f'Link de reset: {reset_link}')
+                    return redirect('admin_reset_password', token=token)
             
             # Se o email foi enviado com sucesso
             if email_enviado:
@@ -793,8 +815,20 @@ def admin_forgot_password(request):
                 )
                 return redirect('admin_login')
             
-            # Apenas em desenvolvimento, mostrar token se o email não foi enviado
-            if settings.DEBUG:
+            # Fallback: se chegou aqui e o email não foi enviado (não deveria acontecer)
+            # Em produção, nunca mostrar token
+            if is_production:
+                messages.error(
+                    request,
+                    'Não foi possível enviar o email de redefinição. Por favor, tente novamente mais tarde ou entre em contato com o administrador do sistema.'
+                )
+                # Limpar o token para segurança
+                admin_user.reset_token = None
+                admin_user.reset_token_expires = None
+                admin_user.save()
+                return render(request, 'consulta_risco/admin_forgot_password.html')
+            else:
+                # Apenas em desenvolvimento
                 messages.warning(
                     request,
                     'Não foi possível enviar o email de redefinição. Modo de desenvolvimento ativo.'
