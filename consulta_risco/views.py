@@ -743,14 +743,6 @@ def admin_forgot_password(request):
                 )
                 return render(request, 'consulta_risco/admin_forgot_password.html')
             
-            # Verificar se as configurações de email estão disponíveis
-            if not getattr(settings, 'EMAIL_HOST_USER', ''):
-                messages.error(
-                    request,
-                    'Serviço de email não configurado. Entre em contato com o administrador do sistema.'
-                )
-                return render(request, 'consulta_risco/admin_forgot_password.html')
-            
             # Gerar token de reset
             token = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
             admin_user.reset_token = token
@@ -762,7 +754,15 @@ def admin_forgot_password(request):
             
             # Tentar enviar email
             try:
-                from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', settings.EMAIL_HOST_USER)
+                # Obter email remetente (tenta DEFAULT_FROM_EMAIL primeiro, depois EMAIL_HOST_USER)
+                from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', None)
+                if not from_email:
+                    from_email = getattr(settings, 'EMAIL_HOST_USER', None)
+                
+                # Se não houver email remetente configurado, usar um padrão
+                if not from_email:
+                    from_email = 'noreply@safetyscorebrasil.com.br'
+                
                 assunto = 'Reset de Senha - Painel Administrativo SafeScore Brasil'
                 mensagem = (
                     f'Olá {admin_user.username},\n\n'
@@ -781,7 +781,7 @@ def admin_forgot_password(request):
                 if not settings.DEBUG:
                     messages.error(
                         request,
-                        'Não foi possível enviar o email de redefinição. Por favor, tente novamente mais tarde ou entre em contato com o administrador do sistema.'
+                        'Não foi possível enviar o email de redefinição. Por favor, verifique se o serviço de email está configurado corretamente ou entre em contato com o administrador do sistema.'
                     )
                     return render(request, 'consulta_risco/admin_forgot_password.html')
             

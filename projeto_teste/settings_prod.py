@@ -14,11 +14,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = config('DEBUG', default=False, cast=bool)
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-#ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='54.244.42.1,127.0.0.1,safetyscorebrasil.com.br,www.safetyscorebrasil.com.br', cast=lambda v: [s.strip() for s in v.split(',')])
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,safetyscorebrasil.com.br,www.safetyscorebrasil.com.br', cast=lambda v: [s.strip() for s in v.split(',')])
 
 # Application definition
 INSTALLED_APPS = [
@@ -154,8 +152,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Configurações de CSRF
 CSRF_TRUSTED_ORIGINS = [
-    "https://54.244.42.1",
-    "http://54.244.42.1",
     "https://safetyscorebrasil.com.br",
     "https://www.safetyscorebrasil.com.br",
 ]
@@ -173,7 +169,8 @@ EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@safetyscorebrasil.com.br')
+# DEFAULT_FROM_EMAIL: usa o valor da variável de ambiente ou EMAIL_HOST_USER como fallback, ou um padrão
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER or 'noreply@safetyscorebrasil.com.br')
 
 # Configurações de cache
 CACHES = {
