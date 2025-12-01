@@ -198,7 +198,7 @@ class AdminUser(models.Model):
     
     username = models.CharField(max_length=50, unique=True)
     password = models.CharField(max_length=128)  # Será hash em produção
-    email = models.EmailField(blank=True)
+    email = models.EmailField()
     nivel_acesso = models.CharField(max_length=20, choices=NIVEL_CHOICES, default='admin')
     ativo = models.BooleanField(default=True)
     data_criacao = models.DateTimeField(auto_now_add=True)

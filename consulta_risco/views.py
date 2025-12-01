@@ -940,14 +940,41 @@ def admin_user_create(request):
     
     if request.method == 'POST':
         try:
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            email = request.POST.get('email', '')
+            username = request.POST.get('username', '').strip()
+            password = request.POST.get('password', '').strip()
+            email = request.POST.get('email', '').strip()
             nivel_acesso = request.POST.get('nivel_acesso')
+            
+            # Validações
+            if not username:
+                messages.error(request, 'Nome de usuário é obrigatório.')
+                return render(request, 'consulta_risco/admin_user_create.html', {'admin_user': admin_user})
+            
+            if not password:
+                messages.error(request, 'Senha é obrigatória.')
+                return render(request, 'consulta_risco/admin_user_create.html', {'admin_user': admin_user})
+            
+            if not email:
+                messages.error(request, 'Email é obrigatório.')
+                return render(request, 'consulta_risco/admin_user_create.html', {'admin_user': admin_user})
+            
+            # Validar formato do email
+            from django.core.validators import validate_email
+            from django.core.exceptions import ValidationError
+            try:
+                validate_email(email)
+            except ValidationError:
+                messages.error(request, 'Email inválido. Por favor, digite um email válido.')
+                return render(request, 'consulta_risco/admin_user_create.html', {'admin_user': admin_user})
             
             # Verificar se usuário já existe
             if AdminUser.objects.filter(username=username).exists():
                 messages.error(request, 'Nome de usuário já existe.')
+                return render(request, 'consulta_risco/admin_user_create.html', {'admin_user': admin_user})
+            
+            # Verificar se email já está em uso
+            if AdminUser.objects.filter(email=email).exists():
+                messages.error(request, 'Este email já está cadastrado para outro usuário.')
                 return render(request, 'consulta_risco/admin_user_create.html', {'admin_user': admin_user})
             
             # Verificar permissões para criar super admin
