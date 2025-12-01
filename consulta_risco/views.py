@@ -735,6 +735,22 @@ def admin_forgot_password(request):
         try:
             admin_user = AdminUser.objects.get(username=username, ativo=True)
             
+            # Verificar se o usuário tem email cadastrado
+            if not admin_user.email:
+                messages.error(
+                    request,
+                    'Este usuário não possui email cadastrado. Entre em contato com o administrador do sistema.'
+                )
+                return render(request, 'consulta_risco/admin_forgot_password.html')
+            
+            # Verificar se as configurações de email estão disponíveis
+            if not getattr(settings, 'EMAIL_HOST_USER', ''):
+                messages.error(
+                    request,
+                    'Serviço de email não configurado. Entre em contato com o administrador do sistema.'
+                )
+                return render(request, 'consulta_risco/admin_forgot_password.html')
+            
             # Gerar token de reset
             token = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(32))
             admin_user.reset_token = token
@@ -743,45 +759,49 @@ def admin_forgot_password(request):
             
             reset_link = request.build_absolute_uri(reverse('admin_reset_password', args=[token]))
             email_enviado = False
-            deve_mostrar_token = settings.DEBUG
             
-            if admin_user.email and getattr(settings, 'EMAIL_HOST_USER', ''):
-                try:
-                    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', settings.EMAIL_HOST_USER)
-                    assunto = 'Reset de Senha - Painel Administrativo SafeScore Brasil'
-                    mensagem = (
-                        f'Olá {admin_user.username},\n\n'
-                        f'Recebemos uma solicitação para redefinir a sua senha do painel administrativo.\n'
-                        f'Use o link abaixo para criar uma nova senha (válido por 24 horas):\n\n'
-                        f'{reset_link}\n\n'
-                        f'Se você não solicitou essa alteração, ignore esta mensagem.\n\n'
-                        f'Atenciosamente,\n'
-                        f'Equipe SafeScore Brasil'
+            # Tentar enviar email
+            try:
+                from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', settings.EMAIL_HOST_USER)
+                assunto = 'Reset de Senha - Painel Administrativo SafeScore Brasil'
+                mensagem = (
+                    f'Olá {admin_user.username},\n\n'
+                    f'Recebemos uma solicitação para redefinir a sua senha do painel administrativo.\n'
+                    f'Use o link abaixo para criar uma nova senha (válido por 24 horas):\n\n'
+                    f'{reset_link}\n\n'
+                    f'Se você não solicitou essa alteração, ignore esta mensagem.\n\n'
+                    f'Atenciosamente,\n'
+                    f'Equipe SafeScore Brasil'
+                )
+                send_mail(assunto, mensagem, from_email, [admin_user.email], fail_silently=False)
+                email_enviado = True
+            except Exception as e:
+                logger.error('Erro ao enviar email de reset para %s: %s', admin_user.username, str(e))
+                # Em produção, não mostrar detalhes do erro nem o token
+                if not settings.DEBUG:
+                    messages.error(
+                        request,
+                        'Não foi possível enviar o email de redefinição. Por favor, tente novamente mais tarde ou entre em contato com o administrador do sistema.'
                     )
-                    send_mail(assunto, mensagem, from_email, [admin_user.email], fail_silently=False)
-                    email_enviado = True
-                except Exception as e:
-                    logger.error('Erro ao enviar email de reset para %s: %s', admin_user.username, str(e))
+                    return render(request, 'consulta_risco/admin_forgot_password.html')
             
+            # Se o email foi enviado com sucesso
             if email_enviado:
                 messages.success(
                     request,
-                    'Enviamos um email com o link de redefinição. Verifique sua caixa de entrada e siga as instruções.'
+                    'Enviamos um email com o link de redefinição para o endereço cadastrado. Verifique sua caixa de entrada e siga as instruções.'
                 )
                 return redirect('admin_login')
             
-            if not deve_mostrar_token:
+            # Apenas em desenvolvimento, mostrar token se o email não foi enviado
+            if settings.DEBUG:
                 messages.warning(
                     request,
-                    'Não foi possível enviar o email de redefinição. Utilizamos um link direto temporário.'
+                    'Não foi possível enviar o email de redefinição. Modo de desenvolvimento ativo.'
                 )
+                messages.info(request, f'Token de desenvolvimento: {token}')
+                messages.info(request, f'Link de reset: {reset_link}')
                 return redirect('admin_reset_password', token=token)
-            
-            # Ambiente de desenvolvimento ou fallback explícito
-            messages.success(request, f'Token de reset gerado para {username}.')
-            messages.info(request, f'Token de desenvolvimento: {token}')
-            messages.info(request, f'Link de reset: {reset_link}')
-            return redirect('admin_reset_password', token=token)
             
         except AdminUser.DoesNotExist:
             messages.error(request, 'Usuário não encontrado ou inativo.')
