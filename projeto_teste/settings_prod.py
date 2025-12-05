@@ -246,8 +246,8 @@ SERVER_EMAIL = config('SERVER_EMAIL', default='contato@stigliani.com.br')
 # AWS_SES_CONFIGURATION_SET = 'my-configuration-set'
 
 # Para desenvolvimento local (mostra no console)
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#if DEBUG:
+#    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 
