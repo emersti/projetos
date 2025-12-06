@@ -756,9 +756,10 @@ def admin_forgot_password(request):
             # Verifica DEBUG e também se o host é de produção
             host = request.get_host().lower()
             is_production = (
-                not settings.DEBUG or 
-                'safetyscorebrasil.com.br' in host or
-                'www.safetyscorebrasil.com.br' in host
+                not settings.DEBUG and (
+                    'safetyscorebrasil.com.br' in host or
+                    'www.safetyscorebrasil.com.br' in host
+                )
             )
             
             # Tentar enviar email
@@ -785,7 +786,16 @@ def admin_forgot_password(request):
                 send_mail(assunto, mensagem, from_email, [admin_user.email], fail_silently=False)
                 email_enviado = True
             except Exception as e:
-                logger.error('Erro ao enviar email de reset para %s: %s', admin_user.username, str(e))
+                # Log detalhado do erro para diagnóstico
+                error_type = type(e).__name__
+                error_message = str(e)
+                logger.error(
+                    'Erro ao enviar email de reset para %s: %s - %s',
+                    admin_user.username,
+                    error_type,
+                    error_message,
+                    exc_info=True  # Inclui traceback completo
+                )
                 # Em produção, NUNCA mostrar token ou link, apenas mensagem genérica
                 if is_production:
                     messages.error(
