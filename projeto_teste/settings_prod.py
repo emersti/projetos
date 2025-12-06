@@ -230,8 +230,8 @@ WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True
 
 # Email Backend
-EMAIL_BACKEND = 'django_ses.SESBackend'
-
+#EMAIL_BACKEND = 'django_ses.SESBackend'
+EMAIL_BACKEND = 'projeto_teste.safe_backend.SESEmailBackend'
 # AWS Credentials
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
