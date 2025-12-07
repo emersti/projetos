@@ -7,10 +7,35 @@
     {% load static %}
     {% load consulta_risco_tags %}
     
-    <!-- Favicon SafeScore Brasil -->
+    <!-- Favicon SafeScore Brasil - Múltiplos formatos para melhor compatibilidade -->
     <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    
+    <!-- Meta tags para melhor indexação no Google -->
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="msapplication-TileColor" content="#FF6B35">
+    <meta name="msapplication-TileImage" content="{% static 'images/mstile-144x144.png' %}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://safetyscorebrasil.com.br/">
+    <meta property="og:title" content="{% block og_title %}SafeScore Brasil - Consulta de Risco de Trajeto{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Consulte o risco de segurança de trajetos entre cidades brasileiras. Sistema de avaliação de segurança para ajudar você a planejar viagens mais seguras.{% endblock %}">
+    <meta property="og:image" content="https://safetyscorebrasil.com.br{% static 'images/og-image.png' %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="SafeScore Brasil">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://safetyscorebrasil.com.br/">
+    <meta name="twitter:title" content="{% block twitter_title %}SafeScore Brasil - Consulta de Risco de Trajeto{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Consulte o risco de segurança de trajetos entre cidades brasileiras.{% endblock %}">
+    <meta name="twitter:image" content="https://safetyscorebrasil.com.br{% static 'images/og-image.png' %}">
     
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">

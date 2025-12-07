@@ -16,10 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('consulta_risco.urls')),
+    # Favicon na raiz - importante para Google e navegadores
+    # O Google busca o favicon em /favicon.ico na raiz do domínio
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('images/favicon.ico'), permanent=True)),
 ]
 
 
