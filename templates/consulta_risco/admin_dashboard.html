@@ -40,6 +40,48 @@
     {% endif %}
 
     <div class="admin-content">
+        <!-- Estatísticas primeiro -->
+        <div class="admin-section admin-section-compact">
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">📈 Estatísticas</h2>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🎫</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ cupons|length }}</div>
+                        <div class="stat-label">Total de Cupons</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ cupons_validos }}</div>
+                        <div class="stat-label">Cupons Válidos</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">⌛</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ cupons_expirados }}</div>
+                        <div class="stat-label">Cupons Expirados/Inativos</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🏪</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ lojas_ativas }}</div>
+                        <div class="stat-label">Lojas Ativas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gerenciar Cupons -->
         <div class="admin-section">
             <div class="admin-section-header">
                 <h2 class="admin-section-title">🎫 Gerenciar Cupons</h2>
@@ -197,38 +239,6 @@
                 </div>
             {% endif %}
         </div>
-
-        <div class="admin-section">
-            <div class="admin-section-header">
-                <h2 class="admin-section-title">📈 Estatísticas</h2>
-            </div>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">🎫</div>
-                    <div class="stat-content">
-                        <div class="stat-number">{{ cupons|length }}</div>
-                        <div class="stat-label">Total de Cupons</div>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">✅</div>
-                    <div class="stat-content">
-                        <div class="stat-number">{{ cupons|length }}</div>
-                        <div class="stat-label">Cupons Ativos</div>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">🏪</div>
-                    <div class="stat-content">
-                        <div class="stat-number">5</div>
-                        <div class="stat-label">Tipos Disponíveis</div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -307,6 +317,10 @@
     padding: 2rem;
     box-shadow: var(--sombra-media);
     border: 1px solid var(--cor-cinza-claro);
+}
+
+.admin-section-compact {
+    padding: 1.25rem 1.5rem;
 }
 
 .admin-section-header {

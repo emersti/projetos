@@ -368,11 +368,17 @@ def admin_required(view_func):
 def admin_dashboard(request):
     """Dashboard do administrador"""
     cupons = Cupom.objects.select_related('criado_por', 'modificado_por', 'tipo_cupom').all().order_by('ordem_exibicao', 'data_criacao')
+    agora = timezone.now()
     
     # Filtro por loja
     loja_pesquisa = request.GET.get('loja', '').strip()
     if loja_pesquisa:
         cupons = cupons.filter(loja__icontains=loja_pesquisa)
+
+    # Estatísticas
+    cupons_validos = [c for c in cupons if c.esta_valido()]
+    cupons_expirados = [c for c in cupons if not c.esta_valido()]
+    lojas_ativas = TipoCupom.objects.filter(ativo=True).count()
     
     # Obter informações do usuário atual
     admin_user_id = request.session.get('admin_user_id')
@@ -383,6 +389,9 @@ def admin_dashboard(request):
     
     return render(request, 'consulta_risco/admin_dashboard.html', {
         'cupons': cupons,
+        'cupons_validos': len(cupons_validos),
+        'cupons_expirados': len(cupons_expirados),
+        'lojas_ativas': lojas_ativas,
         'admin_user': admin_user,
         'loja_pesquisa': loja_pesquisa
     })
