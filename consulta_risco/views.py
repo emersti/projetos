@@ -21,6 +21,7 @@ import pandas as pd
 import folium
 from folium.plugins import HeatMap, MarkerCluster
 import unicodedata
+from datetime import datetime, timedelta
 from .models import Estado, Cidade, Cupom, AdminUser, TipoCupom, AvaliacaoSeguranca, SistemaAtualizacao
 
 logger = logging.getLogger(__name__)
@@ -374,7 +375,52 @@ def admin_dashboard(request):
     loja_pesquisa = request.GET.get('loja', '').strip()
     if loja_pesquisa:
         cupons_qs = cupons_qs.filter(loja__icontains=loja_pesquisa)
-        cupons_todos = list(cupons_qs)
+
+    # Filtro por data de criação
+    data_criacao_inicio = request.GET.get('data_criacao_inicio', '').strip()
+    data_criacao_fim = request.GET.get('data_criacao_fim', '').strip()
+    if data_criacao_inicio:
+        try:
+            data_inicio = datetime.strptime(data_criacao_inicio, '%Y-%m-%d')
+            # Tornar timezone-aware
+            data_inicio = timezone.make_aware(data_inicio)
+            cupons_qs = cupons_qs.filter(data_criacao__gte=data_inicio)
+        except ValueError:
+            pass
+    if data_criacao_fim:
+        try:
+            data_fim = datetime.strptime(data_criacao_fim, '%Y-%m-%d')
+            # Adicionar 23:59:59 para incluir o dia inteiro
+            data_fim = data_fim + timedelta(days=1) - timedelta(seconds=1)
+            # Tornar timezone-aware
+            data_fim = timezone.make_aware(data_fim)
+            cupons_qs = cupons_qs.filter(data_criacao__lte=data_fim)
+        except ValueError:
+            pass
+
+    # Filtro por data de alteração
+    data_alteracao_inicio = request.GET.get('data_alteracao_inicio', '').strip()
+    data_alteracao_fim = request.GET.get('data_alteracao_fim', '').strip()
+    if data_alteracao_inicio:
+        try:
+            data_inicio = datetime.strptime(data_alteracao_inicio, '%Y-%m-%d')
+            # Tornar timezone-aware
+            data_inicio = timezone.make_aware(data_inicio)
+            cupons_qs = cupons_qs.filter(data_atualizacao__gte=data_inicio)
+        except ValueError:
+            pass
+    if data_alteracao_fim:
+        try:
+            data_fim = datetime.strptime(data_alteracao_fim, '%Y-%m-%d')
+            # Adicionar 23:59:59 para incluir o dia inteiro
+            data_fim = data_fim + timedelta(days=1) - timedelta(seconds=1)
+            # Tornar timezone-aware
+            data_fim = timezone.make_aware(data_fim)
+            cupons_qs = cupons_qs.filter(data_atualizacao__lte=data_fim)
+        except ValueError:
+            pass
+
+    cupons_todos = list(cupons_qs)
 
     # Filtro por status (validos, expirados, inativos, todos)
     status_filtro = request.GET.get('status', 'todos')
@@ -416,7 +462,11 @@ def admin_dashboard(request):
         'lojas_ativas': lojas_ativas,
         'admin_user': admin_user,
         'loja_pesquisa': loja_pesquisa,
-        'status_filtro': status_filtro
+        'status_filtro': status_filtro,
+        'data_criacao_inicio': data_criacao_inicio,
+        'data_criacao_fim': data_criacao_fim,
+        'data_alteracao_inicio': data_alteracao_inicio,
+        'data_alteracao_fim': data_alteracao_fim
     })
 
 

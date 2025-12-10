@@ -99,8 +99,8 @@
             
             <!-- CAMPO DE BUSCA POR LOJA -->
             <div class="search-container">
-                <h3 class="search-title">🔍 Buscar Cupons por Loja</h3>
-                <p class="search-description">Digite o nome da loja e/ou selecione o status para filtrar os cupons</p>
+                <h3 class="search-title">🔍 Buscar Cupons</h3>
+                <p class="search-description">Filtre os cupons por loja, status e/ou datas de criação e alteração</p>
                 
                 <form method="GET" class="search-form">
                     <div class="search-input-group">
@@ -117,16 +117,53 @@
                                 <option value="inativos" {% if status_filtro == 'inativos' %}selected{% endif %}>Inativos</option>
                             </select>
                         </div>
-                        <div class="search-actions">
-                            <button type="submit" class="btn btn-primary search-btn">
-                                🔍 Buscar
-                            </button>
-                            {% if loja_pesquisa or status_filtro != 'todos' %}
-                                <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary search-clear">
-                                    ✕ Limpar
-                                </a>
-                            {% endif %}
+                    </div>
+                    
+                    <div class="search-dates-group">
+                        <div class="search-date-field">
+                            <label for="data_criacao_inicio" class="search-date-label">📅 Data de Criação:</label>
+                            <div class="search-date-inputs">
+                                <input type="date" 
+                                       id="data_criacao_inicio"
+                                       name="data_criacao_inicio" 
+                                       value="{{ data_criacao_inicio }}" 
+                                       class="search-date-input">
+                                <span class="search-date-separator">até</span>
+                                <input type="date" 
+                                       id="data_criacao_fim"
+                                       name="data_criacao_fim" 
+                                       value="{{ data_criacao_fim }}" 
+                                       class="search-date-input">
+                            </div>
                         </div>
+                        
+                        <div class="search-date-field">
+                            <label for="data_alteracao_inicio" class="search-date-label">🔄 Data de Alteração:</label>
+                            <div class="search-date-inputs">
+                                <input type="date" 
+                                       id="data_alteracao_inicio"
+                                       name="data_alteracao_inicio" 
+                                       value="{{ data_alteracao_inicio }}" 
+                                       class="search-date-input">
+                                <span class="search-date-separator">até</span>
+                                <input type="date" 
+                                       id="data_alteracao_fim"
+                                       name="data_alteracao_fim" 
+                                       value="{{ data_alteracao_fim }}" 
+                                       class="search-date-input">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="search-actions">
+                        <button type="submit" class="btn btn-primary search-btn">
+                            🔍 Buscar
+                        </button>
+                        {% if loja_pesquisa or status_filtro != 'todos' or data_criacao_inicio or data_criacao_fim or data_alteracao_inicio or data_alteracao_fim %}
+                            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary search-clear">
+                                ✕ Limpar
+                            </a>
+                        {% endif %}
                     </div>
                 </form>
                 
@@ -707,11 +744,64 @@
     box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
+.search-dates-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--cor-cinza-claro);
+}
+
+.search-date-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.search-date-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--cor-azul-escuro);
+}
+
+.search-date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.search-date-input {
+    flex: 1;
+    min-width: 150px;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background: var(--cor-branco);
+    color: var(--cor-azul-escuro);
+}
+
+.search-date-input:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.search-date-separator {
+    color: var(--cor-cinza);
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
 .search-actions {
     display: flex;
     gap: 0.5rem;
     align-items: center;
     flex-wrap: wrap;
+    margin-top: 1rem;
 }
 
 .search-btn {
