@@ -390,7 +390,16 @@ def admin_dashboard(request):
     cupons_validos = [c for c in cupons if c.esta_valido()]
     cupons_expirados = [c for c in cupons if not c.esta_valido() and c.ativo]
     cupons_inativos = [c for c in cupons if not c.ativo]
-    lojas_ativas = TipoCupom.objects.filter(ativo=True).count()
+    
+    # Contar lojas únicas nos cupons filtrados
+    lojas_unicas = set()
+    for cupom in cupons:
+        if cupom.tipo_cupom:
+            lojas_unicas.add(cupom.tipo_cupom.id)
+        else:
+            # Se não tem tipo_cupom, usar o nome da loja como identificador único
+            lojas_unicas.add(cupom.loja.lower().strip())
+    lojas_ativas = len(lojas_unicas)
     
     # Obter informações do usuário atual
     admin_user_id = request.session.get('admin_user_id')
