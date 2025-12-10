@@ -386,10 +386,10 @@ def admin_dashboard(request):
     elif status_filtro == 'inativos':
         cupons = [c for c in cupons_todos if not c.ativo]
 
-    # Estatísticas
-    cupons_validos = [c for c in cupons_todos if c.esta_valido()]
-    cupons_expirados = [c for c in cupons_todos if not c.esta_valido() and c.ativo]
-    cupons_inativos = [c for c in cupons_todos if not c.ativo]
+    # Estatísticas baseadas nos cupons filtrados (refletem os filtros aplicados)
+    cupons_validos = [c for c in cupons if c.esta_valido()]
+    cupons_expirados = [c for c in cupons if not c.esta_valido() and c.ativo]
+    cupons_inativos = [c for c in cupons if not c.ativo]
     lojas_ativas = TipoCupom.objects.filter(ativo=True).count()
     
     # Obter informações do usuário atual
