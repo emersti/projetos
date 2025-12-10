@@ -100,23 +100,33 @@
             <!-- CAMPO DE BUSCA POR LOJA -->
             <div class="search-container">
                 <h3 class="search-title">🔍 Buscar Cupons por Loja</h3>
-                <p class="search-description">Digite o nome da loja para filtrar os cupons disponíveis</p>
+                <p class="search-description">Digite o nome da loja e/ou selecione o status para filtrar os cupons</p>
                 
                 <form method="GET" class="search-form">
                     <div class="search-input-group">
-                        <input type="text" 
-                               name="loja" 
-                               value="{{ loja_pesquisa }}" 
-                               placeholder="Ex: Mercado Livre, Amazon, Magazine Luiza..." 
-                               class="search-input">
-                        <button type="submit" class="btn btn-primary search-btn">
-                            🔍 Buscar
-                        </button>
-                        {% if loja_pesquisa %}
-                            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary search-clear">
-                                ✕ Limpar
-                            </a>
-                        {% endif %}
+                        <div class="search-input-wrapper">
+                            <input type="text" 
+                                   name="loja" 
+                                   value="{{ loja_pesquisa }}" 
+                                   placeholder="Ex: Mercado Livre, Amazon, Magazine Luiza..." 
+                                   class="search-input">
+                            <select name="status" class="search-select">
+                                <option value="todos" {% if status_filtro == 'todos' %}selected{% endif %}>Todos</option>
+                                <option value="validos" {% if status_filtro == 'validos' %}selected{% endif %}>Válidos</option>
+                                <option value="expirados" {% if status_filtro == 'expirados' %}selected{% endif %}>Expirados</option>
+                                <option value="inativos" {% if status_filtro == 'inativos' %}selected{% endif %}>Inativos</option>
+                            </select>
+                        </div>
+                        <div class="search-actions">
+                            <button type="submit" class="btn btn-primary search-btn">
+                                🔍 Buscar
+                            </button>
+                            {% if loja_pesquisa or status_filtro != 'todos' %}
+                                <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary search-clear">
+                                    ✕ Limpar
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </form>
                 
@@ -659,21 +669,49 @@
     display: flex;
     gap: 0.75rem;
     align-items: center;
+    flex-wrap: wrap;
 }
 
-.search-input {
+.search-input-wrapper {
+    flex: 1;
+    display: flex;
+    gap: 0.75rem;
+    min-width: 260px;
+}
+
+.search-input,
+.search-select {
     flex: 1;
     padding: 0.75rem 1rem;
     border: 2px solid var(--cor-cinza-claro);
     border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
+    background: var(--cor-branco);
+    color: var(--cor-azul-escuro);
+}
+
+.search-select {
+    max-width: 220px;
 }
 
 .search-input:focus {
     outline: none;
     border-color: var(--cor-laranja);
     box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.search-select:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.search-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .search-btn {

@@ -367,17 +367,29 @@ def admin_required(view_func):
 @admin_required
 def admin_dashboard(request):
     """Dashboard do administrador"""
-    cupons = Cupom.objects.select_related('criado_por', 'modificado_por', 'tipo_cupom').all().order_by('ordem_exibicao', 'data_criacao')
-    agora = timezone.now()
+    cupons_qs = Cupom.objects.select_related('criado_por', 'modificado_por', 'tipo_cupom').all().order_by('ordem_exibicao', 'data_criacao')
+    cupons_todos = list(cupons_qs)
     
     # Filtro por loja
     loja_pesquisa = request.GET.get('loja', '').strip()
     if loja_pesquisa:
-        cupons = cupons.filter(loja__icontains=loja_pesquisa)
+        cupons_qs = cupons_qs.filter(loja__icontains=loja_pesquisa)
+        cupons_todos = list(cupons_qs)
+
+    # Filtro por status (validos, expirados, inativos, todos)
+    status_filtro = request.GET.get('status', 'todos')
+    cupons = cupons_todos
+    if status_filtro == 'validos':
+        cupons = [c for c in cupons_todos if c.esta_valido()]
+    elif status_filtro == 'expirados':
+        cupons = [c for c in cupons_todos if not c.esta_valido() and c.ativo]
+    elif status_filtro == 'inativos':
+        cupons = [c for c in cupons_todos if not c.ativo]
 
     # Estatísticas
-    cupons_validos = [c for c in cupons if c.esta_valido()]
-    cupons_expirados = [c for c in cupons if not c.esta_valido()]
+    cupons_validos = [c for c in cupons_todos if c.esta_valido()]
+    cupons_expirados = [c for c in cupons_todos if not c.esta_valido() and c.ativo]
+    cupons_inativos = [c for c in cupons_todos if not c.ativo]
     lojas_ativas = TipoCupom.objects.filter(ativo=True).count()
     
     # Obter informações do usuário atual
@@ -391,9 +403,11 @@ def admin_dashboard(request):
         'cupons': cupons,
         'cupons_validos': len(cupons_validos),
         'cupons_expirados': len(cupons_expirados),
+        'cupons_inativos': len(cupons_inativos),
         'lojas_ativas': lojas_ativas,
         'admin_user': admin_user,
-        'loja_pesquisa': loja_pesquisa
+        'loja_pesquisa': loja_pesquisa,
+        'status_filtro': status_filtro
     })
 
 
