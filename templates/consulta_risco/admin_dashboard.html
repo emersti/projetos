@@ -78,6 +78,14 @@
                         <div class="stat-label">Lojas Ativas</div>
                     </div>
                 </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">👆</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ total_cliques }}</div>
+                        <div class="stat-label">Total de Cliques</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -115,6 +123,11 @@
                                 <option value="validos" {% if status_filtro == 'validos' %}selected{% endif %}>Válidos</option>
                                 <option value="expirados" {% if status_filtro == 'expirados' %}selected{% endif %}>Expirados</option>
                                 <option value="inativos" {% if status_filtro == 'inativos' %}selected{% endif %}>Inativos</option>
+                            </select>
+                            <select name="filtro_cliques" class="search-select">
+                                <option value="todos" {% if filtro_cliques == 'todos' %}selected{% endif %}>Todos os Cupons</option>
+                                <option value="com_cliques" {% if filtro_cliques == 'com_cliques' %}selected{% endif %}>Com Cliques</option>
+                                <option value="sem_cliques" {% if filtro_cliques == 'sem_cliques' %}selected{% endif %}>Sem Cliques</option>
                             </select>
                         </div>
                     </div>
@@ -159,7 +172,7 @@
                         <button type="submit" class="btn btn-primary search-btn">
                             🔍 Buscar
                         </button>
-                        {% if loja_pesquisa or status_filtro != 'todos' or data_criacao_inicio or data_criacao_fim or data_alteracao_inicio or data_alteracao_fim %}
+                        {% if loja_pesquisa or status_filtro != 'todos' or filtro_cliques != 'todos' or data_criacao_inicio or data_criacao_fim or data_alteracao_inicio or data_alteracao_fim %}
                             <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary search-clear">
                                 ✕ Limpar
                             </a>

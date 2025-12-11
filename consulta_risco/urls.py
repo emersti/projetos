@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/cidades/', views.get_cidades, name='get_cidades'),
     path('api/avaliar-seguranca/', views.avaliar_seguranca, name='avaliar_seguranca'),
     path('api/media-avaliacoes/', views.obter_media_avaliacoes, name='obter_media_avaliacoes'),
+    path('api/registrar-clique-cupom/', views.registrar_clique_cupom, name='registrar_clique_cupom'),
     path('mapa-seguranca/', views.mapa_seguranca, name='mapa_seguranca'),
     
             # URLs do sistema administrativo (alteradas para evitar conflito com Django admin)

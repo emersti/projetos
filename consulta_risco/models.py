@@ -187,6 +187,34 @@ class Cupom(models.Model):
             return f"Válido até {data_validade_brasilia.strftime('%d/%m/%Y %H:%M')}"
         
         return "Válido sem prazo"
+    
+    def get_total_cliques(self):
+        """Retorna o total de cliques neste cupom"""
+        return self.cliques.count()
+    
+    def foi_clicado(self):
+        """Verifica se o cupom foi clicado pelo menos uma vez"""
+        return self.cliques.exists()
+
+
+class CliqueCupom(models.Model):
+    """Modelo para rastrear cliques em cupons pelos usuários"""
+    cupom = models.ForeignKey(Cupom, on_delete=models.CASCADE, related_name='cliques', help_text="Cupom que foi clicado")
+    ip_address = models.GenericIPAddressField(null=True, blank=True, help_text="Endereço IP do usuário")
+    user_agent = models.TextField(blank=True, help_text="User agent do navegador")
+    data_clique = BrasiliaDateTimeField(default=get_brasilia_time, help_text="Data e hora do clique em UTC-3 (Brasília)")
+    
+    class Meta:
+        ordering = ['-data_clique']
+        verbose_name = 'Clique em Cupom'
+        verbose_name_plural = 'Cliques em Cupons'
+        indexes = [
+            models.Index(fields=['cupom', 'data_clique'], name='clique_cupom_data_idx'),
+            models.Index(fields=['data_clique'], name='clique_data_idx'),
+        ]
+    
+    def __str__(self):
+        return f"Clique em {self.cupom.titulo} em {self.data_clique.strftime('%d/%m/%Y %H:%M')}"
 
 
 class AdminUser(models.Model):

@@ -22,7 +22,7 @@ import folium
 from folium.plugins import HeatMap, MarkerCluster
 import unicodedata
 from datetime import datetime, timedelta
-from .models import Estado, Cidade, Cupom, AdminUser, TipoCupom, AvaliacaoSeguranca, SistemaAtualizacao
+from .models import Estado, Cidade, Cupom, AdminUser, TipoCupom, AvaliacaoSeguranca, SistemaAtualizacao, CliqueCupom
 
 logger = logging.getLogger(__name__)
 
@@ -213,6 +213,39 @@ def avaliar_seguranca(request):
         return JsonResponse({'success': False, 'error': 'Dados inválidos'})
     except Exception as e:
         return JsonResponse({'success': False, 'error': f'Erro interno: {str(e)}'})
+
+
+@csrf_exempt
+@require_POST
+def registrar_clique_cupom(request):
+    """API para registrar clique em um cupom"""
+    try:
+        cupom_id = request.POST.get('cupom_id')
+        if not cupom_id:
+            return JsonResponse({'success': False, 'error': 'ID do cupom não fornecido'}, status=400)
+        
+        try:
+            cupom = Cupom.objects.get(id=cupom_id)
+        except Cupom.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Cupom não encontrado'}, status=404)
+        
+        # Obter informações do usuário
+        ip_address = request.META.get('REMOTE_ADDR')
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+        
+        # Registrar o clique
+        CliqueCupom.objects.create(
+            cupom=cupom,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        
+        return JsonResponse({'success': True, 'message': 'Clique registrado com sucesso'})
+    
+    except Exception as e:
+        logger.error('Erro ao registrar clique no cupom: %s', str(e))
+        return JsonResponse({'success': False, 'error': 'Erro ao registrar clique'}, status=500)
+
 
 @csrf_exempt
 def obter_media_avaliacoes(request):
@@ -432,10 +465,18 @@ def admin_dashboard(request):
     elif status_filtro == 'inativos':
         cupons = [c for c in cupons_todos if not c.ativo]
 
+    # Filtro por cliques
+    filtro_cliques = request.GET.get('filtro_cliques', 'todos')
+    if filtro_cliques == 'com_cliques':
+        cupons = [c for c in cupons if c.foi_clicado()]
+    elif filtro_cliques == 'sem_cliques':
+        cupons = [c for c in cupons if not c.foi_clicado()]
+
     # Estatísticas baseadas nos cupons filtrados (refletem os filtros aplicados)
     cupons_validos = [c for c in cupons if c.esta_valido()]
     cupons_expirados = [c for c in cupons if not c.esta_valido() and c.ativo]
     cupons_inativos = [c for c in cupons if not c.ativo]
+    total_cliques = sum(c.get_total_cliques() for c in cupons)
     
     # Contar lojas únicas nos cupons filtrados
     lojas_unicas = set()
@@ -459,10 +500,12 @@ def admin_dashboard(request):
         'cupons_validos': len(cupons_validos),
         'cupons_expirados': len(cupons_expirados),
         'cupons_inativos': len(cupons_inativos),
+        'total_cliques': total_cliques,
         'lojas_ativas': lojas_ativas,
         'admin_user': admin_user,
         'loja_pesquisa': loja_pesquisa,
         'status_filtro': status_filtro,
+        'filtro_cliques': filtro_cliques,
         'data_criacao_inicio': data_criacao_inicio,
         'data_criacao_fim': data_criacao_fim,
         'data_alteracao_inicio': data_alteracao_inicio,
