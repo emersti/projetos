@@ -40,6 +40,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'consulta_risco.middleware.MaintenanceMiddleware',  # Middleware de manutenção
+    'consulta_risco.middleware.AcessoPaginaMiddleware',  # Middleware para rastrear acessos
 ]
 
 ROOT_URLCONF = 'projeto_teste.urls'
@@ -230,8 +231,8 @@ WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True
 
 # Email Backend
-#EMAIL_BACKEND = 'django_ses.SESBackend'
-EMAIL_BACKEND = 'projeto_teste.safe_backend.SESEmailBackend'
+EMAIL_BACKEND = 'django_ses.SESBackend'
+
 # AWS Credentials
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')

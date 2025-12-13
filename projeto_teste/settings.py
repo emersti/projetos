@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'consulta_risco.middleware.MaintenanceMiddleware',  # Middleware de manutenção
+    'consulta_risco.middleware.AcessoPaginaMiddleware',  # Middleware para rastrear acessos
 ]
 
 ROOT_URLCONF = 'projeto_teste.urls'

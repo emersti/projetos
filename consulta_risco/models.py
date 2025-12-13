@@ -348,47 +348,35 @@ class PaginaAtualizacao(models.Model):
     class Meta:
         verbose_name = 'Atualização de Página'
         verbose_name_plural = 'Atualizações de Páginas'
-        ordering = ['nome_pagina']
     
     def __str__(self):
-        from django.utils import timezone
-        import pytz
-        
-        # Converter para fuso horário de Brasília
-        brasilia_tz = pytz.timezone('America/Sao_Paulo')
-        
-        if timezone.is_aware(self.data_atualizacao):
-            data_brasilia = self.data_atualizacao.astimezone(brasilia_tz)
-        else:
-            utc_tz = pytz.timezone('UTC')
-            data_utc = utc_tz.localize(self.data_atualizacao)
-            data_brasilia = data_utc.astimezone(brasilia_tz)
-            
-        return f"{self.nome_pagina.upper()} atualizada em {data_brasilia.strftime('%d/%m/%Y %H:%M')}"
+        return f"{self.nome_pagina} - {self.data_atualizacao.strftime('%d/%m/%Y %H:%M')}"
+
+
+class AcessoPagina(models.Model):
+    """Modelo para rastrear acessos às páginas do site"""
+    url = models.CharField(max_length=500, help_text="URL da página acessada")
+    nome_pagina = models.CharField(max_length=200, blank=True, help_text="Nome amigável da página")
+    ip_address = models.GenericIPAddressField(null=True, blank=True, help_text="Endereço IP do usuário")
+    cidade = models.CharField(max_length=100, blank=True, help_text="Cidade do usuário")
+    estado = models.CharField(max_length=2, blank=True, help_text="Estado (UF) do usuário")
+    user_agent = models.TextField(blank=True, help_text="User agent do navegador")
+    referer = models.URLField(blank=True, help_text="Página de origem (referer)")
+    data_acesso = BrasiliaDateTimeField(default=get_brasilia_time, help_text="Data e hora do acesso em UTC-3 (Brasília)")
     
-    @classmethod
-    def get_ultima_atualizacao(cls, nome_pagina):
-        """Retorna a data da última atualização de uma página específica"""
-        obj, created = cls.objects.get_or_create(
-            nome_pagina=nome_pagina,
-            defaults={'descricao': f'Inicialização da página {nome_pagina}'}
-        )
-        return obj.data_atualizacao
+    class Meta:
+        ordering = ['-data_acesso']
+        verbose_name = 'Acesso à Página'
+        verbose_name_plural = 'Acessos às Páginas'
+        indexes = [
+            models.Index(fields=['url', 'data_acesso'], name='acesso_url_data_idx'),
+            models.Index(fields=['data_acesso'], name='acesso_data_idx'),
+            models.Index(fields=['estado', 'cidade'], name='acesso_estado_cidade_idx'),
+        ]
     
-    @classmethod
-    def atualizar_pagina(cls, nome_pagina, descricao=None):
-        """Atualiza a data de uma página específica"""
-        if descricao is None:
-            descricao = f'Atualização da página {nome_pagina}'
-            
-        obj, created = cls.objects.get_or_create(
-            nome_pagina=nome_pagina,
-            defaults={'descricao': descricao}
-        )
-        if not created:
-            obj.descricao = descricao
-            obj.save()
-        return obj.data_atualizacao
+    def __str__(self):
+        localizacao = f"{self.cidade}, {self.estado}" if self.cidade and self.estado else "Localização não identificada"
+        return f"{self.nome_pagina or self.url} - {localizacao} - {self.data_acesso.strftime('%d/%m/%Y %H:%M')}"
 
 
 

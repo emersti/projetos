@@ -22,7 +22,7 @@ import folium
 from folium.plugins import HeatMap, MarkerCluster
 import unicodedata
 from datetime import datetime, timedelta
-from .models import Estado, Cidade, Cupom, AdminUser, TipoCupom, AvaliacaoSeguranca, SistemaAtualizacao, CliqueCupom
+from .models import Estado, Cidade, Cupom, AdminUser, TipoCupom, AvaliacaoSeguranca, SistemaAtualizacao, CliqueCupom, AcessoPagina
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +133,31 @@ def get_cidades(request):
         cidades = Cidade.objects.filter(estado_id=estado_id).order_by('nome')
         data = [{'id': cidade.id, 'nome': cidade.nome, 'posicao': cidade.posicao} for cidade in cidades]
         return JsonResponse(data, safe=False)
+    return JsonResponse([], safe=False)
+
+
+@csrf_exempt
+def get_cidades_acessos(request):
+    """API para buscar cidades únicas dos acessos baseado no estado"""
+    estado_sigla = request.GET.get('estado', '').strip()
+    
+    if estado_sigla:
+        # Buscar cidades únicas dos acessos filtrados por estado
+        cidades = AcessoPagina.objects.filter(
+            estado__iexact=estado_sigla
+        ).exclude(
+            cidade=''
+        ).exclude(
+            cidade__isnull=True
+        ).values_list('cidade', flat=True).distinct().order_by('cidade')
+        
+        data = [{'nome': cidade} for cidade in cidades if cidade]
+        
+        # Log para debug
+        logger.debug(f'Cidades encontradas para estado {estado_sigla}: {len(data)}')
+        
+        return JsonResponse(data, safe=False)
+    
     return JsonResponse([], safe=False)
 
 
@@ -510,6 +535,99 @@ def admin_dashboard(request):
         'data_criacao_fim': data_criacao_fim,
         'data_alteracao_inicio': data_alteracao_inicio,
         'data_alteracao_fim': data_alteracao_fim
+    })
+
+
+@admin_required
+def admin_relatorio_acessos(request):
+    """Relatório de acessos às páginas do site"""
+    from django.db.models import Count, Q
+    from collections import Counter
+    
+    # Filtros
+    data_inicio = request.GET.get('data_inicio', '').strip()
+    data_fim = request.GET.get('data_fim', '').strip()
+    estado_filtro = request.GET.get('estado', '').strip()
+    cidade_filtro = request.GET.get('cidade', '').strip()
+    
+    # Query base
+    acessos = AcessoPagina.objects.all()
+    
+    # Filtro por data
+    if data_inicio:
+        try:
+            data_inicio_dt = datetime.strptime(data_inicio, '%Y-%m-%d')
+            data_inicio_dt = timezone.make_aware(data_inicio_dt)
+            acessos = acessos.filter(data_acesso__gte=data_inicio_dt)
+        except ValueError:
+            pass
+    
+    if data_fim:
+        try:
+            data_fim_dt = datetime.strptime(data_fim, '%Y-%m-%d')
+            data_fim_dt = data_fim_dt + timedelta(days=1) - timedelta(seconds=1)
+            data_fim_dt = timezone.make_aware(data_fim_dt)
+            acessos = acessos.filter(data_acesso__lte=data_fim_dt)
+        except ValueError:
+            pass
+    
+    # Filtro por estado
+    if estado_filtro:
+        acessos = acessos.filter(estado__iexact=estado_filtro)
+    
+    # Filtro por cidade
+    if cidade_filtro:
+        acessos = acessos.filter(cidade__icontains=cidade_filtro)
+    
+    # Estatísticas: Páginas mais visitadas
+    paginas_mais_visitadas = acessos.values('url', 'nome_pagina').annotate(
+        total=Count('id')
+    ).order_by('-total')[:20]
+    
+    # Estatísticas: Acessos por estado
+    acessos_por_estado = acessos.exclude(estado='').values('estado').annotate(
+        total=Count('id')
+    ).order_by('-total')
+    
+    # Estatísticas: Acessos por cidade
+    acessos_por_cidade = acessos.exclude(cidade='').exclude(estado='').values(
+        'cidade', 'estado'
+    ).annotate(
+        total=Count('id')
+    ).order_by('-total')[:50]
+    
+    # Total de acessos
+    total_acessos = acessos.count()
+    
+    # Obter informações do usuário atual
+    admin_user_id = request.session.get('admin_user_id')
+    try:
+        admin_user = AdminUser.objects.get(id=admin_user_id) if admin_user_id else None
+    except AdminUser.DoesNotExist:
+        admin_user = None
+    
+    # Lista de estados para o filtro
+    estados_disponiveis = Estado.objects.all().order_by('nome')
+    
+    # Cidades disponíveis para o estado selecionado (para popular o select)
+    cidades_disponiveis = []
+    if estado_filtro:
+        cidades_disponiveis = AcessoPagina.objects.filter(
+            estado__iexact=estado_filtro
+        ).exclude(cidade='').values_list('cidade', flat=True).distinct().order_by('cidade')
+    
+    return render(request, 'consulta_risco/admin_relatorio_acessos.html', {
+        'paginas_mais_visitadas': paginas_mais_visitadas,
+        'acessos_por_estado': acessos_por_estado,
+        'acessos_por_cidade': acessos_por_cidade,
+        'total_acessos': total_acessos,
+        'admin_user': admin_user,
+        'data_inicio': data_inicio,
+        'data_fim': data_fim,
+        'estado_filtro': estado_filtro,
+        'cidade_filtro': cidade_filtro,
+        'estados_disponiveis': estados_disponiveis,
+        'cidades_disponiveis': cidades_disponiveis,
     })
 
 

@@ -1,0 +1,957 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatório de Acessos - Stigliani{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="admin-header">
+        <div class="admin-header-content">
+            <h1 class="admin-title">Relatório de Acessos</h1>
+            <div class="admin-user-info">
+                <span class="admin-welcome">Análise detalhada de tráfego do site</span>
+            </div>
+        </div>
+        <div class="admin-actions">
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary btn-small btn-header">
+                ← Dashboard
+            </a>
+            <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-small btn-header">
+                🚪 Sair
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="admin-content">
+        <!-- Filtros -->
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">🔍 Filtros de Busca</h2>
+            </div>
+            
+            <form method="GET" class="search-form">
+                <div class="search-dates-group">
+                    <div class="search-date-field">
+                        <label for="data_inicio" class="search-date-label">
+                            <span class="label-icon">📅</span>
+                            Data Início
+                        </label>
+                        <input type="date" 
+                               id="data_inicio"
+                               name="data_inicio" 
+                               value="{{ data_inicio }}" 
+                               class="search-date-input">
+                    </div>
+                    
+                    <div class="search-date-field">
+                        <label for="data_fim" class="search-date-label">
+                            <span class="label-icon">📅</span>
+                            Data Fim
+                        </label>
+                        <input type="date" 
+                               id="data_fim"
+                               name="data_fim" 
+                               value="{{ data_fim }}" 
+                               class="search-date-input">
+                    </div>
+                </div>
+                
+                <div class="search-input-group">
+                    <div class="search-input-wrapper">
+                        <select name="estado" class="search-select">
+                            <option value="">🌎 Todos os Estados</option>
+                            {% for estado in estados_disponiveis %}
+                                <option value="{{ estado.sigla }}" {% if estado_filtro == estado.sigla %}selected{% endif %}>
+                                    {{ estado.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <select name="cidade" id="cidade_select" class="search-select" {% if not estado_filtro %}disabled{% endif %}>
+                            <option value="">🔍 {% if estado_filtro %}Todas as Cidades{% else %}Selecione um estado primeiro{% endif %}</option>
+                            {% if estado_filtro and cidades_disponiveis %}
+                                {% for cidade in cidades_disponiveis %}
+                                    <option value="{{ cidade }}" {% if cidade_filtro == cidade %}selected{% endif %}>
+                                        {{ cidade }}
+                                    </option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </div>
+                    <div class="search-actions">
+                        <button type="submit" class="btn btn-primary search-btn">
+                            <span class="btn-icon">🔍</span>
+                            Filtrar
+                        </button>
+                        {% if data_inicio or data_fim or estado_filtro or cidade_filtro %}
+                            <a href="{% url 'admin_relatorio_acessos' %}" class="btn btn-secondary search-clear">
+                                <span class="btn-icon">✕</span>
+                                Limpar Filtros
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Estatísticas Gerais -->
+        <div class="admin-section admin-section-compact">
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">📈 Visão Geral</h2>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ total_acessos|default:0 }}</div>
+                        <div class="stat-label">Total de Acessos</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📄</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ paginas_mais_visitadas|length }}</div>
+                        <div class="stat-label">Páginas Únicas</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🗺️</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ acessos_por_estado|length }}</div>
+                        <div class="stat-label">Estados</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🏙️</div>
+                    <div class="stat-content">
+                        <div class="stat-number">{{ acessos_por_cidade|length }}</div>
+                        <div class="stat-label">Cidades</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Páginas Mais Visitadas -->
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">📄 Páginas Mais Visitadas</h2>
+                <div class="section-badge">{{ paginas_mais_visitadas|length }} páginas</div>
+            </div>
+            
+            {% if paginas_mais_visitadas %}
+                <div class="table-container">
+                    <table class="data-table modern-table">
+                        <thead>
+                            <tr>
+                                <th class="col-rank">#</th>
+                                <th class="col-page">Página</th>
+                                <th class="col-url">URL</th>
+                                <th class="col-views">Acessos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pagina in paginas_mais_visitadas %}
+                                <tr class="table-row-hover">
+                                    <td class="text-center rank-cell">
+                                        <span class="rank-badge rank-{{ forloop.counter }}">
+                                            {% if forloop.counter == 1 %}🥇
+                                            {% elif forloop.counter == 2 %}🥈
+                                            {% elif forloop.counter == 3 %}🥉
+                                            {% else %}{{ forloop.counter }}
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="page-cell">
+                                        <strong class="page-name">{{ pagina.nome_pagina|default:pagina.url|truncatewords:5 }}</strong>
+                                    </td>
+                                    <td class="url-cell">
+                                        <code class="url-code">{{ pagina.url|truncatechars:50 }}</code>
+                                    </td>
+                                    <td class="text-center views-cell">
+                                        <span class="badge badge-primary badge-large">{{ pagina.total }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <h3 class="empty-title">Nenhum acesso encontrado</h3>
+                    <p class="empty-description">Não há acessos registrados no período selecionado.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Acessos por Estado -->
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">🗺️ Distribuição por Estado</h2>
+                <div class="section-badge">{{ acessos_por_estado|length }} estados</div>
+            </div>
+            
+            {% if acessos_por_estado %}
+                <div class="table-container">
+                    <table class="data-table modern-table">
+                        <thead>
+                            <tr>
+                                <th class="col-state">Estado</th>
+                                <th class="col-views">Acessos</th>
+                                <th class="col-percent">Percentual</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in acessos_por_estado %}
+                                {% widthratio item.total total_acessos 100 as percent %}
+                                <tr class="table-row-hover">
+                                    <td class="state-cell">
+                                        <div class="state-info">
+                                            <span class="state-flag">🏳️</span>
+                                            <strong class="state-name">{{ item.estado }}</strong>
+                                        </div>
+                                    </td>
+                                    <td class="text-center views-cell">
+                                        <span class="badge badge-primary badge-large">{{ item.total }}</span>
+                                    </td>
+                                    <td class="percent-cell">
+                                        <div class="progress-wrapper">
+                                            <div class="progress-bar-container">
+                                                <div class="progress-bar progress-animated" 
+                                                     style="width: {{ percent }}%"
+                                                     data-percent="{{ percent }}"></div>
+                                            </div>
+                                            <span class="progress-percent">{{ percent }}%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">🗺️</div>
+                    <h3 class="empty-title">Nenhum dado de localização</h3>
+                    <p class="empty-description">Não há dados de localização disponíveis no período selecionado.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Acessos por Cidade -->
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">🏙️ Top Cidades</h2>
+                <div class="section-badge">Top 50 cidades</div>
+            </div>
+            
+            {% if acessos_por_cidade %}
+                <div class="table-container">
+                    <table class="data-table modern-table">
+                        <thead>
+                            <tr>
+                                <th class="col-city">Cidade</th>
+                                <th class="col-state">Estado</th>
+                                <th class="col-views">Acessos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in acessos_por_cidade %}
+                                <tr class="table-row-hover">
+                                    <td class="city-cell">
+                                        <div class="city-info">
+                                            <span class="city-icon">🏙️</span>
+                                            <strong class="city-name">{{ item.cidade }}</strong>
+                                        </div>
+                                    </td>
+                                    <td class="state-cell-small">
+                                        <span class="state-badge">{{ item.estado }}</span>
+                                    </td>
+                                    <td class="text-center views-cell">
+                                        <span class="badge badge-primary badge-large">{{ item.total }}</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">🏙️</div>
+                    <h3 class="empty-title">Nenhum dado de cidade</h3>
+                    <p class="empty-description">Não há dados de cidade disponíveis no período selecionado.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+/* Background azul marinho */
+body {
+    background: #1a2332 !important;
+}
+
+.admin-dashboard {
+    background: #1a2332;
+    min-height: 100vh;
+}
+
+.admin-content {
+    background: #1a2332;
+}
+
+/* Melhorar contraste do admin-header */
+.admin-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+}
+
+.admin-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.admin-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    margin: 0;
+}
+
+.admin-welcome {
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-weight: 500;
+    text-align: center;
+}
+
+.admin-actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.admin-header .btn-header {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    padding: 0.4rem 0.75rem !important;
+    font-size: 0.8rem !important;
+    min-height: auto !important;
+    height: auto !important;
+}
+
+.admin-header .btn-header:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.admin-header .btn-header.btn-danger {
+    background: rgba(220, 53, 69, 0.8) !important;
+    border-color: rgba(220, 53, 69, 0.9);
+}
+
+.admin-header .btn-header.btn-danger:hover {
+    background: rgba(220, 53, 69, 1) !important;
+    border-color: #dc3545;
+}
+
+@media (max-width: 768px) {
+    .admin-actions {
+        position: static;
+        margin-top: 1rem;
+        justify-content: center;
+    }
+    
+    .admin-header-content {
+        margin-bottom: 0;
+    }
+}
+
+/* Estatísticas - mantendo cores do site */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: #2d3a4e;
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    background: #34495e;
+}
+
+.stat-icon {
+    color: var(--cor-laranja);
+    font-size: 2.5rem;
+}
+
+.stat-number {
+    color: white;
+    font-weight: 700;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+}
+
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Section badges */
+.section-badge {
+    background: var(--cor-laranja);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Títulos e textos para melhor contraste no background azul marinho */
+.admin-section-title {
+    color: #ffffff !important;
+}
+
+.admin-section {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-section-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1rem;
+}
+
+/* Estilização melhorada dos Filtros de Busca */
+.search-form {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.search-date-label {
+    color: #ffffff !important;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.label-icon {
+    font-size: 1.1rem;
+}
+
+.search-date-input,
+.search-input,
+.search-select {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    color: var(--cor-azul-escuro) !important;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.search-date-input:focus,
+.search-input:focus,
+.search-select:focus {
+    outline: none;
+    border-color: var(--cor-laranja) !important;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+    background: #ffffff !important;
+}
+
+.search-date-input::placeholder,
+.search-input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.search-dates-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.search-date-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.search-input-wrapper {
+    flex: 1;
+    display: flex;
+    gap: 1rem;
+    min-width: 300px;
+}
+
+.search-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.search-btn {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+    min-height: auto !important;
+    height: auto !important;
+    white-space: nowrap;
+}
+
+.search-btn .btn-icon {
+    margin-right: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.search-clear {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+    min-height: auto !important;
+    height: auto !important;
+    white-space: nowrap;
+}
+
+.search-clear .btn-icon {
+    margin-right: 0.4rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .search-dates-group {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-input-wrapper {
+        flex-direction: column;
+        min-width: 100%;
+    }
+    
+    .search-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+.modern-table td {
+    color: #ffffff;
+}
+
+.modern-table tbody tr {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.modern-table tbody tr:hover {
+    background: rgba(255, 107, 53, 0.15);
+}
+
+/* Tabelas modernas */
+.modern-table {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.modern-table thead {
+    background: linear-gradient(135deg, var(--cor-azul-escuro) 0%, #2c3e50 100%);
+    color: white;
+}
+
+.modern-table th {
+    padding: 1.25rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+}
+
+.modern-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    vertical-align: middle;
+}
+
+.modern-table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table-row-hover:hover {
+    background: linear-gradient(90deg, rgba(255, 107, 53, 0.08) 0%, rgba(255, 107, 53, 0.02) 100%);
+    transform: scale(1.01);
+}
+
+/* Rank badges */
+.rank-cell {
+    width: 60px;
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.rank-1 {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.rank-2 {
+    background: linear-gradient(135deg, #C0C0C0 0%, #A0A0A0 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
+}
+
+.rank-3 {
+    background: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(205, 127, 50, 0.4);
+}
+
+.rank-badge:not(.rank-1):not(.rank-2):not(.rank-3) {
+    background: var(--cor-cinza-claro);
+    color: var(--cor-azul-escuro);
+}
+
+/* Page cell */
+.page-cell {
+    min-width: 200px;
+}
+
+.page-name {
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+.url-cell {
+    max-width: 300px;
+}
+
+.url-code {
+    background: rgba(255, 107, 53, 0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #ffffff;
+    word-break: break-all;
+}
+
+/* State info */
+.state-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.state-flag {
+    font-size: 1.2rem;
+}
+
+.state-name {
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.state-badge {
+    display: inline-block;
+    background: var(--cor-laranja);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* City info */
+.city-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.city-icon {
+    font-size: 1.2rem;
+}
+
+.city-name {
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+/* Badges melhorados */
+.badge-large {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+}
+
+/* Progress bar melhorado */
+.progress-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.progress-bar-container {
+    flex: 1;
+    position: relative;
+    height: 28px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cor-laranja) 0%, #ff8c5a 50%, #ffa87a 100%);
+    border-radius: 14px;
+    position: relative;
+    transition: width 0.6s ease;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.4);
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.progress-animated {
+    animation: progressFill 1s ease-out;
+}
+
+@keyframes progressFill {
+    from { width: 0; }
+}
+
+.progress-percent {
+    min-width: 50px;
+    text-align: right;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 0.9rem;
+}
+
+/* Label com ícone */
+.label-icon {
+    margin-right: 0.5rem;
+}
+
+/* Botões melhorados */
+.btn-icon {
+    margin-right: 0.5rem;
+}
+
+/* Empty state melhorado */
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 107, 53, 0.02) 100%);
+    border-radius: 12px;
+    border: 2px dashed rgba(255, 107, 53, 0.3);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-title {
+    color: #ffffff;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.empty-description {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .modern-table {
+        font-size: 0.85rem;
+    }
+    
+    .modern-table th,
+    .modern-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .progress-wrapper {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .progress-percent {
+        text-align: center;
+        width: 100%;
+    }
+    
+    .url-code {
+        font-size: 0.75rem;
+    }
+}
+
+/* Animações de entrada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-section {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.admin-section:nth-child(1) { animation-delay: 0.1s; }
+.admin-section:nth-child(2) { animation-delay: 0.2s; }
+.admin-section:nth-child(3) { animation-delay: 0.3s; }
+.admin-section:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const estadoSelect = document.querySelector('select[name="estado"]');
+    const cidadeSelect = document.getElementById('cidade_select');
+    
+    if (estadoSelect && cidadeSelect) {
+        estadoSelect.addEventListener('change', function() {
+            const estadoSigla = this.value;
+            
+            // Limpar cidade selecionada
+            cidadeSelect.innerHTML = '<option value="">🔍 Carregando cidades...</option>';
+            cidadeSelect.disabled = true;
+            
+            if (!estadoSigla) {
+                cidadeSelect.innerHTML = '<option value="">🔍 Todas as Cidades</option>';
+                cidadeSelect.disabled = false;
+                return;
+            }
+            
+            // Buscar cidades via AJAX
+            fetch(`/api/cidades-acessos/?estado=${estadoSigla}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    cidadeSelect.innerHTML = '<option value="">🔍 Todas as Cidades</option>';
+                    
+                    if (data && data.length > 0) {
+                        data.forEach(function(cidade) {
+                            const option = document.createElement('option');
+                            option.value = cidade.nome;
+                            option.textContent = cidade.nome;
+                            cidadeSelect.appendChild(option);
+                        });
+                        console.log(`Cidades carregadas para ${estadoSigla}: ${data.length}`);
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'Nenhuma cidade encontrada para este estado';
+                        cidadeSelect.appendChild(option);
+                        console.log(`Nenhuma cidade encontrada para o estado ${estadoSigla}`);
+                    }
+                    
+                    cidadeSelect.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar cidades:', error);
+                    cidadeSelect.innerHTML = '<option value="">🔍 Erro ao carregar cidades</option>';
+                    cidadeSelect.disabled = false;
+                });
+        });
+    }
+});
+</script>
+{% endblock %}

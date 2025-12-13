@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .maintenance_config import MAINTENANCE_MODE
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class MaintenanceMiddleware:
@@ -32,6 +35,152 @@ class MaintenanceMiddleware:
 
         response = self.get_response(request)
         return response
+
+
+class AcessoPaginaMiddleware:
+    """
+    Middleware para rastrear acessos às páginas do site
+    """
+    
+    def __init__(self, get_response):
+        self.get_response = get_response
+        # URLs que não devem ser rastreadas
+        self.excluded_paths = [
+            '/static/',
+            '/media/',
+            '/favicon.ico',
+            '/admin/',
+            '/api/',
+            '/painel/',
+        ]
+    
+    def __call__(self, request):
+        # Verificar se deve rastrear este acesso
+        should_track = not any(request.path.startswith(path) for path in self.excluded_paths)
+        should_track = should_track and request.method == 'GET'
+        
+        if should_track:
+            try:
+                self._registrar_acesso(request)
+            except Exception as e:
+                # Não interromper o fluxo se houver erro no rastreamento
+                logger.error('Erro ao registrar acesso: %s', str(e))
+        
+        response = self.get_response(request)
+        return response
+    
+    def _registrar_acesso(self, request):
+        """Registra o acesso à página"""
+        from .models import AcessoPagina
+        
+        # Obter informações básicas
+        ip_address = self._get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+        referer = request.META.get('HTTP_REFERER', '')
+        url = request.path
+        nome_pagina = self._get_nome_pagina(url)
+        
+        # Tentar obter localização por IP (opcional, não bloqueia se falhar)
+        cidade = ''
+        estado = ''
+        
+        try:
+            # Usar API gratuita para geolocalização (ip-api.com - sem autenticação)
+            # Limite: 45 requisições por minuto
+            # Em desenvolvimento, tenta mesmo com IPs locais (pode não funcionar)
+            if ip_address:
+                # Para desenvolvimento: tentar mesmo com IPs locais
+                # Em produção, apenas IPs públicos serão geolocalizados
+                try:
+                    import requests
+                    response = requests.get(
+                        f'http://ip-api.com/json/{ip_address}?fields=status,message,country,regionName,city,query&lang=pt-BR',
+                        timeout=2  # Aumentado para 2 segundos
+                    )
+                    if response.status_code == 200:
+                        data = response.json()
+                        if data.get('status') == 'success':
+                            # Aceitar qualquer país, não apenas Brazil (para testes)
+                            country = data.get('country', '')
+                            if country == 'Brazil' or country == 'Brasil':
+                                cidade = data.get('city', '')
+                                estado_nome = data.get('regionName', '')
+                                estado = self._converter_estado_para_sigla(estado_nome)
+                                
+                                # Log para debug (apenas em desenvolvimento)
+                                if not cidade or not estado:
+                                    logger.debug(f'Geolocalização parcial - IP: {ip_address}, Cidade: {cidade}, Estado: {estado_nome} -> {estado}')
+                            else:
+                                logger.debug(f'IP não é do Brasil - IP: {ip_address}, País: {country}')
+                        else:
+                            logger.debug(f'API retornou erro - IP: {ip_address}, Status: {data.get("status")}, Message: {data.get("message")}')
+                except requests.exceptions.Timeout:
+                    logger.debug(f'Timeout ao buscar geolocalização para IP: {ip_address}')
+                except requests.exceptions.RequestException as e:
+                    logger.debug(f'Erro na requisição de geolocalização - IP: {ip_address}, Erro: {str(e)}')
+                except Exception as e:
+                    logger.debug(f'Erro inesperado na geolocalização - IP: {ip_address}, Erro: {str(e)}')
+            else:
+                logger.debug('IP não disponível para geolocalização')
+        except Exception as e:
+            logger.debug(f'Erro geral na geolocalização: {str(e)}')
+        
+        # Registrar acesso (usar create com try/except para não bloquear)
+        try:
+            AcessoPagina.objects.create(
+                url=url,
+                nome_pagina=nome_pagina,
+                ip_address=ip_address,
+                cidade=cidade,
+                estado=estado,
+                user_agent=user_agent,
+                referer=referer
+            )
+            # Log para debug
+            if cidade and estado:
+                logger.debug(f'Acesso registrado com localização - URL: {url}, Cidade: {cidade}, Estado: {estado}')
+            else:
+                logger.debug(f'Acesso registrado sem localização - URL: {url}, IP: {ip_address}')
+        except Exception as e:
+            # Log do erro mas não interrompe o fluxo
+            logger.error('Erro ao registrar acesso: %s', str(e))
+    
+    def _get_client_ip(self, request):
+        """Obtém o IP real do cliente"""
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip
+    
+    def _get_nome_pagina(self, url):
+        """Retorna nome amigável da página baseado na URL"""
+        nomes = {
+            '/': 'Página Inicial',
+            '/sobre/': 'Sobre',
+            '/faq/': 'FAQ',
+            '/lgpd/': 'LGPD',
+            '/termos-uso/': 'Termos de Uso',
+            '/cupons/': 'Cupons',
+            '/mapa-seguranca/': 'Mapa de Segurança',
+        }
+        return nomes.get(url, url)
+    
+    def _converter_estado_para_sigla(self, estado_nome):
+        """Converte nome do estado para sigla"""
+        estados = {
+            'Acre': 'AC', 'Alagoas': 'AL', 'Amapá': 'AP', 'Amazonas': 'AM',
+            'Bahia': 'BA', 'Ceará': 'CE', 'Distrito Federal': 'DF',
+            'Espírito Santo': 'ES', 'Goiás': 'GO', 'Maranhão': 'MA',
+            'Mato Grosso': 'MT', 'Mato Grosso do Sul': 'MS', 'Minas Gerais': 'MG',
+            'Pará': 'PA', 'Paraíba': 'PB', 'Paraná': 'PR', 'Pernambuco': 'PE',
+            'Piauí': 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN',
+            'Rio Grande do Sul': 'RS', 'Rondônia': 'RO', 'Roraima': 'RR',
+            'Santa Catarina': 'SC', 'São Paulo': 'SP', 'Sergipe': 'SE',
+            'Tocantins': 'TO'
+        }
+        return estados.get(estado_nome, estado_nome[:2].upper() if estado_nome else '')
 
 
 
