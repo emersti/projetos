@@ -39,6 +39,7 @@
             </div>
             
             <form method="GET" class="search-form">
+                {% csrf_token %}
                 <div class="search-dates-group">
                     <div class="search-date-field">
                         <label for="data_inicio" class="search-date-label">
@@ -295,6 +296,104 @@
                 </div>
             {% endif %}
         </div>
+
+        <!-- Registros Individuais de Acesso -->
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">📋 Registros de Acesso</h2>
+                <div class="header-actions">
+                    <div class="section-badge">{{ total_acessos }} registros</div>
+                    {% if total_acessos > 0 %}
+                        <button type="button" 
+                                class="btn btn-danger btn-delete-all" 
+                                id="btn-excluir-todos"
+                                title="Excluir todos os registros que correspondem aos filtros aplicados">
+                            🗑️ Excluir Todos os Filtrados
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if acessos_paginados %}
+                <div class="table-container">
+                    <table class="data-table modern-table">
+                        <thead>
+                            <tr>
+                                <th class="col-date">Data/Hora</th>
+                                <th class="col-page">Página</th>
+                                <th class="col-url">URL</th>
+                                <th class="col-location">Localização</th>
+                                <th class="col-ip">IP</th>
+                                <th class="col-actions">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for acesso in acessos_paginados %}
+                                <tr class="table-row-hover" id="acesso-row-{{ acesso.id }}">
+                                    <td class="date-cell">
+                                        <span class="date-time">{{ acesso.data_acesso|date:"d/m/Y H:i" }}</span>
+                                    </td>
+                                    <td class="page-cell">
+                                        <strong class="page-name">{{ acesso.nome_pagina|default:"-" }}</strong>
+                                    </td>
+                                    <td class="url-cell">
+                                        <code class="url-code">{{ acesso.url|truncatechars:40 }}</code>
+                                    </td>
+                                    <td class="location-cell">
+                                        {% if acesso.cidade and acesso.estado %}
+                                            <span class="location-badge">{{ acesso.cidade }}, {{ acesso.estado }}</span>
+                                        {% else %}
+                                            <span class="location-badge location-unknown">Não identificado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="ip-cell">
+                                        <code class="ip-code">{{ acesso.ip_address|default:"-" }}</code>
+                                    </td>
+                                    <td class="actions-cell">
+                                        <button class="btn-delete-acesso" 
+                                                data-acesso-id="{{ acesso.id }}"
+                                                title="Excluir registro">
+                                            🗑️
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Paginação -->
+                {% if acessos_paginados.has_other_pages %}
+                    <div class="pagination-container">
+                        <div class="pagination">
+                            {% if acessos_paginados.has_previous %}
+                                <a href="?page=1{% if data_inicio %}&data_inicio={{ data_inicio }}{% endif %}{% if data_fim %}&data_fim={{ data_fim }}{% endif %}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if cidade_filtro %}&cidade={{ cidade_filtro }}{% endif %}" 
+                                   class="pagination-link">« Primeira</a>
+                                <a href="?page={{ acessos_paginados.previous_page_number }}{% if data_inicio %}&data_inicio={{ data_inicio }}{% endif %}{% if data_fim %}&data_fim={{ data_fim }}{% endif %}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if cidade_filtro %}&cidade={{ cidade_filtro }}{% endif %}" 
+                                   class="pagination-link">‹ Anterior</a>
+                            {% endif %}
+                            
+                            <span class="pagination-info">
+                                Página {{ acessos_paginados.number }} de {{ acessos_paginados.paginator.num_pages }}
+                            </span>
+                            
+                            {% if acessos_paginados.has_next %}
+                                <a href="?page={{ acessos_paginados.next_page_number }}{% if data_inicio %}&data_inicio={{ data_inicio }}{% endif %}{% if data_fim %}&data_fim={{ data_fim }}{% endif %}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if cidade_filtro %}&cidade={{ cidade_filtro }}{% endif %}" 
+                                   class="pagination-link">Próxima ›</a>
+                                <a href="?page={{ acessos_paginados.paginator.num_pages }}{% if data_inicio %}&data_inicio={{ data_inicio }}{% endif %}{% if data_fim %}&data_fim={{ data_fim }}{% endif %}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}{% if cidade_filtro %}&cidade={{ cidade_filtro }}{% endif %}" 
+                                   class="pagination-link">Última »</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">📋</div>
+                    <h3 class="empty-title">Nenhum registro encontrado</h3>
+                    <p class="empty-description">Não há registros de acesso no período selecionado.</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 
@@ -467,6 +566,18 @@ body {
 .admin-section-header {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 /* Estilização melhorada dos Filtros de Busca */
@@ -895,10 +1006,203 @@ body {
 .admin-section:nth-child(2) { animation-delay: 0.2s; }
 .admin-section:nth-child(3) { animation-delay: 0.3s; }
 .admin-section:nth-child(4) { animation-delay: 0.4s; }
+
+/* Estilos para botão de exclusão */
+.btn-delete-acesso {
+    background: rgba(220, 53, 69, 0.8);
+    color: white;
+    border: none;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete-acesso:hover {
+    background: rgba(220, 53, 69, 1);
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+}
+
+.btn-delete-acesso:active {
+    transform: scale(0.95);
+}
+
+/* Botão para excluir todos os registros filtrados */
+.btn-delete-all {
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    border: 1px solid rgba(220, 53, 69, 1);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.btn-delete-all:hover {
+    background: rgba(220, 53, 69, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.btn-delete-all:active {
+    transform: translateY(0);
+}
+
+.btn-delete-all:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Estilos para células da tabela de registros */
+.date-cell {
+    min-width: 140px;
+}
+
+.date-time {
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.location-cell {
+    min-width: 150px;
+}
+
+.location-badge {
+    display: inline-block;
+    background: rgba(255, 107, 53, 0.2);
+    color: #ffffff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.location-unknown {
+    background: rgba(128, 128, 128, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.ip-cell {
+    min-width: 120px;
+}
+
+.ip-code {
+    background: rgba(255, 107, 53, 0.15);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #ffffff;
+    font-family: 'Courier New', monospace;
+}
+
+.actions-cell {
+    width: 80px;
+    text-align: center;
+}
+
+.col-actions {
+    width: 80px;
+    text-align: center;
+}
+
+/* Paginação */
+.pagination-container {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.pagination-link {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pagination-link:hover {
+    background: rgba(255, 107, 53, 0.3);
+    border-color: var(--cor-laranja);
+    transform: translateY(-2px);
+}
+
+.pagination-info {
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .modern-table {
+        font-size: 0.8rem;
+    }
+    
+    .date-cell,
+    .location-cell,
+    .ip-cell {
+        min-width: auto;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .pagination-link {
+        width: 100%;
+        text-align: center;
+    }
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Obter CSRF token
+    function getCSRFToken() {
+        const token = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (token) {
+            return token.value;
+        }
+        // Tentar obter do cookie
+        const name = 'csrftoken';
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
     const estadoSelect = document.querySelector('select[name="estado"]');
     const cidadeSelect = document.getElementById('cidade_select');
     
@@ -950,6 +1254,193 @@ document.addEventListener('DOMContentLoaded', function() {
                     cidadeSelect.innerHTML = '<option value="">🔍 Erro ao carregar cidades</option>';
                     cidadeSelect.disabled = false;
                 });
+        });
+    }
+    
+    // Funcionalidade de exclusão de registros
+    document.querySelectorAll('.btn-delete-acesso').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const acessoId = this.getAttribute('data-acesso-id');
+            const row = document.getElementById('acesso-row-' + acessoId);
+            
+            if (!confirm('Tem certeza que deseja excluir este registro de acesso?')) {
+                return;
+            }
+            
+            // Desabilitar botão durante a requisição
+            this.disabled = true;
+            this.style.opacity = '0.5';
+            
+            // Obter CSRF token
+            const csrftoken = getCSRFToken();
+            
+            // Fazer requisição AJAX
+            fetch(`/painel/acesso/excluir/${acessoId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Mostrar mensagem de sucesso
+                    showMessage(data.message || 'Registro excluído do banco de dados com sucesso!', 'success');
+                    
+                    // Se a resposta indicar que deve recarregar, recarregar a página
+                    // Isso garante que as estatísticas sejam atualizadas
+                    if (data.reload) {
+                        // Recarregar a página após 1 segundo para atualizar todas as estatísticas
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        // Remover linha da tabela com animação (fallback se não recarregar)
+                        row.style.transition = 'opacity 0.3s ease';
+                        row.style.opacity = '0';
+                        setTimeout(function() {
+                            row.remove();
+                            
+                            // Atualizar contador se existir
+                            const badge = document.querySelector('.section-badge');
+                            if (badge) {
+                                const currentCount = parseInt(badge.textContent.match(/\d+/)[0]);
+                                badge.textContent = (currentCount - 1) + ' registros';
+                            }
+                        }, 300);
+                    }
+                } else {
+                    alert('Erro ao excluir registro: ' + (data.error || 'Erro desconhecido'));
+                    this.disabled = false;
+                    this.style.opacity = '1';
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao excluir registro. Tente novamente.');
+                this.disabled = false;
+                this.style.opacity = '1';
+            });
+        });
+    });
+    
+    // Função para mostrar mensagens
+    function showMessage(message, type) {
+        const messagesContainer = document.querySelector('.messages-container');
+        if (!messagesContainer) {
+            // Criar container se não existir
+            const container = document.createElement('div');
+            container.className = 'messages-container';
+            document.querySelector('.admin-content').insertBefore(container, document.querySelector('.admin-content').firstChild);
+        }
+        
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-' + (type === 'success' ? 'success' : 'error');
+        alertDiv.textContent = message;
+        document.querySelector('.messages-container').appendChild(alertDiv);
+        
+        // Remover mensagem após 5 segundos
+        setTimeout(function() {
+            alertDiv.style.transition = 'opacity 0.3s ease';
+            alertDiv.style.opacity = '0';
+            setTimeout(function() {
+                alertDiv.remove();
+            }, 300);
+        }, 5000);
+    }
+    
+    // Funcionalidade para excluir todos os registros filtrados
+    const btnExcluirTodos = document.getElementById('btn-excluir-todos');
+    if (btnExcluirTodos) {
+        btnExcluirTodos.addEventListener('click', function() {
+            // Obter valores dos filtros do formulário
+            const form = document.querySelector('.search-form');
+            const formData = new FormData(form);
+            
+            // Obter valores dos filtros
+            const dataInicio = formData.get('data_inicio') || '';
+            const dataFim = formData.get('data_fim') || '';
+            const estado = formData.get('estado') || '';
+            const cidade = formData.get('cidade') || '';
+            
+            // Contar quantos registros serão excluídos (usar o total_acessos do template)
+            const totalAcessos = {{ total_acessos|default:0 }};
+            
+            // Mensagem de confirmação
+            let mensagemConfirmacao = 'ATENÇÃO: Esta ação não pode ser desfeita!\n\n';
+            mensagemConfirmacao += `Você está prestes a excluir ${totalAcessos} registro(s) de acesso`;
+            
+            if (dataInicio || dataFim || estado || cidade) {
+                mensagemConfirmacao += ' que correspondem aos filtros aplicados:\n\n';
+                if (dataInicio) mensagemConfirmacao += `• Data início: ${dataInicio}\n`;
+                if (dataFim) mensagemConfirmacao += `• Data fim: ${dataFim}\n`;
+                if (estado) mensagemConfirmacao += `• Estado: ${estado}\n`;
+                if (cidade) mensagemConfirmacao += `• Cidade: ${cidade}\n`;
+            } else {
+                mensagemConfirmacao += ' (TODOS os registros, pois nenhum filtro está aplicado)';
+            }
+            
+            mensagemConfirmacao += '\n\nTem CERTEZA ABSOLUTA que deseja continuar?';
+            
+            if (!confirm(mensagemConfirmacao)) {
+                return;
+            }
+            
+            // Segunda confirmação para segurança
+            if (!confirm('ÚLTIMA CONFIRMAÇÃO: Você realmente deseja excluir TODOS estes registros?\n\nEsta ação é IRREVERSÍVEL!')) {
+                return;
+            }
+            
+            // Desabilitar botão durante a requisição
+            this.disabled = true;
+            this.style.opacity = '0.6';
+            const textoOriginal = this.textContent;
+            this.textContent = '⏳ Excluindo...';
+            
+            // Obter CSRF token
+            const csrftoken = getCSRFToken();
+            
+            // Criar FormData para enviar os filtros
+            const deleteFormData = new FormData();
+            deleteFormData.append('data_inicio', dataInicio);
+            deleteFormData.append('data_fim', dataFim);
+            deleteFormData.append('estado', estado);
+            deleteFormData.append('cidade', cidade);
+            
+            // Fazer requisição AJAX
+            fetch('/painel/acesso/excluir-todos-filtrados/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                },
+                body: deleteFormData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const mensagem = data.message || `${data.total_excluidos || data.total_realmente_excluido || 0} registro(s) excluído(s) do banco de dados com sucesso!`;
+                    showMessage(mensagem, 'success');
+                    
+                    // Recarregar a página após 1.5 segundos para atualizar todas as estatísticas
+                    // Isso garante que as stats grids sejam recalculadas com os dados atualizados do banco
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    alert('Erro ao excluir registros: ' + (data.error || 'Erro desconhecido'));
+                    this.disabled = false;
+                    this.style.opacity = '1';
+                    this.textContent = textoOriginal;
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao excluir registros. Tente novamente.');
+                this.disabled = false;
+                this.style.opacity = '1';
+                this.textContent = textoOriginal;
+            });
         });
     }
 });

@@ -12,6 +12,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.urls import reverse
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 import hashlib
 import json
 import secrets
@@ -540,7 +541,13 @@ def admin_dashboard(request):
 
 @admin_required
 def admin_relatorio_acessos(request):
-    """Relatório de acessos às páginas do site"""
+    """
+    Relatório de acessos às páginas do site
+    
+    IMPORTANTE: Todas as estatísticas são recalculadas do banco de dados a cada requisição.
+    Após exclusão de registros, quando a página recarregar, as estatísticas serão
+    automaticamente atualizadas refletindo os dados reais do banco de dados.
+    """
     from django.db.models import Count, Q
     from collections import Counter
     
@@ -550,7 +557,7 @@ def admin_relatorio_acessos(request):
     estado_filtro = request.GET.get('estado', '').strip()
     cidade_filtro = request.GET.get('cidade', '').strip()
     
-    # Query base
+    # Query base - sempre busca do banco de dados atual
     acessos = AcessoPagina.objects.all()
     
     # Filtro por data
@@ -580,23 +587,28 @@ def admin_relatorio_acessos(request):
         acessos = acessos.filter(cidade__icontains=cidade_filtro)
     
     # Estatísticas: Páginas mais visitadas
+    # NOTA: Estas estatísticas são recalculadas do banco de dados a cada requisição
+    # Após exclusão de registros, estas estatísticas refletirão os dados reais do banco
     paginas_mais_visitadas = acessos.values('url', 'nome_pagina').annotate(
         total=Count('id')
     ).order_by('-total')[:20]
     
     # Estatísticas: Acessos por estado
+    # Recalculado do banco de dados atual
     acessos_por_estado = acessos.exclude(estado='').values('estado').annotate(
         total=Count('id')
     ).order_by('-total')
     
     # Estatísticas: Acessos por cidade
+    # Recalculado do banco de dados atual
     acessos_por_cidade = acessos.exclude(cidade='').exclude(estado='').values(
         'cidade', 'estado'
     ).annotate(
         total=Count('id')
     ).order_by('-total')[:50]
     
-    # Total de acessos
+    # Total de acessos - sempre conta do banco de dados atual
+    # Após exclusão, este número será automaticamente reduzido
     total_acessos = acessos.count()
     
     # Obter informações do usuário atual
@@ -616,6 +628,15 @@ def admin_relatorio_acessos(request):
             estado__iexact=estado_filtro
         ).exclude(cidade='').values_list('cidade', flat=True).distinct().order_by('cidade')
     
+    # Paginação dos registros individuais (limitado para performance)
+    acessos_ordenados = acessos.order_by('-data_acesso')
+    paginator = Paginator(acessos_ordenados, 20)  # 20 registros por página para melhor performance
+    page_number = request.GET.get('page', 1)
+    try:
+        acessos_paginados = paginator.page(page_number)
+    except:
+        acessos_paginados = paginator.page(1)
+    
     return render(request, 'consulta_risco/admin_relatorio_acessos.html', {
         'paginas_mais_visitadas': paginas_mais_visitadas,
         'acessos_por_estado': acessos_por_estado,
@@ -628,7 +649,158 @@ def admin_relatorio_acessos(request):
         'cidade_filtro': cidade_filtro,
         'estados_disponiveis': estados_disponiveis,
         'cidades_disponiveis': cidades_disponiveis,
+        'acessos_paginados': acessos_paginados,
     })
+
+
+@admin_required
+@csrf_exempt
+@require_POST
+def excluir_acesso_pagina(request, acesso_id):
+    """API para excluir um registro de acesso individual do banco de dados"""
+    try:
+        # Buscar o registro no banco de dados
+        acesso = get_object_or_404(AcessoPagina, id=acesso_id)
+        
+        # Armazenar informações para log antes de excluir
+        acesso_info = f"ID: {acesso.id}, URL: {acesso.url}, Data: {acesso.data_acesso}"
+        
+        # Excluir do banco de dados (DELETE SQL será executado)
+        acesso.delete()
+        
+        # Verificar se realmente foi excluído (garantir que não existe mais)
+        try:
+            AcessoPagina.objects.get(id=acesso_id)
+            # Se chegou aqui, o registro ainda existe (erro)
+            logger.error(f'ERRO: Registro {acesso_id} não foi excluído do banco de dados')
+            return JsonResponse({
+                'success': False,
+                'error': 'Erro: Registro não foi excluído do banco de dados'
+            }, status=500)
+        except AcessoPagina.DoesNotExist:
+            # Registro não existe mais - exclusão bem-sucedida
+            logger.info(f'Registro de acesso excluído do banco de dados: {acesso_info}')
+            pass
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Registro de acesso excluído do banco de dados com sucesso',
+            'reload': True  # Indicar que a página deve recarregar para atualizar estatísticas
+        })
+    except Exception as e:
+        logger.error('Erro ao excluir registro de acesso: %s', str(e))
+        return JsonResponse({
+            'success': False,
+            'error': f'Erro ao excluir registro de acesso: {str(e)}'
+        }, status=500)
+
+
+@admin_required
+@csrf_exempt
+@require_POST
+def excluir_todos_acessos_filtrados(request):
+    """API para excluir todos os registros de acesso que correspondem aos filtros aplicados"""
+    try:
+        # Obter filtros da requisição
+        data_inicio = request.POST.get('data_inicio', '').strip()
+        data_fim = request.POST.get('data_fim', '').strip()
+        estado_filtro = request.POST.get('estado', '').strip()
+        cidade_filtro = request.POST.get('cidade', '').strip()
+        
+        # Query base (mesma lógica da view admin_relatorio_acessos)
+        acessos = AcessoPagina.objects.all()
+        
+        # Filtro por data
+        if data_inicio:
+            try:
+                data_inicio_dt = datetime.strptime(data_inicio, '%Y-%m-%d')
+                data_inicio_dt = timezone.make_aware(data_inicio_dt)
+                acessos = acessos.filter(data_acesso__gte=data_inicio_dt)
+            except ValueError:
+                pass
+        
+        if data_fim:
+            try:
+                data_fim_dt = datetime.strptime(data_fim, '%Y-%m-%d')
+                data_fim_dt = data_fim_dt + timedelta(days=1) - timedelta(seconds=1)
+                data_fim_dt = timezone.make_aware(data_fim_dt)
+                acessos = acessos.filter(data_acesso__lte=data_fim_dt)
+            except ValueError:
+                pass
+        
+        # Filtro por estado
+        if estado_filtro:
+            acessos = acessos.filter(estado__iexact=estado_filtro)
+        
+        # Filtro por cidade
+        if cidade_filtro:
+            acessos = acessos.filter(cidade__icontains=cidade_filtro)
+        
+        # Contar quantos registros serão excluídos ANTES da exclusão
+        total_excluir = acessos.count()
+        
+        # Verificar se há registros para excluir
+        if total_excluir == 0:
+            return JsonResponse({
+                'success': False,
+                'error': 'Nenhum registro encontrado para excluir com os filtros aplicados'
+            }, status=400)
+        
+        # Obter IDs dos registros que serão excluídos (para verificação)
+        ids_para_excluir = list(acessos.values_list('id', flat=True)[:100])  # Limitar para log
+        
+        # Excluir todos os registros filtrados do banco de dados
+        # IMPORTANTE: .delete() em queryset executa DELETE SQL diretamente no banco
+        # Isso é mais eficiente e realmente remove os dados do banco de dados
+        # Retorna uma tupla: (total_excluidos, {modelo: quantidade_por_modelo})
+        resultado_exclusao = acessos.delete()
+        
+        # Extrair o total de registros excluídos
+        # resultado_exclusao[0] = total de objetos excluídos
+        # resultado_exclusao[1] = dicionário com quantidade por modelo
+        if isinstance(resultado_exclusao, tuple):
+            total_realmente_excluido = resultado_exclusao[0]
+            detalhes_por_modelo = resultado_exclusao[1]
+        else:
+            # Fallback se retornar apenas número
+            total_realmente_excluido = resultado_exclusao
+        
+        # Verificar se a exclusão foi bem-sucedida
+        if total_realmente_excluido != total_excluir:
+            logger.warning(f'Aviso: Esperado excluir {total_excluir} registros, mas {total_realmente_excluido} foram excluídos')
+        
+        # Verificar se os registros realmente foram excluídos do banco de dados
+        # (amostra de verificação para garantir que o DELETE SQL foi executado)
+        if len(ids_para_excluir) > 0:
+            registros_restantes = AcessoPagina.objects.filter(id__in=ids_para_excluir[:10]).count()
+            if registros_restantes > 0:
+                logger.error(f'ERRO: {registros_restantes} registros ainda existem no banco após exclusão')
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Erro: Alguns registros não foram excluídos do banco de dados'
+                }, status=500)
+        
+        # Log detalhado da exclusão
+        logger.info(f'Excluídos {total_realmente_excluido} registros de acesso do banco de dados')
+        if isinstance(resultado_exclusao, tuple):
+            logger.info(f'Detalhes por modelo: {detalhes_por_modelo}')
+        
+        # Verificar o total de registros restantes no banco (para confirmar redução)
+        total_restante = AcessoPagina.objects.count()
+        logger.info(f'Total de registros restantes no banco após exclusão: {total_restante}')
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'{total_realmente_excluido} registro(s) excluído(s) do banco de dados com sucesso. Total restante: {total_restante}',
+            'total_excluidos': total_realmente_excluido,
+            'total_restante': total_restante
+        })
+    except Exception as e:
+        logger.error('Erro ao excluir registros de acesso filtrados: %s', str(e))
+        return JsonResponse({
+            'success': False,
+            'error': f'Erro ao excluir registros: {str(e)}'
+        }, status=500)
 
 
 @admin_required
