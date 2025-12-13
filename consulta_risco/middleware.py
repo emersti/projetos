@@ -39,25 +39,29 @@ class MaintenanceMiddleware:
 
 class AcessoPaginaMiddleware:
     """
-    Middleware para rastrear acessos às páginas do site
+    Middleware para rastrear acessos às páginas do site.
+    Registra apenas as páginas especificadas: home, cupons, lgpd, fale conosco, faq, termos de uso e sobre.
     """
     
     def __init__(self, get_response):
         self.get_response = get_response
-        # URLs que não devem ser rastreadas
-        self.excluded_paths = [
-            '/static/',
-            '/media/',
-            '/favicon.ico',
-            '/admin/',
-            '/api/',
-            '/painel/',
+        # URLs que DEVEM ser rastreadas (apenas estas páginas específicas)
+        self.allowed_paths = [
+            '/',  # home
+            '/cupons/',
+            '/lgpd/',
+            '/faq/',
+            '/termos-uso/',
+            '/sobre/',
+            # Nota: Se existir página "fale conosco" ou "contato", adicionar aqui
+            # Exemplo: '/fale-conosco/', '/contato/'
         ]
     
     def __call__(self, request):
         # Verificar se deve rastrear este acesso
-        should_track = not any(request.path.startswith(path) for path in self.excluded_paths)
-        should_track = should_track and request.method == 'GET'
+        # Apenas registrar se for GET e se a URL estiver na lista permitida
+        should_track = request.method == 'GET'
+        should_track = should_track and request.path in self.allowed_paths
         
         if should_track:
             try:
@@ -157,13 +161,14 @@ class AcessoPaginaMiddleware:
     def _get_nome_pagina(self, url):
         """Retorna nome amigável da página baseado na URL"""
         nomes = {
-            '/': 'Página Inicial',
+            '/': 'Home',
             '/sobre/': 'Sobre',
             '/faq/': 'FAQ',
             '/lgpd/': 'LGPD',
             '/termos-uso/': 'Termos de Uso',
             '/cupons/': 'Cupons',
-            '/mapa-seguranca/': 'Mapa de Segurança',
+            '/fale-conosco/': 'Fale Conosco',
+            '/contato/': 'Fale Conosco',
         }
         return nomes.get(url, url)
     
