@@ -7,14 +7,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('consulta_risco', '0021_cliquecupom'),
+        ('consulta_risco', '0020_make_email_required'),
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='paginaatualizacao',
-            options={'verbose_name': 'Atualização de Página', 'verbose_name_plural': 'Atualizações de Páginas'},
-        ),
         migrations.CreateModel(
             name='AcessoPagina',
             fields=[
