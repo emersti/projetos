@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('consulta_risco', '0020_make_email_required'),
+        ('consulta_risco', '0021_cliquecupom'),
     ]
 
     operations = [
