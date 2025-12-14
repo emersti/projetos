@@ -6,30 +6,51 @@ from django.db.models import DateTimeField
 
 class BrasiliaDateTimeField(DateTimeField):
     """
-    Campo DateTimeField que salva diretamente em UTC-3 (Brasília)
+    Campo DateTimeField que salva com timezone de Brasília
+    CORREÇÃO: Agora salva com timezone para evitar problemas de conversão
     """
     def get_prep_value(self, value):
         if value is None:
             return value
         
-        # Se tem timezone, converter para Brasília e remover timezone
-        if hasattr(value, 'tzinfo') and value.tzinfo is not None:
-            brasilia_tz = pytz.timezone('America/Sao_Paulo')
-            brasilia_time = value.astimezone(brasilia_tz)
-            return brasilia_time.replace(tzinfo=None)
+        brasilia_tz = pytz.timezone('America/Sao_Paulo')
         
-        # Se não tem timezone, assumir que já é UTC-3
-        return value
+        # Se tem timezone, converter para Brasília e MANTER timezone
+        if hasattr(value, 'tzinfo') and value.tzinfo is not None:
+            brasilia_time = value.astimezone(brasilia_tz)
+            return brasilia_time  # Manter timezone
+        
+        # Se não tem timezone, localizar como Brasília
+        return brasilia_tz.localize(value)
+    
+    def from_db_value(self, value, expression, connection):
+        """
+        Converte o valor do banco de dados.
+        Com USE_TZ=True, o Django pode retornar como UTC-aware.
+        Convertemos para Brasília.
+        """
+        if value is None:
+            return value
+        
+        brasilia_tz = pytz.timezone('America/Sao_Paulo')
+        
+        # Se não tem timezone, localizar como Brasília
+        if not timezone.is_aware(value):
+            return brasilia_tz.localize(value)
+        
+        # Se tem timezone, converter para Brasília
+        return value.astimezone(brasilia_tz)
 
 
 def get_brasilia_time():
     """
-    Retorna o horário atual em UTC-3 (Brasília) sem timezone info
+    Retorna o horário atual em UTC-3 (Brasília) COM timezone info
+    CORREÇÃO: Retornar COM timezone para evitar problemas de conversão
     """
     brasilia_tz = pytz.timezone('America/Sao_Paulo')
     brasilia_time = timezone.now().astimezone(brasilia_tz)
-    # Retornar apenas a data/hora sem timezone para salvar diretamente em UTC-3
-    return brasilia_time.replace(tzinfo=None)
+    # Retornar COM timezone para que o Django salve corretamente
+    return brasilia_time
 
 
 class TipoCupom(models.Model):
@@ -362,7 +383,7 @@ class AcessoPagina(models.Model):
     estado = models.CharField(max_length=2, blank=True, help_text="Estado (UF) do usuário")
     user_agent = models.TextField(blank=True, help_text="User agent do navegador")
     referer = models.URLField(blank=True, help_text="Página de origem (referer)")
-    data_acesso = BrasiliaDateTimeField(default=get_brasilia_time, help_text="Data e hora do acesso em UTC-3 (Brasília)")
+    data_acesso = models.DateTimeField(default=timezone.now, help_text="Data e hora do acesso")
     
     class Meta:
         ordering = ['-data_acesso']
@@ -373,6 +394,23 @@ class AcessoPagina(models.Model):
             models.Index(fields=['data_acesso'], name='acesso_data_idx'),
             models.Index(fields=['estado', 'cidade'], name='acesso_estado_cidade_idx'),
         ]
+    
+    def get_data_acesso_brasilia(self):
+        """
+        Retorna a data de acesso formatada no timezone de São Paulo (Brasília)
+        
+        SOLUÇÃO SIMPLIFICADA: Com USE_TZ=True, o Django salva em UTC e converte automaticamente.
+        Usamos localtime() que converte para o TIME_ZONE configurado (America/Sao_Paulo).
+        """
+        from django.utils.timezone import localtime
+        
+        if self.data_acesso is None:
+            return ''
+        
+        # localtime() converte automaticamente para o TIME_ZONE configurado em settings
+        # (America/Sao_Paulo quando USE_TZ=True)
+        data_local = localtime(self.data_acesso)
+        return data_local.strftime('%d/%m/%Y %H:%M')
     
     def __str__(self):
         localizacao = f"{self.cidade}, {self.estado}" if self.cidade and self.estado else "Localização não identificada"
