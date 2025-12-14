@@ -53,6 +53,7 @@ class AcessoPaginaMiddleware:
             '/faq/',
             '/termos-uso/',
             '/sobre/',
+            '/mapa-seguranca/',  # mapa de segurança
             # Nota: Se existir página "fale conosco" ou "contato", adicionar aqui
             # Exemplo: '/fale-conosco/', '/contato/'
         ]
@@ -167,6 +168,7 @@ class AcessoPaginaMiddleware:
             '/lgpd/': 'LGPD',
             '/termos-uso/': 'Termos de Uso',
             '/cupons/': 'Cupons',
+            '/mapa-seguranca/': 'Mapa de Segurança',
             '/fale-conosco/': 'Fale Conosco',
             '/contato/': 'Fale Conosco',
         }
